@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | MetaEducación</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-sidebar {
+            width: 280px;
+            background: #1a3db6;
+            min-height: 100vh;
+            color: white;
+            position: fixed;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 40px;
+        }
+
+        .nav-link-admin {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 20px;
+            display: block;
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-link-admin:hover,
+        .nav-link-admin.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <div id="loginOverlay"
+        style="position: fixed; inset: 0; background: white; z-index: 2000; display: flex; align-items: center; justify-content: center;">
+        <div class="card p-5 border-0 shadow-lg rounded-5" style="max-width: 400px; width: 90%;">
+            <div class="text-center mb-4">
+                <img src="assets/logo_white.png" height="60"
+                    style="filter: brightness(0) saturate(100%) invert(32%) sepia(85%) alt(20%) saturate(400%);"
+                    alt="Logo">
+                <h3 class="fw-bold text-blue mt-3">Panel Admin</h3>
+                <p class="text-muted small">Ingresa tus credenciales</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Usuario</label>
+                <input type="text" class="form-control rounded-pill px-4 py-2" value="admin">
+            </div>
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Contraseña</label>
+                <input type="password" class="form-control rounded-pill px-4 py-2" id="adminPass">
+            </div>
+            <button onclick="checkPass()" class="btn btn-pink text-white w-100 py-3 rounded-pill fw-bold shadow">Entrar
+                al Sistema</button>
+            <p id="loginError" class="text-danger small mt-3 text-center" style="display:none;">Contraseña incorrecta
+            </p>
+        </div>
+    </div>
+
+    <div id="adminPanel" style="display:none;">
+        <div class="admin-sidebar p-4 shadow-lg">
+            <div class="mb-5">
+                <h3 class="fw-bolder italic">MetaAdmin</h3>
+                <span class="badge bg-pink">Control Center</span>
+            </div>
+            <nav>
+                <a href="#" class="nav-link-admin active" onclick="filterType('todos', this)"><i
+                        class="bi bi-grid-1x2-fill me-2"></i> Dashboard</a>
+                <a href="#" class="nav-link-admin" onclick="filterType('proyectos', this)"><i
+                        class="bi bi-laptop me-2"></i> Portafolio</a>
+                <a href="#" class="nav-link-admin" onclick="filterType('eventos', this)"><i
+                        class="bi bi-calendar-event me-2"></i> Eventos</a>
+                <div class="mt-5 border-top border-white opacity-25 pt-4"></div>
+                <a href="index.html" class="nav-link-admin text-danger"><i class="bi bi-box-arrow-left me-2"></i> Cerrar
+                    Sesión</a>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <header class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h2 class="fw-bold text-blue">Gestión del Portafolio</h2>
+                    <p class="text-muted mb-0">Administra los proyectos y eventos de la Legión Axolot.</p>
+                </div>
+                <button class="btn btn-pink text-white px-4 py-2 rounded-pill fw-bold" data-bs-toggle="modal"
+                    data-bs-target="#addProjectModal">
+                    <i class="bi bi-plus-lg me-2"></i> Nuevo Proyecto
+                </button>
+            </header>
+
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <small class="text-muted d-block mb-1">Total Proyectos</small>
+                        <h2 class="fw-bold mb-0 text-blue">24</h2>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <small class="text-muted d-block mb-1">Próximos Eventos</small>
+                        <h2 class="fw-bold mb-0 text-pink">3</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="p-4">
+                    <h5 class="fw-bold text-blue mb-0">Proyectos Actuales</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Proyecto</th>
+                                <th>Categoría</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th class="text-end pe-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Proyecto -->
+    <div class="modal fade" id="addProjectModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-5 border-0 shadow-lg p-3">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold text-blue">Añadir Nuevo Proyecto al Portafolio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="projectForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Nombre del Proyecto</label>
+                                <input type="text" id="title" class="form-control rounded-pill px-3"
+                                    placeholder="Ej: Brazo Robótico o Hackathon 2026">
+                            </div>
+                            <div class="col-md-6" id="dateContainer">
+                                <label class="form-label small fw-bold">Fecha (Solo para Eventos: ej: 12 de Oct)</label>
+                                <input type="text" id="eventDate" class="form-control rounded-pill px-3"
+                                    placeholder="Día y Mes">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Categoría</label>
+                                <select id="category" class="form-select rounded-pill px-3">
+                                    <option>Ing. en Software</option>
+                                    <option>Ing. en Telemática</option>
+                                    <option>Ing. Telemática & Software</option>
+                                    <option>Preparatoria</option>
+                                    <option>Robótica</option>
+                                    <option>Eventos</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Descripción Corta</label>
+                                <textarea id="shortDesc" class="form-control rounded-4" rows="2"
+                                    placeholder="Resumen rápido..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Descripción Detallada / Objetivos</label>
+                                <textarea id="fullDesc" class="form-control rounded-4" rows="4"
+                                    placeholder="Explica de qué trata el proyecto..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Retos y Soluciones</label>
+                                <textarea id="challenges" class="form-control rounded-4" rows="3"
+                                    placeholder="¿Qué problemas enfrentaron?"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Resultados / Aprendizajes</label>
+                                <textarea id="results" class="form-control rounded-4" rows="3"
+                                    placeholder="¿Qué se logró?"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">Imagen Principal</label>
+                                <div class="d-flex gap-3 align-items-center">
+                                    <input type="file" id="projectImageFile" class="form-control rounded-pill px-3"
+                                        accept="image/*">
+                                    <span class="text-muted small">o URL:</span>
+                                    <input type="text" id="projectImageUrl" class="form-control rounded-pill px-3"
+                                        placeholder="https://...">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">Galería de Imágenes (Sube varias)</label>
+                                <input type="file" id="galleryFiles" class="form-control rounded-pill px-3"
+                                    accept="image/*" multiple>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Tecnologías Usadas</label>
+                                <input type="text" id="techs" class="form-control rounded-pill px-3"
+                                    placeholder="React, Python, etc.">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Integrantes / Equipo</label>
+                                <input type="text" id="team" class="form-control rounded-pill px-3"
+                                    placeholder="Ej: Juan, Ana y Pedro">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Ubicación (Solo para Eventos)</label>
+                                <input type="text" id="location" class="form-control rounded-pill px-3"
+                                    placeholder="Ej: Auditorio Principal">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold">Enlace al Proyecto (GitHub/Web)</label>
+                                <input type="text" id="repoLink" class="form-control rounded-pill px-3"
+                                    placeholder="https://github.com/...">
+                            </div>
+                            <div id="uploadProgress" class="progress mt-2 d-none" style="height: 10px;">
+                                <div class="progress-bar bg-pink progress-bar-striped progress-bar-animated"
+                                    style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-pink text-white rounded-pill px-4 shadow"
+                        onclick="saveProject()">🚀 Publicar en la Legión</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://qzymwhuhczhoisuhuwbl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_oEuepxOVbuZWb-vZOHGnmg_CXybs_vt';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function checkPass() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === 'meta2025') {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadProjects();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        let currentFilter = 'todos';
+
+        async function loadProjects() {
+            const tbody = document.querySelector('tbody');
+            const { data, error } = await supabaseClient.from('projects').select('*').order('created_at', { ascending: false });
+            if (error) return;
+
+            // Update Counters
+            document.querySelector('.stat-card .text-blue').innerText = data.filter(p => p.category !== 'Eventos').length;
+            document.querySelector('.stat-card .text-pink').innerText = data.filter(p => p.category === 'Eventos').length;
+
+            tbody.innerHTML = '';
+
+            // Filter Data
+            let filteredData = data;
+            if (currentFilter === 'proyectos') filteredData = data.filter(p => p.category !== 'Eventos');
+            if (currentFilter === 'eventos') filteredData = data.filter(p => p.category === 'Eventos');
+
+            filteredData.forEach(p => {
+                const tr = `
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded-3 me-3" style="width:40px;height:40px; background: url('${p.image_url || 'assets/proyecto-robotica.png'}') center/cover;"></div>
+                                <span class="fw-bold">${p.title}</span>
+                            </div>
+                        </td>
+                        <td><span class="badge ${getBadgeClass(p.category)}">${p.category}</span></td>
+                        <td>${p.date || 'N/A'}</td>
+                        <td><span class="badge bg-success-subtle text-success">Publicado</span></td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-light btn-sm rounded-pill px-3" onclick="deleteProject(${p.id})">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += tr;
+            });
+        }
+
+        function filterType(type, element) {
+            currentFilter = type;
+            // UI Update
+            document.querySelectorAll('.nav-link-admin').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            // Re-label Table and Button
+            const h5 = document.querySelector('h5.fw-bold.text-blue');
+            const btnNew = document.querySelector('header button');
+            const modalTitle = document.querySelector('.modal-title');
+            const catSelect = document.getElementById('category');
+            const dateContainer = document.getElementById('dateContainer');
+
+            if (type === 'todos') {
+                h5.innerText = 'Todos los Registros';
+                btnNew.innerHTML = '<i class="bi bi-plus-lg me-2"></i> Nuevo Registro';
+                modalTitle.innerText = 'Añadir Nuevo Registro';
+                dateContainer.style.display = 'block';
+            }
+            if (type === 'proyectos') {
+                h5.innerText = 'Proyectos del Portafolio';
+                btnNew.innerHTML = '<i class="bi bi-plus-lg me-2"></i> Nuevo Proyecto';
+                modalTitle.innerText = 'Añadir Nuevo Proyecto';
+                catSelect.value = 'Ing. en Software';
+                dateContainer.style.display = 'none';
+            }
+            if (type === 'eventos') {
+                h5.innerText = 'Eventos del Campus';
+                btnNew.innerHTML = '<i class="bi bi-plus-lg me-2"></i> Nuevo Evento';
+                modalTitle.innerText = 'Crear Nuevo Evento';
+                catSelect.value = 'Eventos';
+                dateContainer.style.display = 'block';
+            }
+
+            loadProjects();
+        }
+
+        async function saveProject() {
+            const progressBar = document.getElementById('uploadProgress');
+            const progressInner = progressBar.querySelector('.progress-bar');
+            progressBar.classList.remove('d-none');
+            progressInner.style.width = '10%';
+
+            let imageUrl = document.getElementById('projectImageUrl').value;
+            let galleryUrls = [];
+
+            // 1. Upload Main Image
+            const mainFile = document.getElementById('projectImageFile').files[0];
+            if (mainFile) {
+                const fileName = `${Date.now()}_main_${mainFile.name.replace(/\s/g, '_')}`;
+                const { error: err } = await supabaseClient.storage.from('portfolio').upload(fileName, mainFile);
+                if (!err) {
+                    const { data } = supabaseClient.storage.from('portfolio').getPublicUrl(fileName);
+                    imageUrl = data.publicUrl;
+                }
+            }
+            progressInner.style.width = '40%';
+
+            // 2. Upload Gallery
+            const gFiles = document.getElementById('galleryFiles').files;
+            if (gFiles.length > 0) {
+                for (let i = 0; i < gFiles.length; i++) {
+                    const file = gFiles[i];
+                    const fileName = `${Date.now()}_gal_${i}_${file.name.replace(/\s/g, '_')}`;
+                    const { error: err } = await supabaseClient.storage.from('portfolio').upload(fileName, file);
+                    if (!err) {
+                        const { data } = supabaseClient.storage.from('portfolio').getPublicUrl(fileName);
+                        galleryUrls.push(data.publicUrl);
+                    }
+                    progressInner.style.width = `${40 + ((i + 1) / gFiles.length) * 50}%`;
+                }
+            }
+
+            // 3. Save to Database
+            const newProject = {
+                title: document.getElementById('title').value,
+                category: document.getElementById('category').value,
+                short_description: document.getElementById('shortDesc').value,
+                full_description: document.getElementById('fullDesc').value,
+                challenges: document.getElementById('challenges').value,
+                results: document.getElementById('results').value,
+                image_url: imageUrl,
+                gallery: galleryUrls,
+                technologies: document.getElementById('techs').value,
+                team: document.getElementById('team').value,
+                location: document.getElementById('location').value,
+                repo_link: document.getElementById('repoLink').value,
+                date: document.getElementById('eventDate').value || new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
+            };
+
+            const { error } = await supabaseClient.from('projects').insert([newProject]);
+
+            if (error) {
+                alert('Error al guardar: ' + error.message);
+                return;
+            }
+
+            alert('¡Publicado con éxito!');
+            bootstrap.Modal.getInstance(document.getElementById('addProjectModal')).hide();
+            loadProjects(); // This will reload projects and update counters
+            document.getElementById('projectForm').reset();
+            progressBar.classList.add('d-none');
+        }
+
+        async function deleteProject(id) {
+            if (confirm('¿Eliminar permanente?')) {
+                await supabaseClient.from('projects').delete().eq('id', id);
+                loadProjects();
+            }
+        }
+
+        function getBadgeClass(cat) {
+            const map = {
+                'Robótica': 'bg-soft-blue text-blue',
+                'Software': 'bg-soft-pink text-pink',
+                'Eventos': 'bg-soft-purple text-purple',
+                'Ing. en Software': 'bg-soft-pink text-pink',
+                'Ing. en Telemática': 'bg-soft-blue text-blue',
+                'Ing. Telemática & Software': 'bg-soft-purple text-purple',
+                'Preparatoria': 'bg-warning text-dark'
+            };
+            return map[cat] || 'bg-light text-muted';
+        }
+    </script>
+</body>
+
+</html>

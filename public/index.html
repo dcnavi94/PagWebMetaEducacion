@@ -69,6 +69,7 @@
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#oferta">Programas</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#calculadora">Calculadora</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#admisiones">Inscripción</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#portafolio">Portfolio</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#convenios">Convenios</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#faq">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#nosotros">Nosotros</a></li>
@@ -390,7 +391,7 @@
                     flex: 0 0 auto;
                 }
             </style>
-            <div class="portfolio-scroll">
+            <div class="portfolio-scroll" id="portfolioContainer">
                 <div class="portfolio-item">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                         <img src="assets/robot_creation.png" class="card-img-top" alt="Proyecto Robótica"
@@ -464,6 +465,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Botón de ver todo eliminado por petición del usuario -->
         </div>
     </section>
 
@@ -793,7 +796,8 @@
             <div class="mt-4 text-center">
                 <div class="d-inline-block p-2 px-4 rounded-pill bg-white shadow-sm border">
                     <p class="mb-0 text-muted small"><i class="bi bi-info-circle me-2 text-pink"></i>Presenta tu
-                        <b>credencial digital</b> para hacer válidos estos beneficios.</p>
+                        <b>credencial digital</b> para hacer válidos estos beneficios.
+                    </p>
                 </div>
             </div>
         </div>
@@ -860,6 +864,7 @@
             </div>
         </div>
     </section>
+
 
     <!-- FAQ Section -->
     <section id="faq" class="faq py-5" style="background-color: #fff;">
@@ -1022,40 +1027,9 @@
                 </div>
                 <div class="col-lg-7">
                     <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item p-4 d-flex align-items-center gap-4">
-                                <div class="text-center rounded-3 bg-light px-3 py-2 text-blue">
-                                    <h4 class="fw-bold mb-0">12</h4>
-                                    <span class="small fw-semibold">OCT</span>
-                                </div>
-                                <div>
-                                    <h5 class="fw-bold mb-1">Hackathon Axolotl 2026</h5>
-                                    <p class="text-muted mb-0 small"><i class="bi bi-geo-alt-fill me-1 text-pink"></i>
-                                        Laboratorios Principales</p>
-                                </div>
-                            </div>
-                            <div class="list-group-item p-4 d-flex align-items-center gap-4">
-                                <div class="text-center rounded-3 bg-light px-3 py-2 text-blue">
-                                    <h4 class="fw-bold mb-0">28</h4>
-                                    <span class="small fw-semibold">OCT</span>
-                                </div>
-                                <div>
-                                    <h5 class="fw-bold mb-1">Open Campus: Taller Ensamblaje PC</h5>
-                                    <p class="text-muted mb-0 small"><i class="bi bi-geo-alt-fill me-1 text-pink"></i>
-                                        Taller de Hardware</p>
-                                </div>
-                            </div>
-                            <div class="list-group-item p-4 d-flex align-items-center gap-4">
-                                <div class="text-center rounded-3 bg-light px-3 py-2 text-blue">
-                                    <h4 class="fw-bold mb-0">15</h4>
-                                    <span class="small fw-semibold">NOV</span>
-                                </div>
-                                <div>
-                                    <h5 class="fw-bold mb-1">Torneo e-Sports de la Legión</h5>
-                                    <p class="text-muted mb-0 small"><i class="bi bi-geo-alt-fill me-1 text-pink"></i>
-                                        Salón de Usos Múltiples</p>
-                                </div>
-                            </div>
+                        <div class="list-group list-group-flush" id="eventsContainer">
+                            <!-- Eventos dinámicos -->
+                            <div class="list-group-item p-4 text-center text-muted">Cargando eventos...</div>
                         </div>
                     </div>
                 </div>
@@ -1187,6 +1161,11 @@
                         <li class="mb-2"><a href="mailto:metaeducacionsanjose@gmail.com"
                                 class="text-pink text-decoration-none fw-bold"><i class="bi bi-briefcase me-1"></i>
                                 Trabaja con Nosotros</a></li>
+                        <li class="mb-2"><a
+                                href="https://wa.me/524191070127?text=Hola%2C%20me%20interesa%20solicitar%20una%20alianza%20con%20MetaEducaci%C3%B3n"
+                                target="_blank" class="text-blue text-decoration-none fw-bold"><i
+                                    class="bi bi-handshake me-1"></i>
+                                Solicita una Alianza</a></li>
                     </ul>
                 </div>
             </div>
@@ -1264,7 +1243,13 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // CONFIGURACIÓN SUPABASE - Reemplaza con tus llaves reales después de crear tu tabla
+        const SUPABASE_URL = 'https://qzymwhuhczhoisuhuwbl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_oEuepxOVbuZWb-vZOHGnmg_CXybs_vt';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         function calculateTuition() {
             const carrera = document.getElementById('calcCarrera').value;
             const modalidad = document.getElementById('calcModalidad').value;
@@ -1279,6 +1264,87 @@
             document.getElementById('finalPrice').innerText = '$' + finalPrice.toLocaleString('es-MX', { minimumFractionDigits: 2 });
             document.getElementById('calcResult').classList.remove('d-none');
         }
+
+        async function loadContent() {
+            const portfolioContainer = document.getElementById('portfolioContainer');
+            const eventsContainer = document.getElementById('eventsContainer');
+
+            const { data, error } = await supabaseClient
+                .from('projects')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) return;
+
+            // Filtrar y Renderizar Portafolio (Proyectos)
+            const projects = data.filter(p => p.category !== 'Eventos');
+            if (portfolioContainer && projects.length > 0) {
+                portfolioContainer.innerHTML = '';
+                projects.slice(0, 6).forEach(project => {
+                    portfolioContainer.innerHTML += `
+                        <div class="portfolio-item">
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                                <img src="${project.image_url || 'assets/robot_creation.png'}" class="card-img-top" alt="${project.title}" style="height: 250px; object-fit: cover;">
+                                <div class="card-body">
+                                    <span class="badge ${getBadgeClass(project.category)} mb-2">${project.category}</span>
+                                    <h5 class="fw-bold text-dark">${project.title}</h5>
+                                    <p class="text-muted small">${project.short_description}</p>
+                                    <a href="proyecto-detalle.html?id=${project.id}" class="btn btn-outline-pink btn-sm rounded-pill px-3 mt-2">Ver Detalle</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Filtrar y Renderizar Eventos
+            const events = data.filter(p => p.category === 'Eventos');
+            if (eventsContainer) {
+                if (events.length > 0) {
+                    eventsContainer.innerHTML = '';
+                    events.forEach(event => {
+                        const dateParts = (event.date || '01 de ene').split(' ');
+                        const day = dateParts[0] || '01';
+                        const month = (dateParts[2] || 'ene').substring(0, 3).toUpperCase();
+
+                        eventsContainer.innerHTML += `
+                            <div class="list-group-item p-4 d-flex align-items-center gap-4">
+                                <div class="text-center rounded-3 bg-light px-3 py-2 text-blue" style="min-width: 70px;">
+                                    <h4 class="fw-bold mb-0">${day}</h4>
+                                    <span class="small fw-semibold text-uppercase">${month}</span>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-1">${event.title}</h5>
+                                    <p class="text-muted mb-0 small"><i class="bi bi-geo-alt-fill me-1 text-pink"></i> 
+                                        ${event.location || 'Campus MetaEducación'}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    eventsContainer.innerHTML = '<div class="list-group-item p-4 text-center text-muted small">No hay eventos próximos programados.</div>';
+                }
+            }
+        }
+
+        function getBadgeClass(cat) {
+            const map = {
+                'Robótica': 'bg-soft-blue text-blue',
+                'Software': 'bg-soft-pink text-pink',
+                'Eventos': 'bg-soft-purple text-purple',
+                'Ing. en Software': 'bg-soft-pink text-pink',
+                'Ing. en Telemática': 'bg-soft-blue text-blue',
+                'Ing. Telemática & Software': 'bg-soft-purple text-purple',
+                'Preparatoria': 'bg-warning text-dark'
+            };
+            return map[cat] || 'bg-light text-muted';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+                loadContent();
+            }
+        });
     </script>
     <script src="script.js"></script>
 </body>

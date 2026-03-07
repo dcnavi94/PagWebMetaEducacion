@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Proyecto | MetaEducación</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .detail-hero {
+            height: 50vh;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .detail-hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8));
+        }
+
+        .detail-content {
+            margin-top: -100px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .project-meta-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top py-1" style="background-color: #1a3db6;">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/logo_white.png" alt="MetaEducación Logo" height="40" class="me-2">
+                <span class="fw-bolder fs-4 italic">MetaEducación</span>
+            </a>
+            <a href="index.html#portafolio" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Volver al Portafolio
+            </a>
+        </div>
+    </nav>
+
+    <div id="projectDetail">
+        <div class="detail-hero" id="projectHero"></div>
+
+        <div class="container detail-content mb-5">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="project-meta-box mb-4">
+                        <span id="projectCategory"
+                            class="badge bg-soft-pink text-pink mb-3 px-3 py-2 rounded-pill"></span>
+                        <h1 id="projectTitle" class="display-4 fw-bolder text-blue"></h1>
+                        <p id="projectFullDesc" class="lead text-muted mt-4"></p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+                        <h3 class="fw-bold text-blue mb-4">Galería del Proyecto</h3>
+                        <div class="row g-3" id="projectGallery">
+                            <!-- Imágenes adicionales si las hubiera -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="project-meta-box sticky-top" style="top: 100px;">
+                        <h4 class="fw-bold text-blue mb-4">Detalles Técnicos</h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="bi bi-calendar-event text-pink fs-4 me-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">Fecha</small>
+                                    <span id="projectDate" class="fw-bold"></span>
+                                </div>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="bi bi-people text-blue fs-4 me-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">Integrantes</small>
+                                    <span id="projectTeam" class="fw-bold"></span>
+                                </div>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="bi bi-tools text-purple fs-4 me-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">Tecnologías</small>
+                                    <span id="projectTech" class="fw-bold"></span>
+                                </div>
+                            </li>
+                        </ul>
+                        <hr>
+                        <a id="projectLink" href="#" target="_blank"
+                            class="btn btn-pink text-white w-100 fw-bold py-3 mt-2 rounded-pill shadow">
+                            <i class="bi bi-github me-2"></i> Ver Repositorio
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-blue text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">© 2025 MetaEducación - Legión Axolot. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // CONFIGURACIÓN SUPABASE - Reemplaza con tus llaves reales
+        const SUPABASE_URL = 'https://qzymwhuhczhoisuhuwbl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_oEuepxOVbuZWb-vZOHGnmg_CXybs_vt';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadProjectDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('id');
+
+            if (!projectId) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const { data: project, error } = await supabaseClient
+                .from('projects')
+                .select('*')
+                .eq('id', projectId)
+                .single();
+
+            if (error || !project) {
+                console.error('Error cargando detalle:', error);
+                // Fallback a datos estáticos si las llaves no existen todavía (para demo)
+                if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                    showDemoData(projectId);
+                } else {
+                    window.location.href = 'index.html';
+                }
+                return;
+            }
+
+            renderProject(project);
+        }
+
+        function renderProject(project) {
+            document.getElementById('projectHero').style.backgroundImage = `url(${project.image_url || 'assets/proyecto-robotica.png'})`;
+            document.getElementById('projectTitle').innerText = project.title;
+            document.getElementById('projectCategory').innerText = project.category;
+            document.getElementById('projectFullDesc').innerText = project.full_description;
+            document.getElementById('projectDate').innerText = project.date || 'Pendiente';
+            document.getElementById('projectTeam').innerText = project.team || 'Legión Axolot';
+            document.getElementById('projectTech').innerText = project.technologies || 'Diversas';
+
+            const linkBtn = document.getElementById('projectLink');
+            if (project.repo_link && project.repo_link !== '#') {
+                linkBtn.href = project.repo_link;
+                linkBtn.classList.remove('d-none');
+            } else {
+                linkBtn.classList.add('d-none');
+            }
+
+            // Render Extra Info
+            if (project.challenges || project.results) {
+                const detailBox = document.querySelector('.project-meta-box');
+                const extraInfo = `
+                    <div class="mt-5 border-top pt-4">
+                        <h4 class="fw-bold text-blue mb-3">🛠️ Retos y Soluciones</h4>
+                        <p class="text-muted">${project.challenges || 'Información en proceso...'}</p>
+                        <h4 class="fw-bold text-blue mt-4 mb-3">🏆 Resultados e Impacto</h4>
+                        <p class="text-muted">${project.results || 'Información en proceso...'}</p>
+                    </div>
+                `;
+                detailBox.insertAdjacentHTML('beforeend', extraInfo);
+            }
+
+            // Render Gallery
+            const galleryGrid = document.getElementById('projectGallery');
+            if (project.gallery && project.gallery.length > 0) {
+                galleryGrid.innerHTML = '';
+                project.gallery.forEach(imgUrl => {
+                    const imgCol = `
+                        <div class="col-md-4">
+                            <div class="rounded-4 overflow-hidden shadow-sm h-100">
+                                <img src="${imgUrl}" class="img-fluid w-100 h-100" style="object-fit: cover; cursor: pointer;" onclick="window.open(this.src)">
+                            </div>
+                        </div>
+                    `;
+                    galleryGrid.innerHTML += imgCol;
+                });
+            } else {
+                document.getElementById('projectGallery').closest('.bg-white').classList.add('d-none');
+            }
+        }
+
+        function showDemoData(id) {
+            const projects = {
+                "1": {
+                    title: "Brazo Robótico Axolot",
+                    category: "Robótica",
+                    image_url: "assets/proyecto-robotica.png",
+                    full_description: "Un prototipo avanzado de brazo robótico diseñado para tareas de precisión en entornos industriales controlados. Los alumnos desarrollaron tanto la estructura física mediante impresión 3D como el software de control basado en C++ y Python.",
+                    date: "Septiembre 2025",
+                    team: "Equipo Alpha (6 alumnos)",
+                    technologies: "Arduino, Raspberry Pi, Python, OpenCV",
+                    repo_link: "#"
+                },
+                "2": {
+                    title: "App Gestión Escolar",
+                    category: "Software",
+                    image_url: "assets/proyecto-software.png",
+                    full_description: "Plataforma integral diseñada para digitalizar los procesos administrativos de pequeñas y medianas instituciones educativas. Cuenta con módulos de inscripción, seguimiento de becas, control de asistencia y un portal para padres.",
+                    date: "Agosto 2025",
+                    team: "DevSquad (4 alumnos)",
+                    technologies: "React, Node.js, MongoDB, Tailwind",
+                    repo_link: "#"
+                },
+                "3": {
+                    title: "Hackathon Meta 2025",
+                    category: "Eventos",
+                    image_url: "assets/evento-hackathon.png",
+                    full_description: "El evento de innovación más grande de MetaEducación. Durante 24 horas ininterrumpidas, los estudiantes trabajaron bajo presión para resolver retos reales planteados por empresas de la región.",
+                    date: "Julio 2025",
+                    team: "Participación Global",
+                    technologies: "IoT, Cloud, Big Data",
+                    repo_link: "#"
+                }
+            };
+            const project = projects[id];
+            if (project) renderProject(project);
+        }
+
+        loadProjectDetail();
+    </script>
+</body>
+
+</html>
