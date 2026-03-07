@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaEducación | Ingeniería en Software y Telemática en Guanajuato</title>
+    <meta name="description"
+        content="Estudia Ingeniería en Software, Telemática o Preparatoria en 2 años en MetaEducación, San José Iturbide, Gto. Calcula tu beca. Laboratorios de última tecnología. ¡Inscríbete!">
+    <meta name="keywords"
+        content="ingeniería software guanajuato, Preparatoria 2 años, telemática san josé iturbide, universidad tecnología bajío, metaeducación">
+    <meta property="og:title" content="MetaEducación — Legión Axolot | Tu futuro tech empieza aquí">
+    <meta property="og:description"
+        content="Carreras de Ingeniería en Software, Telemática y Preparatoria intensivo en San José Iturbide. Calcula tu beca. Únete a la Legión Axolot.">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://metaeducacion.edu.mx">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Banner de Inscripciones Urgente -->
+    <div class="enrollment-banner" id="enrollmentBanner">
+        <div class="container d-flex align-items-center justify-content-center gap-3 flex-wrap">
+            <span class="d-none d-md-inline">🚀</span>
+            <strong>Inscripciones en Septiembre</strong>
+            <span class="d-none d-sm-inline">—</span>
+            <a href="#calculadora" class="text-white text-decoration-none fw-bold"><i
+                    class="bi bi-calculator me-1 text-warning"></i> <span
+                    class="border-bottom border-warning pb-1">Calcula tu beca</span></a>
+            <a href="#contacto" class="btn btn-sm btn-warning text-dark fw-bold px-3 ms-2 rounded-pill">¡Aparta tu
+                lugar!</a>
+            <button class="btn-close btn-close-white ms-2"
+                onclick="document.getElementById('enrollmentBanner').style.display='none'" aria-label="Cerrar"></button>
+        </div>
+    </div>
+
+    <!-- Social Sidebar -->
+    <div class="social-sidebar d-none d-lg-flex">
+        <a href="https://www.facebook.com/profile.php?id=61577786609467" class="facebook-side" target="_blank"><i
+                class="bi bi-facebook fs-4"></i></a>
+        <a href="https://www.instagram.com/metaeducacionsanjose/" class="instagram-side" target="_blank"><i
+                class="bi bi-instagram fs-4"></i></a>
+        <a href="https://www.tiktok.com/@legionaxolot?lang=es" class="tiktok-side" target="_blank"><i
+                class="bi bi-tiktok fs-4"></i></a>
+        <a href="https://wa.me/524191070127?text=Hola%2C%20me%20interesa%20información%20sobre%20MetaEducación.%20Vengo%20del%20sitio%20web."
+            class="whatsapp-side" target="_blank"><i class="bi bi-whatsapp fs-4"></i></a>
+    </div>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: #1a3db6;">
+        <div class="container py-1">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="assets/logo_white.png" alt="MetaEducación Logo" height="40" class="me-2">
+                <span class="fw-bolder fs-4 italic">MetaEducación</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link active fw-semibold" href="#inicio">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#modalidades">Modalidades</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#oferta">Programas</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#calculadora">Calculadora</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#admisiones">Inscripción</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#convenios">Convenios</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#faq">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#nosotros">Nosotros</a></li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="#contacto" class="btn btn-pink text-white fw-bold px-3 py-1 small">¡Inscríbete!</a>
+                    <a href="campus-virtual.html"
+                        class="btn btn-warning text-dark fw-bold px-3 py-1 small d-none d-lg-flex align-items-center">
+                        <i class="bi bi-phone-fill me-1"></i>Campus</a>
+                    <a href="https://wa.me/524191070127?text=Hola%2C%20quiero%20información%20sobre%20las%20carreras."
+                        class="btn btn-outline-light bg-white text-primary fw-bold px-2 py-1 small d-flex align-items-center"
+                        target="_blank"><i class="bi bi-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <!-- Hero Section Banner Cambiante -->
+    <header id="inicio" class="hero-carousel">
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active" style="background: url('assets/robotics.png') center/cover;">
+                    <div class="carousel-overlay"></div>
+                    <div class="carousel-caption text-start mb-5 h-75 d-flex flex-column justify-content-center">
+                        <h1 class="display-2 fw-bold italic">Legión <span class="text-pink">Axolot</span></h1>
+                        <p class="h3 fw-light mb-4">Más que una escuela, una familia tecnológica.</p>
+                        <div class="d-flex gap-3">
+                            <a href="#contacto" class="btn btn-pink btn-lg text-white fw-bold px-4">Inicia tu
+                                Evolución</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item" style="background: url('assets/events.png') center/cover;">
+                    <div class="carousel-overlay"></div>
+                    <div class="carousel-caption text-center mb-5 h-75 d-flex flex-column justify-content-center">
+                        <h1 class="display-2 fw-bold italic">Crea el <span class="text-pink">Futuro</span></h1>
+                        <p class="h3 fw-light mb-4 text-white-50">Ingeniería en Software y Telemática de nivel global.
+                        </p>
+                        <a href="#oferta" class="btn btn-outline-light btn-lg border-2 px-4 mx-auto"
+                            style="width: fit-content;">Ver Programas</a>
+                    </div>
+                </div>
+                <div class="carousel-item" style="background: url('assets/travel.png') center/cover;">
+                    <div class="carousel-overlay"></div>
+                    <div class="carousel-caption text-end mb-5 h-75 d-flex flex-column justify-content-center">
+                        <h1 class="display-2 fw-bold italic">Preparatoria <span class="text-pink">2 años</span></h1>
+                        <p class="h3 fw-light mb-4">Acelera tus metas con nuestra modalidad presencial intensiva.</p>
+                        <a href="#calculadora" class="btn btn-pink btn-lg text-white fw-bold px-4 ms-auto">Calcula tu
+                            Beca</a>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </header>
+
+
+    <!-- Oferta Educativa Section -->
+    <section id="oferta" class="oferta-educativa py-5" style="background-color: #f8f9fa;">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bolder text-blue italic">Nuestra <span class="text-pink">Oferta Educativa</span>
+                </h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="h5 text-muted">Programas diseñados para el futuro.</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden career-card">
+                        <div
+                            class="card-header bg-blue text-white py-5 text-center position-relative overflow-hidden border-0">
+                            <div class="position-absolute w-100 h-100 start-0 top-0"
+                                style="background: url('assets/telematica.png') center/cover; opacity: 0.3; mix-blend-mode: luminosity;">
+                            </div>
+                            <div class="position-relative" style="z-index: 1;">
+                                <i class="bi bi-cpu fs-1 mb-2 d-block fw-bold"
+                                    style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);"></i>
+                                <h3 class="h4 fw-bold mb-0" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">Ingeniería
+                                    en Telemática</h3>
+                                <span class="badge bg-light text-blue mt-2 shadow-sm">3 años · Cuatrimestral</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-muted">Conéctate al mundo con la tecnología más avanzada en redes y
+                                telecomunicaciones.</p>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-blue px-3 py-2">Presencial Intensiva</span>
+                                <span class="badge bg-pink px-3 py-2">Presencial Sabatina</span>
+                            </div>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-pink me-2"></i> Redes
+                                    Inteligentes</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-pink me-2"></i> Ciberseguridad
+                                </li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-pink me-2"></i> IoT (Internet de
+                                    las Cosas)</li>
+                                <li class="mb-2"><i class="bi bi-award-fill text-warning me-2"></i> Certificaciones
+                                    Internacionales</li>
+                            </ul>
+                            <a href="telematica.html" class="btn btn-outline-primary w-100 mt-3 fw-bold">Más
+                                Información</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden career-card">
+                        <div
+                            class="card-header bg-pink text-white py-5 text-center position-relative overflow-hidden border-0">
+                            <div class="position-absolute w-100 h-100 start-0 top-0"
+                                style="background: url('assets/software.png') center/cover; opacity: 0.3; mix-blend-mode: luminosity;">
+                            </div>
+                            <div class="position-relative" style="z-index: 1;">
+                                <i class="bi bi-code-slash fs-1 mb-2 d-block fw-bold"
+                                    style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);"></i>
+                                <h3 class="h4 fw-bold mb-0" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">Ingeniería
+                                    en Software</h3>
+                                <span class="badge bg-light text-pink mt-2 shadow-sm">3 años · Cuatrimestral</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-muted">Desarrolla las apps y sistemas que moverán el mundo del mañana.</p>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-pink px-3 py-2">Presencial Intensiva</span>
+                                <span class="badge bg-blue px-3 py-2">Presencial Sabatina</span>
+                                <span class="badge bg-purple px-3 py-2">Virtual</span>
+                            </div>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-blue me-2"></i> Desarrollo
+                                    Fullstack</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-blue me-2"></i> Inteligencia
+                                    Artificial</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-blue me-2"></i> Cloud Computing
+                                </li>
+                                <li class="mb-2"><i class="bi bi-award-fill text-warning me-2"></i> Certificaciones
+                                    Internacionales</li>
+                            </ul>
+                            <a href="software.html" class="btn btn-outline-pink w-100 mt-3 fw-bold text-pink">Más
+                                Información</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 border-0 shadow-lg rounded-4 overflow-hidden career-card">
+                        <div
+                            class="card-header bg-purple text-white py-5 text-center position-relative overflow-hidden border-0">
+                            <div class="position-absolute w-100 h-100 start-0 top-0"
+                                style="background: url('assets/preparatoria.png') center 60%/cover; opacity: 0.3; mix-blend-mode: luminosity;">
+                            </div>
+                            <div class="position-relative" style="z-index: 1;">
+                                <i class="bi bi-mortarboard fs-1 mb-2 d-block fw-bold"
+                                    style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);"></i>
+                                <h3 class="h4 fw-bold mb-0" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
+                                    Preparatoria</h3>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-muted">Una base sólida para tu futuro universitario en solo <strong>2
+                                    años</strong>.</p>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-purple px-3 py-2">Presencial Sabatino</span>
+                                <span class="badge bg-pink px-3 py-2">Presencial Intensiva</span>
+                                <span class="badge bg-blue px-3 py-2">Virtual</span>
+                            </div>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-pink me-2"></i> Certificado
+                                    Oficial en solo 2 años</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-pink me-2"></i> Validez Oficial
+                                    RVOE (SEG)</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-pink me-2"></i> Orientaciones
+                                    Técnicas Especializadas</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill text-pink me-2"></i> Becas por
+                                    Promedio y Convenios</li>
+                            </ul>
+                            <a href="preparatoria.html" class="btn btn-outline-dark w-100 mt-3 fw-bold">Más
+                                Información</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modalities Section -->
+    <section id="modalidades" class="modalities py-5" style="background-color: var(--light-blue);">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bolder text-blue italic">Nuestras <span class="text-pink">Modalidades</span>
+                </h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="h5 text-muted">Aprende a tu ritmo, como tú quieras.</p>
+            </div>
+            <div class="row g-4 text-center">
+                <div class="col-md-4">
+                    <div class="modality-card-container">
+                        <div class="modality-card-inner">
+                            <div class="modality-card-front">
+                                <i class="bi bi-lightning-charge fs-1 text-pink mb-4"></i>
+                                <h3 class="fw-bold">Presencial Intensiva</h3>
+                                <p class="text-muted">Avanza rápido con clases entre semana en formato intensivo. Ideal
+                                    para
+                                    quienes quieren
+                                    dedicarse de lleno a su formación.</p>
+                                <div class="d-flex flex-wrap gap-2 justify-content-center mt-auto">
+                                    <span class="badge bg-blue">Telemática</span>
+                                    <span class="badge bg-pink">Ing. Software</span>
+                                    <span class="badge bg-purple">Preparatoria</span>
+                                </div>
+                            </div>
+                            <div class="modality-card-back">
+                                <img src="assets/axo-polo-waving.png" alt="Axo Waving">
+                                <h4>¡Hola! Soy Axo</h4>
+                                <p>En esta modalidad vienes de <b>lunes a viernes</b>. ¡Es la ruta más rápida para
+                                    evolucionar y convertirte en un experto!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="modality-card-container">
+                        <div class="modality-card-inner">
+                            <div class="modality-card-front border-pink-bottom">
+                                <i class="bi bi-calendar-week fs-1 text-blue mb-4"></i>
+                                <h3 class="fw-bold">Presencial Sabatina</h3>
+                                <p class="text-muted">Estudia los sábados sin dejar de trabajar. Disponible en todas
+                                    nuestras
+                                    carreras y Preparatorias.</p>
+                                <div class="d-flex flex-wrap gap-2 justify-content-center mt-auto">
+                                    <span class="badge bg-blue">Telemática</span>
+                                    <span class="badge bg-pink">Ing. Software</span>
+                                    <span class="badge bg-purple">Preparatoria</span>
+                                </div>
+                            </div>
+                            <div class="modality-card-back"
+                                style="background: linear-gradient(135deg, var(--accent-pink) 0%, #d84315 100%);">
+                                <img src="assets/axolotl-waving.png" alt="Axo Hero">
+                                <h4>Flexibilidad Sabatina</h4>
+                                <p>¿Trabajas? ¡No hay problema! Evoluciona solo los <b>sábados</b> con la misma calidad
+                                    y validez oficial. ¡A tu ritmo!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="modality-card-container">
+                        <div class="modality-card-inner">
+                            <div class="modality-card-front">
+                                <i class="bi bi-globe fs-1 text-purple mb-4"></i>
+                                <h3 class="fw-bold">Virtual</h3>
+                                <p class="text-muted">¿Lejos? No importa. Conéctate desde cualquier lugar sin perder
+                                    calidad.
+                                </p>
+                                <div class="d-flex flex-wrap gap-2 justify-content-center mt-auto">
+                                    <span class="badge bg-pink">Ing. Software</span>
+                                    <span class="badge bg-purple">Preparatoria</span>
+                                </div>
+                            </div>
+                            <div class="modality-card-back"
+                                style="background: linear-gradient(135deg, var(--meta-purple) 0%, #6a1b9a 100%);">
+                                <img src="assets/axo-polo-laptop.png" alt="Axo Laptop">
+                                <h4>Sin Fronteras</h4>
+                                <p>No importa dónde estés, la <b>Legión Axolot</b> llega a ti. Estudia 100% online en
+                                    nuestra plataforma de vanguardia.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portafolio de la Legión -->
+    <section id="portafolio" class="py-5 bg-white">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bolder text-blue italic">Portafolio de la <span class="text-pink">Legión</span>
+                </h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="h5 text-muted">Proyectos reales creados por nuestros estudiantes actuales.</p>
+            </div>
+            <style>
+                .portfolio-scroll {
+                    display: flex;
+                    overflow-x: auto;
+                    gap: 1.5rem;
+                    padding-bottom: 1.5rem;
+                    scroll-snap-type: x mandatory;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                .portfolio-scroll::-webkit-scrollbar {
+                    height: 8px;
+                }
+
+                .portfolio-scroll::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                    border-radius: 4px;
+                }
+
+                .portfolio-scroll::-webkit-scrollbar-thumb {
+                    background: var(--accent-pink);
+                    border-radius: 4px;
+                }
+
+                .portfolio-item {
+                    min-width: 300px;
+                    max-width: 350px;
+                    scroll-snap-align: start;
+                    flex: 0 0 auto;
+                }
+            </style>
+            <div class="portfolio-scroll">
+                <div class="portfolio-item">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <img src="assets/robot_creation.png" class="card-img-top" alt="Proyecto Robótica"
+                            style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-blue mb-2">Ing. en Telemática</span>
+                            <h5 class="fw-bold text-dark">Vehículo Autónomo IoT</h5>
+                            <p class="text-muted small">Robot construido desde cero con sensores programados por
+                                nuestros alumnos de 4to cuatrimestre.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <img src="assets/app_mockup.png" class="card-img-top" alt="Proyecto App"
+                            style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-pink mb-2">Ing. en Software</span>
+                            <h5 class="fw-bold text-dark">App Móvil de Gestión</h5>
+                            <p class="text-muted small">Plataforma móvil diseñada con UI/UX de vanguardia y arquitectura
+                                en la nube.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <img src="assets/cyber_network.png" class="card-img-top" alt="Proyecto Redes"
+                            style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-purple mb-2">Ing. Telemática & Software</span>
+                            <h5 class="fw-bold text-dark">Implementación Cibersegura</h5>
+                            <p class="text-muted small">Configuración de servidores y protección de datos en nuestro
+                                laboratorio tecnológico.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <img src="assets/drone_project.png" class="card-img-top" alt="Proyecto Drone"
+                            style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-blue mb-2">Ing. en Telemática</span>
+                            <h5 class="fw-bold text-dark">Dron de Rescate AI</h5>
+                            <p class="text-muted small">Quadcopter programado para misiones de reconocimiento usando AI.
+                                Proyecto de estadía.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <img src="assets/ecommerce_app.png" class="card-img-top" alt="Proyecto Ecommerce"
+                            style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-pink mb-2">Ing. en Software</span>
+                            <h5 class="fw-bold text-dark">Startup E-commerce</h5>
+                            <p class="text-muted small">Proyecto integrador: tienda online funcional con pagos
+                                descentralizados desarrollada por alumnos.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <img src="assets/smart_home_board.png" class="card-img-top" alt="Proyecto Domótica"
+                            style="height: 250px; object-fit: cover;">
+                        <div class="card-body">
+                            <span class="badge bg-purple mb-2">Preparatoria - Informática</span>
+                            <h5 class="fw-bold text-dark">Prototipo Smart Home</h5>
+                            <p class="text-muted small">Sistema domótico programado en C++ usando microcontroladores en
+                                laboratorio de preparatoria.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section id="porque" class="why-us py-5" style="background-color: #fff;">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bolder text-blue italic">¿Por qué elegir <span
+                        class="text-pink">MetaEducación</span>?</h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="h5 text-muted">Mucho más que una escuela, tu plataforma al éxito.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="modality-card-container">
+                        <div class="modality-card-inner">
+                            <div class="modality-card-front feature-box text-center">
+                                <div class="icon-circle mx-auto mb-4"
+                                    style="width: 80px; height: 80px; font-size: 2rem; background-color: var(--primary-blue);">
+                                    <i class="bi bi-person-workspace text-white"></i>
+                                </div>
+                                <h3 class="h4 fw-bold mb-3">Aulas Funcionales</h3>
+                                <p class="text-muted">Instalaciones con equipo adecuado para que realices tus proyectos
+                                    técnicos
+                                    y pongas en práctica todo lo que aprendes en clase.</p>
+                            </div>
+                            <div class="modality-card-back">
+                                <img src="assets/axo_labs_working.png" alt="Axo Labs"
+                                    style="border-radius: 15px; margin-bottom: 15px;">
+                                <h4>¡Manos a la obra!</h4>
+                                <p>Nuestros laboratorios están equipados para que tu evolución sea 100% práctica desde
+                                    el día uno.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="modality-card-container">
+                        <div class="modality-card-inner">
+                            <div class="modality-card-front feature-box text-center">
+                                <div class="icon-circle mx-auto mb-4"
+                                    style="width: 80px; height: 80px; font-size: 2rem; background-color: var(--accent-pink);">
+                                    <i class="bi bi-clock-history text-white"></i>
+                                </div>
+                                <h3 class="h4 fw-bold mb-3">Modalidad Intensiva</h3>
+                                <p class="text-muted">Ahorra tiempo valioso. Preparatoria en solo 2 años y Carreras en
+                                    3, con un ritmo diseñado
+                                    para el aprendizaje efectivo.</p>
+                            </div>
+                            <div class="modality-card-back"
+                                style="background: linear-gradient(135deg, var(--accent-pink) 0%, #d84315 100%);">
+                                <img src="assets/axo-polo-success.png" alt="Axo Time">
+                                <h4>¡Acelera tu Éxito!</h4>
+                                <p>Maximizamos tu tiempo. En la <b>Legión Axolot</b>, cada hora cuenta para que llegues
+                                    más rápido a tus metas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="modality-card-container">
+                        <div class="modality-card-inner">
+                            <div class="modality-card-front feature-box text-center">
+                                <div class="icon-circle mx-auto mb-4"
+                                    style="width: 80px; height: 80px; font-size: 2rem; background-color: #f7b42c;"><i
+                                        class="bi bi-briefcase text-white"></i></div>
+                                <h3 class="h4 fw-bold mb-3">Enfoque Profesional</h3>
+                                <p class="text-muted">Proyectos reales desde el primer semestre. No solo aprendes
+                                    teoría, creas
+                                    soluciones para el mercado laboral actual.</p>
+                            </div>
+                            <div class="modality-card-back"
+                                style="background: linear-gradient(135deg, #f7b42c 0%, #e67e22 100%);">
+                                <img src="assets/axo-polo-laptop.png" alt="Axo Work">
+                                <h4>Proyectos Reales</h4>
+                                <p>Aquí no solo estudias, ¡trabajas en lo que amas! Creamos soluciones tecnológicas que
+                                    el mundo real demanda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Calculator Section -->
+    <section id="calculadora" class="calculator py-5" style="background-color: #f8f9fa;">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="display-4 fw-bolder text-blue italic mb-4">Calcula tu <span
+                            class="text-pink">Futuro</span></h2>
+                    <p class="lead mb-5 text-muted">Asegura tu lugar con colegiaturas preferenciales y plan de beca.</p>
+
+                    <div class="calculator-card p-4 p-md-5 shadow-lg text-start bg-white rounded-4 border-top border-5"
+                        style="border-color: var(--accent-pink) !important;">
+                        <div class="row g-4">
+                            <div class="col-md-9 mx-auto">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-blue">Promedio Actual:</label>
+                                    <select class="form-select border-2 py-2" id="calcPromedio">
+                                        <option value="alto">9.0 a 10</option>
+                                        <option value="medio" selected>8.0 a 8.9</option>
+                                        <option value="bajo">Menor a 8.0</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-blue">Programa de interés:</label>
+                                    <select class="form-select border-2 py-2" id="calcCarrera">
+                                        <option value="software" selected>Ingeniería en Software</option>
+                                        <option value="telematica">Ingeniería en Telemática</option>
+                                        <option value="Preparatoria">Preparatoria (2 años)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-blue">Modalidad:</label>
+                                    <select class="form-select border-2 py-2" id="calcModalidad">
+                                        <option value="presencial" selected>Presencial Intensiva</option>
+                                        <option value="virtual">Virtual / Presencial Sabatino</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 text-center mt-4">
+                                <button onclick="calculateTuition()"
+                                    class="btn px-5 py-3 fw-bold rounded-pill shadow-sm"
+                                    style="background-color: var(--primary-blue); color: white; transition: all 0.3s ease;">
+                                    <i class="bi bi-calculator me-2"></i>Calcular Inversión Mensual
+                                </button>
+                            </div>
+                            <div id="calcResult" class="col-12 mt-4 d-none">
+                                <div class="p-4 rounded-4 text-center border-0"
+                                    style="background: rgba(216, 27, 96, 0.05); border: 2px dashed rgba(216, 27, 96, 0.3) !important;">
+                                    <p class="mb-1 text-muted fw-bold">Mensualidad ya con Beca Institucional aplicada:
+                                    </p>
+                                    <h2 class="display-3 fw-bolder" style="color: var(--accent-pink);" id="finalPrice">
+                                        $0.00</h2>
+                                    <p class="small text-muted mb-0">Esta mensualidad te asegura un lugar. Puedes
+                                        validarlo con un Asesor.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Proceso de Inscripción -->
+    <section id="admisiones" class="evolution py-5"
+        style="background-color: #f0f7ff; position: relative; overflow: hidden;">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bolder text-blue italic">Proceso de <span class="text-pink">Inscripción</span>
+                </h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="h5 text-muted">Tu camino hacia el éxito en 4 sencillos pasos — ¡Axo te guía!</p>
+            </div>
+
+            <div class="row align-items-center g-5">
+                <div class="col-lg-5 text-center d-none d-lg-block">
+                    <div class="evolution-card p-5 rounded-5 bg-white shadow-lg border-blue-custom position-relative">
+                        <img src="assets/axo-polo-waving.png" alt="Axo te guía en tu inscripción"
+                            class="img-fluid floating">
+                        <div class="evolution-badge mt-4">
+                            <span class="badge bg-pink px-4 py-2 rounded-pill fs-6"><i
+                                    class="bi bi-heart-fill me-1"></i> ¡Axo te acompaña!</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="timeline ps-4 ps-md-0">
+                        <div class="timeline-item pb-4">
+                            <div
+                                class="evolution-step p-4 bg-white rounded-4 shadow-sm border-start border-4 border-blue">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-blue rounded-circle me-3"
+                                        style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">1</span>
+                                    <h4 class="fw-bold text-blue mb-0">Contáctanos</h4>
+                                </div>
+                                <p class="text-muted mb-2">Mándanos un WhatsApp o llámanos. Te damos toda la información
+                                    sobre programas, costos y becas disponibles.</p>
+                                <a href="https://wa.me/524191070127?text=Hola%2C%20quiero%20info%20de%20inscripci%C3%B3n"
+                                    target="_blank" class="btn btn-sm btn-outline-primary rounded-pill"><i
+                                        class="bi bi-whatsapp me-1"></i> Escríbenos</a>
+                            </div>
+                        </div>
+                        <div class="timeline-item pb-4">
+                            <div
+                                class="evolution-step p-4 bg-white rounded-4 shadow-sm border-start border-4 border-pink">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-pink rounded-circle me-3"
+                                        style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">2</span>
+                                    <h4 class="fw-bold text-blue mb-0">Agenda tu Visita</h4>
+                                </div>
+                                <p class="text-muted mb-0">Ven a conocer nuestras instalaciones y laboratorios. Te
+                                    hacemos un recorrido personalizado y una entrevista de orientación vocacional.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item pb-4">
+                            <div
+                                class="evolution-step p-4 bg-white rounded-4 shadow-sm border-start border-4 border-purple">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-purple rounded-circle me-3"
+                                        style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">3</span>
+                                    <h4 class="fw-bold text-blue mb-0">Entrega tus Documentos</h4>
+                                </div>
+                                <p class="text-muted mb-2">Acta de nacimiento, CURP, certificado de estudios anteriores,
+                                    4 fotografías tamaño infantil y comprobante de domicilio.</p>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-light text-dark"><i
+                                            class="bi bi-file-earmark me-1"></i>CURP</span>
+                                    <span class="badge bg-light text-dark"><i
+                                            class="bi bi-file-earmark me-1"></i>Acta</span>
+                                    <span class="badge bg-light text-dark"><i
+                                            class="bi bi-file-earmark me-1"></i>Certificado</span>
+                                    <span class="badge bg-light text-dark"><i class="bi bi-camera me-1"></i>Fotos</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div
+                                class="evolution-step p-4 bg-white rounded-4 shadow-sm border-start border-4 border-warning">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-warning text-dark rounded-circle me-3"
+                                        style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;">4</span>
+                                    <h4 class="fw-bold text-blue mb-0">¡Bienvenido a la Legión Axolot!</h4>
+                                </div>
+                                <p class="text-muted mb-0">Realizas tu pago de inscripción y recibes tu kit de
+                                    bienvenida. ¡Ya eres parte de la familia MetaEducación!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campo Laboral -->
+    <section id="campo-laboral" class="campo-laboral py-5" style="background-color: #fff;">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bolder text-blue italic">¿A dónde <span class="text-pink">llegarás</span>?</h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="h5 text-muted">Nuestros egresados trabajan en empresas líderes del sector tecnológico.</p>
+            </div>
+            <div class="row g-4 justify-content-center align-items-center text-center">
+                <div class="col-6 col-md-3">
+                    <div
+                        class="company-logo-card p-4 rounded-4 bg-light h-100 d-flex flex-column align-items-center justify-content-center">
+                        <i class="bi bi-cpu fs-1 text-blue mb-2"></i>
+                        <h5 class="fw-bold mb-0">Empresas Tech</h5>
+                        <p class="small text-muted mb-0">Desarrollo de software</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div
+                        class="company-logo-card p-4 rounded-4 bg-light h-100 d-flex flex-column align-items-center justify-content-center">
+                        <i class="bi bi-building fs-1 text-pink mb-2"></i>
+                        <h5 class="fw-bold mb-0">Manufactura</h5>
+                        <p class="small text-muted mb-0">Automatización industrial</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div
+                        class="company-logo-card p-4 rounded-4 bg-light h-100 d-flex flex-column align-items-center justify-content-center">
+                        <i class="bi bi-shield-lock fs-1 text-purple mb-2"></i>
+                        <h5 class="fw-bold mb-0">Ciberseguridad</h5>
+                        <p class="small text-muted mb-0">Protección de datos</p>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div
+                        class="company-logo-card p-4 rounded-4 bg-light h-100 d-flex flex-column align-items-center justify-content-center">
+                        <i class="bi bi-rocket-takeoff fs-1 text-warning mb-2"></i>
+                        <h5 class="fw-bold mb-0">Emprendimiento</h5>
+                        <p class="small text-muted mb-0">Tu propia startup</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campo Laboral Section Ends -->
+
+    <!-- Convenios y Alianzas -->
+    <section id="convenios" class="convenios py-4" style="background-color: #f8f9fa;">
+        <div class="container py-3">
+            <div class="text-center mb-4">
+                <h2 class="display-5 fw-bolder text-blue italic">Nuestra Red de <span class="text-pink">Alianzas</span>
+                </h2>
+                <div class="underline mx-auto mb-2" style="width: 100px;"></div>
+                <p class="lead text-muted small">Beneficios exclusivos para la <b>Legión Axolot</b> y vinculación con la
+                    comunidad.</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <!-- Educación e Idiomas -->
+                <div class="col-md-5 col-lg-4">
+                    <div class="partner-card p-3 bg-white rounded-4 shadow-sm h-100 border-top border-4 border-pink">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="icon-box bg-soft-pink p-2 rounded-3 me-3">
+                                <i class="bi bi-translate fs-3 text-pink"></i>
+                            </div>
+                            <h5 class="fw-bold text-blue mb-0">Escuela de Idiomas</h5>
+                        </div>
+                        <p class="text-muted small mb-0">Aprende inglés con <b>descuentos especiales</b> en
+                            mensualidades e inscripción para toda nuestra comunidad estudiantil.</p>
+                    </div>
+                </div>
+
+                <!-- Salud y Deporte -->
+                <div class="col-md-5 col-lg-4">
+                    <div class="partner-card p-3 bg-white rounded-4 shadow-sm h-100 border-top border-4 border-blue">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="icon-box bg-soft-blue p-2 rounded-3 me-3">
+                                <i class="bi bi-lightning-charge fs-3 text-blue"></i>
+                            </div>
+                            <h5 class="fw-bold text-blue mb-0">Gimnasio Local</h5>
+                        </div>
+                        <p class="text-muted small mb-0">Activa tu cuerpo con <b>tarifas preferenciales</b> exclusivas
+                            presentando tu credencial vigente de MetaEducación.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                <div class="d-inline-block p-2 px-4 rounded-pill bg-white shadow-sm border">
+                    <p class="mb-0 text-muted small"><i class="bi bi-info-circle me-2 text-pink"></i>Presenta tu
+                        <b>credencial digital</b> para hacer válidos estos beneficios.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+    </section>
+
+    <!-- Historias de Éxito -->
+    <section id="egresados" class="success-stories py-5" style="background-color: #f0f7ff;">
+        <div class="container py-5">
+            <div class="mb-5">
+                <h2 class="display-4 fw-bolder text-blue italic">Historias de <span class="text-pink">Éxito</span></h2>
+                <p class="h5 text-muted">Nuestros egresados que están conquistando el mundo.</p>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm rounded-4 h-100 p-3 testimonial-card">
+                                <div class="text-center mb-3">
+                                    <img src="assets/andrew.png" class="rounded-circle" alt="Andrew"
+                                        style="width: 100px; height: 100px; object-fit: cover; border: 4px solid #fff;">
+                                </div>
+                                <h4 class="h5 fw-bold text-pink mb-1">Andrew</h4>
+                                <p class="small fw-bold text-blue mb-3">Desarrollador de Software</p>
+                                <p class="fst-italic text-muted">"MetaEducación me dio las bases para trabajar en
+                                    proyectos de clase mundial. Los retos técnicos que enfrenté aquí fueron clave para
+                                    mi crecimiento."</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm rounded-4 h-100 p-3 testimonial-card">
+                                <div class="text-center mb-3">
+                                    <img src="assets/michelle.png" class="rounded-circle" alt="Michelle"
+                                        style="width: 100px; height: 100px; object-fit: cover; border: 4px solid #fff;">
+                                </div>
+                                <h4 class="h5 fw-bold text-pink mb-1">Michelle</h4>
+                                <p class="small fw-bold text-blue mb-3">Ingeniera de Procesos</p>
+                                <p class="fst-italic text-muted">"La formación práctica me abrió las puertas para
+                                    trabajar en empresas importantes como <b>Kostal</b>. El enfoque en soluciones reales
+                                    marca la diferencia."</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 shadow-sm rounded-4 h-100 p-3 testimonial-card">
+                                <div class="text-center mb-3">
+                                    <img src="assets/jose_maria.png" class="rounded-circle" alt="Jose Maria"
+                                        style="width: 100px; height: 100px; object-fit: cover; border: 4px solid #fff;">
+                                </div>
+                                <h4 class="h5 fw-bold text-pink mb-1">Jose Maria</h4>
+                                <p class="small fw-bold text-blue mb-2">Socio y Co-fundador</p>
+                                <p class="small fw-bold text-muted mb-3">Identidad Films</p>
+                                <p class="fst-italic text-muted">"Desde que estudié aquí supe que quería emprender. Hoy
+                                    dirijo mi propia casa productora gracias a la visión que MetaEducación fomenta en
+                                    sus alumnos."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center mt-5 mt-lg-0">
+                    <img src="assets/axo-polo-success.png" alt="Axolotl on laptop" class="img-fluid"
+                        style="max-height: 400px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq py-5" style="background-color: #fff;">
+        <div class="container py-5">
+            <div class="row g-5 align-items-start">
+                <div class="col-lg-5">
+                    <h2 class="display-4 fw-bolder text-blue italic">Preguntas <span class="text-pink">Frecuentes</span>
+                    </h2>
+                    <div class="underline mb-3"></div>
+                    <p class="lead text-muted">¿Tienes dudas? Axo te las resuelve. Si no encuentras tu respuesta,
+                        escríbenos por WhatsApp.</p>
+                    <img src="assets/axo-polo-laptop.png" alt="Axo resolviendo dudas"
+                        class="img-fluid floating d-none d-lg-block mt-4" style="max-height: 280px;">
+                </div>
+                <div class="col-lg-7">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq1">¿Tienen RVOE (validez oficial)?</button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">Sí, todos nuestros programas cuentan con
+                                    Reconocimiento de Validez Oficial de Estudios (RVOE) ante la <b>Secretaría de
+                                        Educación de Guanajuato (SEG)</b>. Tu título es 100%
+                                    válido a nivel nacional.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq2">¿Cuánto cuesta la
+                                    colegiatura?</button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">Los costos varían según el programa. Usa nuestra
+                                    <a href="#calculadora" class="text-pink fw-bold">Calculadora de Beca</a> para
+                                    obtener un estimado personalizado con descuentos por promedio.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq3">¿Ofrecen becas?</button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">¡Sí! Ofrecemos becas por mérito académico; puedes
+                                    usar nuestra
+                                    Calculadora de Beca para conocer tu descuento. También hay descuentos por
+                                    pronto pago y convenios empresariales.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq4">¿Qué horarios tienen?</button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">Las modalidades varían según el programa.
+                                    Ing. en Software ofrece modalidad presencial intensiva, presencial sabatina y
+                                    virtual. Ing. en
+                                    Telemática
+                                    es presencial intensiva o presencial sabatina. El Preparatoria tiene opción
+                                    presencial
+                                    intensiva, presencial sabatina y
+                                    virtual.
+                                    <br>Las ingenierías son a 3 años con planes cuatrimestrales.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq5">¿Qué documentos necesito
+                                    para
+                                    inscribirme?</button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">Necesitas: CURP, Acta de Nacimiento,
+                                    Certificado
+                                    de estudios anteriores, 4 fotografías tamaño infantil y comprobante de
+                                    domicilio.
+                                    Consulta los detalles en la sección de <a href="#admisiones"
+                                        class="text-pink fw-bold">Proceso de Inscripción</a>.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item border-0 mb-3 shadow-sm rounded-4 overflow-hidden">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#faq6">¿Puedo estudiar si
+                                    trabajo?</button>
+                            </h2>
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">¡Claro! Tenemos modalidad presencial
+                                    sabatina para
+                                    Preparatoria y
+                                    ambas ingenierías, así como virtual. Lo cual te permite
+                                    combinar estudio y trabajo sin problema.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Acerca de Nosotros -->
+    <section id="nosotros" class="nosotros py-5" style="background-color: #f0f7ff;">
+        <div class="container py-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="display-4 fw-bolder text-blue italic">Acerca de <span class="text-pink">Nosotros</span>
+                    </h2>
+                    <div class="underline mb-4"></div>
+                    <p class="lead text-muted">MetaEducación es una institución comprometida con la formación de
+                        profesionistas tecnológicos en San José Iturbide, Guanajuato.</p>
+                    <p class="text-muted">Desde nuestros inicios nos hemos enfocado en ofrecer educación de calidad con
+                        un enfoque práctico, formando ingenieros y profesionistas que dominan las tecnologías que mueven
+                        al mundo.</p>
+                    <div class="row g-3 mt-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded-4 bg-white shadow-sm text-center">
+                                <i class="bi bi-eye-fill text-blue fs-3 d-block mb-2"></i>
+                                <h6 class="fw-bold mb-1">Visión</h6>
+                                <p class="small text-muted mb-0">Ser la institución tecnológica líder del Bajío,
+                                    reconocida por la calidad de sus egresados.</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-4 bg-white shadow-sm text-center">
+                                <i class="bi bi-bullseye text-pink fs-3 d-block mb-2"></i>
+                                <h6 class="fw-bold mb-1">Misión</h6>
+                                <p class="small text-muted mb-0">Formar profesionistas competentes y éticos con
+                                    herramientas tecnológicas de vanguardia.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="position-relative">
+                        <img src="assets/axo-polo-waving.png" alt="Axo representando MetaEducación"
+                            class="img-fluid floating" style="max-height: 400px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eventos Open Campus -->
+    <section id="eventos" class="py-5" style="background-color: #fff;">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-5 mb-4 mb-lg-0">
+                    <h2 class="display-5 fw-bolder text-blue italic">Vive el <span class="text-pink">Campus</span></h2>
+                    <p class="lead text-muted mb-4">Conoce a la comunidad, descubre tu pasión y participa en nuestros
+                        eventos abiertos antes de inscribirte.</p>
+                    <a href="#contacto" class="btn btn-outline-pink fw-bold px-4 py-2 rounded-pill">Solicitar mi Pase
+                        Free</a>
+                </div>
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item p-4 d-flex align-items-center gap-4">
+                                <div class="text-center rounded-3 bg-light px-3 py-2 text-blue">
+                                    <h4 class="fw-bold mb-0">12</h4>
+                                    <span class="small fw-semibold">OCT</span>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-1">Hackathon Axolotl 2026</h5>
+                                    <p class="text-muted mb-0 small"><i class="bi bi-geo-alt-fill me-1 text-pink"></i>
+                                        Laboratorios Principales</p>
+                                </div>
+                            </div>
+                            <div class="list-group-item p-4 d-flex align-items-center gap-4">
+                                <div class="text-center rounded-3 bg-light px-3 py-2 text-blue">
+                                    <h4 class="fw-bold mb-0">28</h4>
+                                    <span class="small fw-semibold">OCT</span>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-1">Open Campus: Taller Ensamblaje PC</h5>
+                                    <p class="text-muted mb-0 small"><i class="bi bi-geo-alt-fill me-1 text-pink"></i>
+                                        Taller de Hardware</p>
+                                </div>
+                            </div>
+                            <div class="list-group-item p-4 d-flex align-items-center gap-4">
+                                <div class="text-center rounded-3 bg-light px-3 py-2 text-blue">
+                                    <h4 class="fw-bold mb-0">15</h4>
+                                    <span class="small fw-semibold">NOV</span>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-1">Torneo e-Sports de la Legión</h5>
+                                    <p class="text-muted mb-0 small"><i class="bi bi-geo-alt-fill me-1 text-pink"></i>
+                                        Salón de Usos Múltiples</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contacto" class="contact py-5" style="background-color: #f8f9fa;">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="display-4 fw-bolder text-blue italic">Haz tu <span class="text-pink">Cita</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+            </div>
+
+            <div class="row g-5 mb-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="map-container mb-4">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3714.6191638361!2d-100.4180492!3d21.0083234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d438997a0f6a39%3A0xe5435987a0f6a39!2sManuel%20Capetillo%2040%2C%20Loma%20de%20Guadalupe%2C%2037980%20San%20Jos%C3%A9%20Iturbide%2C%20Gto.!5e0!3m2!1sen!2smx!4v1709420000000!5m2!1sen!2smx"
+                            allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                    <a href="https://www.google.com/maps/dir//Manuel+Capetillo+40,+Loma+de+Guadalupe,+37980+San+Jos%C3%A9+Iturbide,+Gto.,+Mexico/"
+                        target="_blank" class="btn btn-blue text-white w-100 py-3 fw-bold rounded-pill shadow"
+                        style="background-color: var(--primary-blue);">
+                        <i class="bi bi-geo-alt-fill me-2"></i>Ver en Google Maps
+                    </a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="contact-form-container">
+                        <form id="contactForm">
+                            <h3 class="h4 fw-bold text-blue mb-4">Mándanos un Mensaje</h3>
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">Nombre</label>
+                                <input type="text" class="form-control" placeholder="Tu nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">Email</label>
+                                <input type="email" class="form-control" placeholder="tu@correo.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small fw-bold mb-1">Duda o Comentario</label>
+                                <textarea class="form-control" rows="3"
+                                    placeholder="¿Cómo podemos apoyarte?"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-pink text-white w-100 py-3 fw-bold rounded-pill">Enviar
+                                Datos</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row text-center g-4">
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 bg-white shadow-sm h-100"
+                        style="border-bottom: 4px solid var(--accent-pink);">
+                        <i class="bi bi-geo-alt-fill text-pink fs-2 mb-3 d-block"></i>
+                        <h4 class="h5 fw-bold">Ubicación</h4>
+                        <p class="text-muted small mb-0">Manuel Capetillo #40, San José Iturbide, Gto.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 bg-white shadow-sm h-100"
+                        style="border-bottom: 4px solid var(--accent-pink);">
+                        <i class="bi bi-telephone-fill text-pink fs-2 mb-3 d-block"></i>
+                        <h4 class="h5 fw-bold">Teléfono</h4>
+                        <p class="text-muted small mb-0"><a href="tel:+524191070127"
+                                class="text-decoration-none text-muted">419 107 0127</a></p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 bg-white shadow-sm h-100"
+                        style="border-bottom: 4px solid var(--accent-pink);">
+                        <i class="bi bi-envelope-check-fill text-pink fs-2 mb-3 d-block"></i>
+                        <h4 class="h5 fw-bold">Email</h4>
+                        <p class="text-muted small mb-0"><a href="mailto:metaeducacionsanjose@gmail.com"
+                                class="text-decoration-none text-muted">metaeducacionsanjose@gmail.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5 text-white" style="background-color: #111;">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-md-4 text-center text-md-start">
+                    <h3 class="fw-bolder fs-4 italic mb-1">MetaEducación</h3>
+                    <p class="text-muted small">Forjando el futuro tecnológico de Guanajuato.</p>
+                    <div class="d-flex gap-2 justify-content-center justify-content-md-start">
+                        <a href="https://www.facebook.com/profile.php?id=61577786609467"
+                            class="btn btn-outline-light rounded-circle p-2" target="_blank"
+                            style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i
+                                class="bi bi-facebook"></i></a>
+                        <a href="https://www.instagram.com/metaeducacionsanjose/"
+                            class="btn btn-outline-light rounded-circle p-2" target="_blank"
+                            style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i
+                                class="bi bi-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@legionaxolot?lang=es"
+                            class="btn btn-outline-light rounded-circle p-2" target="_blank"
+                            style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i
+                                class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5 class="fw-bold mb-3">Enlaces</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#oferta" class="text-muted text-decoration-none">Oferta Educativa</a>
+                        </li>
+                        <li class="mb-2"><a href="#admisiones" class="text-muted text-decoration-none">Proceso de
+                                Inscripción</a></li>
+                        <li class="mb-2"><a href="#faq" class="text-muted text-decoration-none">Preguntas Frecuentes</a>
+                        </li>
+                        <li class="mb-2"><a href="#nosotros" class="text-muted text-decoration-none">Acerca de
+                                Nosotros</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <h5 class="fw-bold mb-3">Contacto</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2 text-muted"><i class="bi bi-geo-alt me-1"></i> Manuel Capetillo #40, San José
+                            Iturbide</li>
+                        <li class="mb-2"><a href="tel:+524191070127" class="text-muted text-decoration-none"><i
+                                    class="bi bi-telephone me-1"></i> 419 107 0127</a></li>
+                        <li class="mb-2"><a href="mailto:metaeducacionsanjose@gmail.com"
+                                class="text-muted text-decoration-none"><i class="bi bi-envelope me-1"></i>
+                                metaeducacionsanjose@gmail.com</a></li>
+                        <li class="mb-2"><a href="mailto:metaeducacionsanjose@gmail.com"
+                                class="text-pink text-decoration-none fw-bold"><i class="bi bi-briefcase me-1"></i>
+                                Trabaja con Nosotros</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="opacity-10 mb-3">
+            <p class="mb-0 text-muted small text-center">&copy; 2026 MetaEducación — Legión Axolot. Tu camino al éxito
+                tecnológico.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/524191070127?text=Hola%2C%20me%20interesa%20información%20sobre%20MetaEducación."
+        class="whatsapp-float" target="_blank">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <!-- Axo Chatbot Widget -->
+    <div id="axoChatbot" class="axo-chatbot">
+        <!-- Chat Toggle Button -->
+        <button id="axoChatToggle" class="axo-chat-toggle" aria-label="Abrir chat con Axo">
+            <div class="axo-toggle-avatar">
+                <img src="assets/axo-polo-laptop.png" alt="Axo" class="axo-toggle-img">
+            </div>
+            <div class="axo-toggle-pulse"></div>
+            <div class="axo-toggle-pulse axo-toggle-pulse-2"></div>
+            <span class="axo-toggle-badge">1</span>
+        </button>
+
+        <!-- Chat Window -->
+        <div id="axoChatWindow" class="axo-chat-window">
+            <!-- Header -->
+            <div class="axo-chat-header">
+                <div class="axo-chat-header-left">
+                    <div class="axo-header-avatar">
+                        <img src="assets/axo-polo-laptop.png" alt="Axo">
+                        <span class="axo-status-dot"></span>
+                    </div>
+                    <div class="axo-header-info">
+                        <h4>Axo</h4>
+                        <span>Asistente de MetaEducación</span>
+                    </div>
+                </div>
+                <button id="axoChatClose" class="axo-chat-close" aria-label="Cerrar chat">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="axoChatMessages" class="axo-chat-messages">
+                <!-- Welcome message injected by JS -->
+            </div>
+
+            <!-- Quick Actions -->
+            <div id="axoQuickActions" class="axo-quick-actions">
+                <button class="axo-quick-btn" data-question="carreras">🎓 Carreras</button>
+                <button class="axo-quick-btn" data-question="becas">💰 Becas</button>
+                <button class="axo-quick-btn" data-question="inscripcion">📝 Inscripción</button>
+                <button class="axo-quick-btn" data-question="horarios">🕐 Horarios</button>
+                <button class="axo-quick-btn" data-question="costos">💵 Costos</button>
+                <button class="axo-quick-btn" data-question="contacto">📞 Contacto</button>
+            </div>
+
+            <!-- Input Area -->
+            <div class="axo-chat-input-area">
+                <div class="axo-input-wrapper">
+                    <input type="text" id="axoChatInput" class="axo-chat-input" placeholder="Escribe tu pregunta..."
+                        autocomplete="off">
+                    <button id="axoChatSend" class="axo-chat-send" aria-label="Enviar mensaje">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+                <p class="axo-input-disclaimer">Axo te orienta con info general. Para detalles, contacta por <a
+                        href="https://wa.me/524191070127" target="_blank">WhatsApp</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function calculateTuition() {
+            const carrera = document.getElementById('calcCarrera').value;
+            const modalidad = document.getElementById('calcModalidad').value;
+
+            let finalPrice = 0;
+            if (carrera === 'software' || carrera === 'telematica') {
+                finalPrice = modalidad === 'presencial' ? 1700 : 1500;
+            } else if (carrera === 'Preparatoria') {
+                finalPrice = modalidad === 'presencial' ? 1400 : 1250;
+            }
+
+            document.getElementById('finalPrice').innerText = '$' + finalPrice.toLocaleString('es-MX', { minimumFractionDigits: 2 });
+            document.getElementById('calcResult').classList.remove('d-none');
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
