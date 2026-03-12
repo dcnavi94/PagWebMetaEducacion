@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingeniería en Telemática | MetaEducación</title>
+    <link rel="icon" type="image/png" href="assets/logo_white.png">
     <meta name="description"
         content="Estudia Ingeniería en Telemática en MetaEducación. Aprende sobre Redes, Ciberseguridad, e Internet de las Cosas (IoT).">
     <link rel="canonical" href="https://metaeducacion.edu.mx/telematica.html">
@@ -14,6 +15,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#14309c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MetaEdu">
+    <link rel="apple-touch-icon" href="assets/icon-512.png">
 </head>
 
 <body>
@@ -530,6 +539,17 @@
         <i class="bi bi-whatsapp"></i>
     </a>
 
+    <script src="script.js"></script>
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered', reg))
+                    .catch(err => console.log('Service Worker registration failed', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

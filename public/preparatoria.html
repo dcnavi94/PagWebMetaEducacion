@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preparatoria General | MetaEducación</title>
+    <link rel="icon" type="image/png" href="assets/logo_white.png">
     <meta name="description"
         content="Estudia tu Preparatoria en 2 años en MetaEducación. Modalidades: Informática, Automotriz, y Sabatino.">
     <link rel="canonical" href="https://metaeducacion.edu.mx/preparatoria.html">
@@ -14,6 +15,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#14309c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MetaEdu">
+    <link rel="apple-touch-icon" href="assets/icon-512.png">
 </head>
 
 <body>
@@ -116,10 +125,10 @@
                     </h4>
                     <p class="text-muted">La mayoría de nuestros estudiantes avanzan hacia la Universidad. Quienes se
                         integran al sector productivo se desempeñan como auxiliares en TI, asistentes automotrices o
-                        soporte técnico empresarial gracias a sus orientaciones especializadas.</p>
+                        soporte técnico empresarial gracias a sus clases de inglés y taller de robótica. </p>
 
-                    <h4 class="fw-bold mt-5 mb-3"><i class="bi bi-map-fill text-warning me-2"></i> Modalidades y
-                        Orientaciones</h4>
+                    <h4 class="fw-bold mt-5 mb-3"><i class="bi bi-star-fill text-warning me-2"></i> Modalidades y
+                        Plus MetaEducación</h4>
                     <ul class="list-group list-group-flush mb-4 shadow-sm rounded-4">
                         <li class="list-group-item py-3"><i class="bi bi-check2-circle text-success me-2"></i>
                             <b>Presencial Intensiva (Lunes a Viernes):</b> Orientación Informática o Automotriz, ideal
@@ -130,6 +139,12 @@
                             <b>Presencial Sabatina / Virtual:</b> Adaptado especialmente a estudiantes que necesitan
                             horarios
                             flexibles o laboran entre semana y requieren obtener su certificado oficial.
+                        </li>
+                        <li class="list-group-item py-3"><i class="bi bi-translate text-pink me-2"></i>
+                            <b>Clases de Inglés:</b> Refuerza tu perfil internacional con clases de inglés integradas.
+                        </li>
+                        <li class="list-group-item py-3"><i class="bi bi-robot text-pink me-2"></i>
+                            <b>Taller de Robótica:</b> Aprende mecánica y electrónica aplicada con proyectos reales.
                         </li>
                     </ul>
                 </div>
@@ -457,6 +472,17 @@
         <i class="bi bi-whatsapp"></i>
     </a>
 
+    <script src="script.js"></script>
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered', reg))
+                    .catch(err => console.log('Service Worker registration failed', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
