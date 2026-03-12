@@ -1,97 +1,211 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Virtual | MetaEducación App</title>
+    <title>Portal Escolar | MetaEducación</title>
     <link rel="icon" type="image/png" href="assets/logo_white.png">
-    <meta name="description"
-        content="Descarga la aplicación oficial de MetaEducación. Tu campus virtual en tu bolsillo: calificaciones, horarios, comunidad y pagos.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css">
-</head>
-
-<body style="background-color: var(--primary-blue);">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark border-bottom border-secondary border-opacity-25"
-        style="background-color: transparent;">
-        <div class="container py-2">
-            <a class="navbar-brand d-flex align-items-center" href="index.html">
-                <img src="assets/logo_white.png" alt="MetaEducación Logo" height="40" class="me-2">
-                <span class="fw-bolder fs-4 italic">MetaEducación</span>
-            </a>
-            <a href="index.html" class="btn btn-outline-light rounded-pill px-4 ms-auto">Volver al Inicio</a>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="container py-5 min-vh-100 d-flex align-items-center">
-        <div class="row align-items-center w-100 g-5">
-            <div class="col-lg-6 text-white text-center text-lg-start">
-                <div class="badge bg-pink text-white px-3 py-2 rounded-pill mb-4 fw-bold">🎓 Exclusivo para Alumnos
-                </div>
-                <h1 class="display-3 fw-bold italic mb-4">Tu <span class="text-pink">Campus</span> <br>en la palma de tu
-                    mano.</h1>
-                <p class="lead text-white-50 mb-5">
-                    Descarga la app oficial de la Legión Axolot. Consulta tus horarios, calificaciones en tiempo real,
-                    realiza pagos seguros y conecta con tus compañeros.
-                </p>
-
-                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start mt-4">
-                    <a href="#" onclick="alert('Redirigiendo a la App Store...'); return false;" class="d-inline-block">
-                        <img src="assets/app_store_badges.png" alt="Descargar en App Store"
-                            style="height: 60px; object-fit: contain; background: #000; border-radius: 8px; padding: 5px;">
-                    </a>
-                </div>
-
-                <div class="row mt-5 pt-4 text-white-50">
-                    <div class="col-6 col-md-4 mb-3">
-                        <i class="bi bi-calendar-event fs-2 text-pink mb-2 d-block"></i>
-                        <span class="fw-bold d-block text-white">Horarios</span>
-                        <small>Actualizados en vivo</small>
-                    </div>
-                    <div class="col-6 col-md-4 mb-3">
-                        <i class="bi bi-ui-checks fs-2 text-warning mb-2 d-block"></i>
-                        <span class="fw-bold d-block text-white">Calificaciones</span>
-                        <small>Sigue tu progreso</small>
-                    </div>
-                    <div class="col-12 col-md-4 mb-3">
-                        <i class="bi bi-credit-card fs-2 text-info mb-2 d-block"></i>
-                        <span class="fw-bold d-block text-white">Pagos</span>
-                        <small>Rápidos y seguros</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 text-center position-relative">
-                <div class="position-absolute w-100 h-100 top-0 start-0 bg-pink rounded-circle"
-                    style="filter: blur(80px); opacity: 0.2; z-index: 0; transform: scale(0.8);"></div>
-                <img src="assets/app_showcase.png" alt="MetaEducación App UI" class="img-fluid position-relative"
-                    style="z-index: 1; max-width: 90%; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); animation: float 6s ease-in-out infinite;">
-            </div>
-        </div>
-    </main>
-
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Outfit', sans-serif;
+        }
+        .sidebar {
+            background: #1a3db6;
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 10px;
+            border-radius: 10px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        .user-badge {
+            background: #d81b60;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .logout-btn {
+            background: rgba(216, 27, 96, 0.1);
+            color: #d81b60;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
         }
     </style>
+</head>
+<body>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar d-none d-md-block">
+                <div class="text-center mb-5 mt-3">
+                    <img src="assets/logo_white.png" height="40" alt="Logo">
+                    <h4 class="mt-2 fw-bold italic">Legión Portal</h4>
+                </div>
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="#"><i class="bi bi-speedometer2"></i> Inicio</a>
+                    <a class="nav-link" href="#"><i class="bi bi-person-badge"></i> Perfil</a>
+                    <a class="nav-link" href="#"><i class="bi bi-calendar3"></i> Horarios</a>
+                    <a class="nav-link" href="#"><i class="bi bi-journal-text"></i> Calificaciones</a>
+                    <a class="nav-link" href="#"><i class="bi bi-wallet2"></i> Pagos</a>
+                    <a class="nav-link" href="#"><i class="bi bi-gear"></i> Configuración</a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 content">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <div>
+                        <h2 class="fw-bold text-blue mb-1" id="welcomeMsg">Hola, Cargando...</h2>
+                        <p class="text-muted mb-0">Bienvenido de nuevo a tu portal escolar.</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="user-badge" id="userRole">---</span>
+                        <button class="logout-btn" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Salir</button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="dashboard-card">
+                            <i class="bi bi-book fs-1 text-blue mb-2"></i>
+                            <h5 class="fw-bold">Materias</h5>
+                            <h2 class="fw-bold">6</h2>
+                            <p class="text-muted small">Registradas este cuatrimestre</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dashboard-card">
+                            <i class="bi bi-star-fill fs-1 text-warning mb-2"></i>
+                            <h5 class="fw-bold">Promedio</h5>
+                            <h2 class="fw-bold">9.2</h2>
+                            <p class="text-muted small">Promedio general acumulado</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dashboard-card">
+                            <i class="bi bi-check-circle-fill fs-1 text-pink mb-2"></i>
+                            <h5 class="fw-bold">Asistencia</h5>
+                            <h2 class="fw-bold">98%</h2>
+                            <p class="text-muted small">Registro del mes actual</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Section -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="dashboard-card">
+                            <h4 class="fw-bold mb-4">Información del Usuario</h4>
+                            <div class="row" id="userInfo">
+                                <!-- User info loaded via JS -->
+                                <p>Cargando información...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar autenticación
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        async function loadUserData() {
+            try {
+                const response = await fetch('http://localhost:8000/users/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById('welcomeMsg').textContent = `Hola, ${user.full_name}`;
+                    document.getElementById('userRole').textContent = user.role;
+                    
+                    let roleLabel = "";
+                    switch(user.role) {
+                        case 'admin': roleLabel = 'Administrador'; break;
+                        case 'teacher': roleLabel = 'Profesor'; break;
+                        case 'student': roleLabel = 'Alumno'; break;
+                        case 'services': roleLabel = 'Servicios Escolares'; break;
+                        default: roleLabel = user.role;
+                    }
+                    document.getElementById('userRole').textContent = roleLabel;
+
+                    document.getElementById('userInfo').innerHTML = `
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Matrícula / Usuario</label>
+                            <span class="fw-bold">${user.username}</span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Correo Institucional</label>
+                            <span class="fw-bold">${user.email}</span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Carrera / Programa</label>
+                            <span class="fw-bold">${user.carrera || 'N/A'}</span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small d-block">Semestre / Cuatrimestre</label>
+                            <span class="fw-bold">${user.semestre || 'N/A'}°</span>
+                        </div>
+                    `;
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                // Si el servidor backend no responde, de momento no cerramos sesión para permitir debug
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('token_type');
+            window.location.href = 'login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUserData);
+    </script>
 </body>
-
 </html>
-
-

@@ -1,8 +1,41 @@
-version: '3'
+version: '3.8'
+
 services:
+  db:
+    image: postgres:13-alpine
+    container_name: unives-postgres
+    environment:
+      POSTGRES_USER: unives_user
+      POSTGRES_PASSWORD: unives_password
+      POSTGRES_DB: plataforma_escolar
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  backend:
+    build: ./backend
+    container_name: unives-backend
+    environment:
+      DATABASE_URL: postgresql://unives_user:unives_password@db:5432/plataforma_escolar
+      SECRET_KEY: unives_super_secret_key_12345
+    volumes:
+      - ./backend:/app
+      - ./alumnos_2026-03-06.csv:/app/alumnos_2026-03-06.csv
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
   web:
     build: .
+    container_name: unives-frontend
     ports:
       - "8080:80"
     volumes:
       - ./public:/usr/share/nginx/html
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
