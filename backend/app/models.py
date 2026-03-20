@@ -1,12 +1,73 @@
-from sqlalchemy import Column, Integer, String, Enum
+from sqlalchemy import Boolean, Column, Integer, String, Enum as SQLEnum, Float, ForeignKey, DateTime, CheckConstraint, UniqueConstraint
+from sqlalchemy.orm import relationship
 from .database import Base
 import enum
+from datetime import datetime
+
+class Career(Base):
+    __tablename__ = "careers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    description = Column(String, nullable=True)
+
+    students = relationship("User", back_populates="career_rel")
+    study_plans = relationship("StudyPlan", back_populates="career", passive_deletes=True)
+
+class Modality(Base):
+    __tablename__ = "modalities"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+
+    students = relationship("User", back_populates="modality_rel")
 
 class UserRole(str, enum.Enum):
     ADMIN = "admin"
     TEACHER = "teacher"
     STUDENT = "student"
     SERVICES = "services"
+
+class UserStatus(str, enum.Enum):
+    ACTIVO = "Activo"
+    BAJA = "Baja"
+    BLOQUEADO = "Bloqueado"
+
+class EnrollmentStatus(str, enum.Enum):
+    INSCRITO = "Inscrito"
+    NO_INSCRITO = "No Inscrito"
+    BAJA_TEMPORAL = "Baja Temporal"
+    BAJA_DEFINITIVA = "Baja Definitiva"
+    GRADUADO = "Graduado"
+
+class PaymentStatus(str, enum.Enum):
+    PENDIENTE = "Pendiente"
+    PAGADO = "Pagado"
+    VENCIDO = "Vencido"
+
+class ChargeType(str, enum.Enum):
+    TUITION = "Colegiatura"
+    ENROLLMENT = "Inscripcion"
+    REENROLLMENT = "Reinscripcion"
+    SERVICE = "Tramite"
+    SURCHARGE = "Recargo"
+    SCHOLARSHIP = "Beca"
+    OTHER = "Otro"
+
+class GradeStatus(str, enum.Enum):
+    CURSANDO = "Cursando"
+    APROBADA = "Aprobada"
+    REPROBADA = "Reprobada"
+    PROXIMAMENTE = "Proximamente"
+
+class AttemptType(str, enum.Enum):
+    REGULAR = "Regular"
+    EXTEMPORANEO = "Extemporaneo"
+
+class ServiceRequestStatus(str, enum.Enum):
+    EN_PROCESO = "En Proceso"
+    LISTO = "Listo"
+    ENTREGADO = "Entregado"
 
 class User(Base):
     __tablename__ = "users"
@@ -16,7 +77,326 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     full_name = Column(String)
     hashed_password = Column(String)
-    role = Column(String, default=UserRole.STUDENT)
+    role = Column(
+        SQLEnum(UserRole, name="user_role", values_callable=lambda x: [e.value for e in x]),
+        default=UserRole.STUDENT,
+        server_default=UserRole.STUDENT.value,
+        nullable=False,
+    )
+    user_status = Column(
+        SQLEnum(UserStatus, name="user_status", values_callable=lambda x: [e.value for e in x]),
+        default=UserStatus.ACTIVO,
+        server_default=UserStatus.ACTIVO.value,
+        nullable=False,
+    )
+    enrollment_status = Column(
+        SQLEnum(EnrollmentStatus, name="enrollment_status", values_callable=lambda x: [e.value for e in x]),
+        default=EnrollmentStatus.NO_INSCRITO,
+        server_default=EnrollmentStatus.NO_INSCRITO.value,
+        nullable=False,
+    )
+    # Campos legacy: se conservan como espejo temporal para compatibilidad,
+    # pero la fuente operativa ya vive en StudentEnrollment/Group.
     carrera = Column(String, nullable=True)
+    career_id = Column(Integer, ForeignKey("careers.id", ondelete="SET NULL"), nullable=True)
+    modalidad = Column(String, nullable=True)
+    modality_id = Column(Integer, ForeignKey("modalities.id", ondelete="SET NULL"), nullable=True)
     semestre = Column(String, nullable=True)
     grupo = Column(String, nullable=True)
+
+    career_rel = relationship("Career", back_populates="students")
+    modality_rel = relationship("Modality", back_populates="students")
+    payments = relationship("Payment", back_populates="student", passive_deletes=True)
+    charges = relationship("Charge", back_populates="student", passive_deletes=True)
+    grades = relationship("Grade", back_populates="student", passive_deletes=True)
+    service_requests = relationship("ServiceRequest", back_populates="student", passive_deletes=True)
+    student_enrollments = relationship("StudentEnrollment", back_populates="student", passive_deletes=True)
+    # Asignaciones del docente (qué materias imparte en qué ciclos)
+    assignments = relationship("SubjectAssignment", back_populates="teacher", passive_deletes=True)
+
+class Charge(Base):
+    __tablename__ = "charges"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    student_enrollment_id = Column(Integer, ForeignKey("student_enrollments.id", ondelete="SET NULL"), nullable=True)
+    charge_type = Column(
+        SQLEnum(ChargeType, name="charge_type", values_callable=lambda x: [e.value for e in x]),
+        default=ChargeType.OTHER,
+        server_default=ChargeType.OTHER.value,
+        nullable=False,
+    )
+    concept = Column(String, nullable=False)
+    period_label = Column(String, nullable=True)
+    amount = Column(Float, nullable=False)
+    due_date = Column(DateTime, nullable=False)
+    status = Column(
+        SQLEnum(PaymentStatus, name="charge_status", values_callable=lambda x: [e.value for e in x]),
+        default=PaymentStatus.PENDIENTE,
+        server_default=PaymentStatus.PENDIENTE.value,
+        nullable=False,
+    )
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    student = relationship("User", back_populates="charges")
+    student_enrollment = relationship("StudentEnrollment", back_populates="charges")
+    payments = relationship("Payment", back_populates="charge", passive_deletes=True)
+
+
+class Payment(Base):
+    __tablename__ = "payments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    charge_id = Column(Integer, ForeignKey("charges.id", ondelete="SET NULL"), nullable=True)
+    concept = Column(String)
+    amount = Column(Float)
+    due_date = Column(DateTime)
+    status = Column(
+        SQLEnum(PaymentStatus, name="payment_status", values_callable=lambda x: [e.value for e in x]),
+        default=PaymentStatus.PENDIENTE,
+        server_default=PaymentStatus.PENDIENTE.value,
+        nullable=False,
+    )
+
+    student = relationship("User", back_populates="payments")
+    charge = relationship("Charge", back_populates="payments")
+
+class Subject(Base):
+    """Plantilla de materia (catálogo). No contiene docente; usa SubjectAssignment."""
+    __tablename__ = "subjects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    credits = Column(Integer)
+    semester = Column(String)
+    career = Column(String)
+
+    grades = relationship("Grade", back_populates="subject", passive_deletes=True)
+    assignments = relationship("SubjectAssignment", back_populates="subject", passive_deletes=True)
+    study_plan_subjects = relationship("StudyPlanSubject", back_populates="subject", passive_deletes=True)
+
+
+class SubjectAssignment(Base):
+    """Asignación de un docente a una materia para un ciclo escolar.
+
+    Permite que múltiples docentes impartan la misma materia en el mismo ciclo
+    (grupos distintos). El campo cycle_id es nullable para datos migrados sin ciclo.
+    """
+    __tablename__ = "subject_assignments"
+    __table_args__ = (
+        # Un docente no puede tener dos asignaciones de la misma materia en el mismo ciclo
+        UniqueConstraint("subject_id", "teacher_id", "cycle_id", name="uq_assignment_subject_teacher_cycle"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
+    teacher_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    cycle_id = Column(Integer, ForeignKey("school_cycles.id", ondelete="SET NULL"), nullable=True)
+
+    subject = relationship("Subject", back_populates="assignments")
+    teacher = relationship("User", back_populates="assignments")
+    cycle = relationship("SchoolCycle", back_populates="assignments")
+    grades = relationship("Grade", back_populates="assignment", passive_deletes=True)
+    course_enrollments = relationship("CourseEnrollment", back_populates="assignment", passive_deletes=True)
+
+
+class Grade(Base):
+    """Resultado evaluativo final de una carga académica.
+
+    - course_enrollment_id: apunta a la inscripción académica concreta del alumno.
+    - assignment_id: se conserva para retrocompatibilidad y datos migrados.
+    - subject_id: se mantiene para consultas directas e historial legacy.
+    - attempt_type: describe la oportunidad evaluativa del resultado final.
+    """
+    __tablename__ = "grades"
+    __table_args__ = (
+        CheckConstraint("score >= 0 AND score <= 10", name="ck_grades_score_range"),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
+    assignment_id = Column(Integer, ForeignKey("subject_assignments.id", ondelete="SET NULL"), nullable=True)
+    course_enrollment_id = Column(Integer, ForeignKey("course_enrollments.id", ondelete="SET NULL"), nullable=True)
+    attempt_type = Column(
+        SQLEnum(AttemptType, name="attempt_type", values_callable=lambda x: [e.value for e in x]),
+        default=AttemptType.REGULAR,
+        server_default=AttemptType.REGULAR.value,
+        nullable=False,
+    )
+    score = Column(Float, nullable=True)
+    recorded_at = Column(DateTime, nullable=True)
+    teacher_locked = Column(Boolean, default=False, nullable=False, server_default="false")
+    status = Column(
+        SQLEnum(GradeStatus, name="grade_status", values_callable=lambda x: [e.value for e in x]),
+        default=GradeStatus.CURSANDO,
+        server_default=GradeStatus.CURSANDO.value,
+        nullable=False,
+    )
+
+    student = relationship("User", back_populates="grades")
+    subject = relationship("Subject", back_populates="grades")
+    assignment = relationship("SubjectAssignment", back_populates="grades")
+    course_enrollment = relationship("CourseEnrollment", back_populates="grades")
+
+
+class ServiceRequest(Base):
+    __tablename__ = "service_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    type = Column(String)
+    attachment_filename = Column(String, nullable=True)
+    attachment_path = Column(String, nullable=True)
+    status = Column(
+        SQLEnum(ServiceRequestStatus, name="service_status", values_callable=lambda x: [e.value for e in x]),
+        default=ServiceRequestStatus.EN_PROCESO,
+        server_default=ServiceRequestStatus.EN_PROCESO.value,
+        nullable=False,
+    )
+    request_date = Column(DateTime, default=datetime.utcnow)
+
+    student = relationship("User", back_populates="service_requests")
+
+
+class SchoolCycle(Base):
+    __tablename__ = "school_cycles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    period = Column(String)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    monthly_amount = Column(Float, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    tuitions = relationship("CycleTuition", back_populates="cycle", cascade="all, delete-orphan")
+    assignments = relationship("SubjectAssignment", back_populates="cycle")
+    student_enrollments = relationship("StudentEnrollment", back_populates="cycle")
+
+
+class CycleTuition(Base):
+    """Costo mensual por carrera+modalidad para un ciclo escolar."""
+    __tablename__ = "cycle_tuitions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cycle_id = Column(Integer, ForeignKey("school_cycles.id", ondelete="CASCADE"), nullable=False)
+    career_id = Column(Integer, ForeignKey("careers.id", ondelete="CASCADE"), nullable=False)
+    modality_id = Column(Integer, ForeignKey("modalities.id", ondelete="CASCADE"), nullable=False)
+    amount = Column(Float, nullable=False)
+
+    cycle = relationship("SchoolCycle", back_populates="tuitions")
+
+
+class StudyPlan(Base):
+    __tablename__ = "study_plans"
+    __table_args__ = (
+        UniqueConstraint("career_id", "name", name="uq_study_plans_career_name"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    career_id = Column(Integer, ForeignKey("careers.id", ondelete="CASCADE"), nullable=False)
+    name = Column(String, nullable=False)
+    version = Column(String, nullable=False, default="1")
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    career = relationship("Career", back_populates="study_plans")
+    subjects = relationship("StudyPlanSubject", back_populates="study_plan", cascade="all, delete-orphan")
+
+
+class StudyPlanSubject(Base):
+    __tablename__ = "study_plan_subjects"
+    __table_args__ = (
+        UniqueConstraint("study_plan_id", "subject_id", name="uq_study_plan_subjects_plan_subject"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    study_plan_id = Column(Integer, ForeignKey("study_plans.id", ondelete="CASCADE"), nullable=False)
+    subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
+    semester = Column(String, nullable=True)
+    order_index = Column(Integer, nullable=False, default=0)
+    is_required = Column(Boolean, default=True, nullable=False)
+
+    study_plan = relationship("StudyPlan", back_populates="subjects")
+    subject = relationship("Subject", back_populates="study_plan_subjects")
+
+
+class Group(Base):
+    __tablename__ = "groups"
+    __table_args__ = (
+        UniqueConstraint("name", "modality_id", name="uq_groups_name_modality"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, index=True)
+    modality_id = Column(Integer, ForeignKey("modalities.id", ondelete="SET NULL"), nullable=True)
+    tutor_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    modality = relationship("Modality")
+    tutor = relationship("User", foreign_keys=[tutor_id])
+    student_enrollments = relationship("StudentEnrollment", back_populates="group")
+
+
+class StudentEnrollment(Base):
+    __tablename__ = "student_enrollments"
+    __table_args__ = (
+        UniqueConstraint("student_id", "cycle_id", name="uq_student_enrollment_student_cycle"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    cycle_id = Column(Integer, ForeignKey("school_cycles.id", ondelete="CASCADE"), nullable=False)
+    career_id = Column(Integer, ForeignKey("careers.id", ondelete="SET NULL"), nullable=True)
+    modality_id = Column(Integer, ForeignKey("modalities.id", ondelete="SET NULL"), nullable=True)
+    group_id = Column(Integer, ForeignKey("groups.id", ondelete="SET NULL"), nullable=True)
+    semester = Column(String, nullable=True)
+    enrollment_status = Column(
+        SQLEnum(EnrollmentStatus, name="student_enrollment_status", values_callable=lambda x: [e.value for e in x]),
+        default=EnrollmentStatus.NO_INSCRITO,
+        server_default=EnrollmentStatus.NO_INSCRITO.value,
+        nullable=False,
+    )
+    is_active = Column(Boolean, default=True, nullable=False)
+    change_reason = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    student = relationship("User", back_populates="student_enrollments")
+    cycle = relationship("SchoolCycle", back_populates="student_enrollments")
+    career = relationship("Career")
+    modality = relationship("Modality")
+    group = relationship("Group", back_populates="student_enrollments")
+    course_enrollments = relationship("CourseEnrollment", back_populates="student_enrollment", passive_deletes=True)
+    charges = relationship("Charge", back_populates="student_enrollment", passive_deletes=True)
+
+
+class CourseEnrollment(Base):
+    __tablename__ = "course_enrollments"
+    __table_args__ = (
+        UniqueConstraint("student_enrollment_id", "assignment_id", "attempt_type", name="uq_course_enrollment_student_assignment_attempt"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_enrollment_id = Column(Integer, ForeignKey("student_enrollments.id", ondelete="CASCADE"), nullable=False)
+    assignment_id = Column(Integer, ForeignKey("subject_assignments.id", ondelete="CASCADE"), nullable=False)
+    attempt_type = Column(
+        SQLEnum(AttemptType, name="course_enrollment_attempt_type", values_callable=lambda x: [e.value for e in x]),
+        default=AttemptType.REGULAR,
+        server_default=AttemptType.REGULAR.value,
+        nullable=False,
+    )
+    status = Column(
+        SQLEnum(GradeStatus, name="course_enrollment_status", values_callable=lambda x: [e.value for e in x]),
+        default=GradeStatus.CURSANDO,
+        server_default=GradeStatus.CURSANDO.value,
+        nullable=False,
+    )
+    enrolled_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    dropped_at = Column(DateTime, nullable=True)
+
+    student_enrollment = relationship("StudentEnrollment", back_populates="course_enrollments")
+    assignment = relationship("SubjectAssignment", back_populates="course_enrollments")
+    grades = relationship("Grade", back_populates="course_enrollment", passive_deletes=True)

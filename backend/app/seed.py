@@ -1,6 +1,7 @@
 import pandas as pd
 from .database import SessionLocal, engine
 from . import models, auth
+from .curriculum import seed_all_curricula
 import os
 import time
 from sqlalchemy import text
@@ -65,6 +66,9 @@ def seed_db():
                 hashed_password=auth.get_password_hash(u["password"])
             )
             db.add(db_user)
+
+        # 1.1 Sembrar la currícula base de las carreras públicas
+        seed_all_curricula(db)
 
         # 2. Cargar alumnos desde CSV
         csv_path = "alumnos_2026-03-06.csv"

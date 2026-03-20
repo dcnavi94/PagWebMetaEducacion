@@ -2,8 +2,28 @@
     --primary-blue: #14309c;
     /* Matched to mascot image background */
     --accent-pink: #ff5722;
+    --accent-pink-hover: #e64a19;
     --light-blue: #f0f7ff;
     --meta-purple: #9c27b0;
+    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+    --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Reveal animations (usado por script.js) */
+.reveal-active {
+    animation: revealIn 0.6s ease-out forwards;
+}
+
+@keyframes revealIn {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Enrollment Urgency Banner */
@@ -534,6 +554,10 @@ body {
     padding: 0.5rem 1rem;
 }
 
+.navbar .nav-campus {
+    color: #ffd54f !important;
+}
+
 .navbar .nav-link.active {
     border-bottom: 2px solid white;
 }
@@ -564,7 +588,8 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.animate-float {
+.animate-float,
+.floating {
     animation: float 6s ease-in-out infinite;
 }
 
@@ -594,11 +619,12 @@ body {
 }
 
 .card {
-    transition: all 0.3s ease;
+    transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
 }
 
 .card:hover {
     transform: translateY(-10px);
+    box-shadow: var(--shadow-card-hover) !important;
 }
 
 .testimonial-card {
@@ -1300,6 +1326,23 @@ body {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+
+/* Utility classes for dashboards (campus, teacher, admin) */
+.bg-pink-subtle {
+    background-color: rgba(255, 87, 34, 0.1);
+}
+
+.bg-primary-subtle {
+    background-color: rgba(20, 48, 156, 0.1);
+}
+
+.bg-success-subtle {
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+.letter-spacing-1 {
+    letter-spacing: 1px;
 }
 
 /* Mobile Responsive */

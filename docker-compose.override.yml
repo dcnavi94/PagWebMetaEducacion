@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  db:
+    ports:
+      - "5433:5432"
+
+  backend:
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./alumnos_2026-03-06.csv:/app/alumnos_2026-03-06.csv
+      - ./calificaciones.csv:/app/calificaciones.csv
+    environment:
+      - ENVIRONMENT=development
+
+  web:
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/usr/share/nginx/html

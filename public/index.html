@@ -51,14 +51,14 @@
 
     <!-- Social Sidebar -->
     <div class="social-sidebar d-none d-lg-flex">
-        <a href="https://www.facebook.com/profile.php?id=61577786609467" class="facebook-side" target="_blank"><i
+        <a href="https://www.facebook.com/profile.php?id=61577786609467" class="facebook-side" target="_blank" rel="noopener noreferrer" aria-label="Facebook de MetaEducación"><i
                 class="bi bi-facebook fs-4"></i></a>
-        <a href="https://www.instagram.com/metaeducacionsanjose/" class="instagram-side" target="_blank"><i
+        <a href="https://www.instagram.com/metaeducacionsanjose/" class="instagram-side" target="_blank" rel="noopener noreferrer" aria-label="Instagram de MetaEducación"><i
                 class="bi bi-instagram fs-4"></i></a>
-        <a href="https://www.tiktok.com/@legionaxolot?lang=es" class="tiktok-side" target="_blank"><i
+        <a href="https://www.tiktok.com/@legionaxolot?lang=es" class="tiktok-side" target="_blank" rel="noopener noreferrer" aria-label="TikTok de MetaEducación"><i
                 class="bi bi-tiktok fs-4"></i></a>
         <a href="https://wa.me/524191070127?text=Hola%2C%20me%20interesa%20información%20sobre%20MetaEducación.%20Vengo%20del%20sitio%20web."
-            class="whatsapp-side" target="_blank"><i class="bi bi-whatsapp fs-4"></i></a>
+            class="whatsapp-side" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de MetaEducación"><i class="bi bi-whatsapp fs-4"></i></a>
     </div>
 
     <!-- Header / Navbar -->
@@ -68,7 +68,7 @@
                 <img src="assets/logo_white.png" alt="MetaEducación Logo" height="40" class="me-2">
                 <span class="fw-bolder fs-4 italic">MetaEducación</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Abrir menú de navegación" title="Abrir menú">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -82,6 +82,11 @@
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#convenios">Convenios</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#faq">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#nosotros">Nosotros</a></li>
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link fw-bold d-flex align-items-center gap-2 nav-campus" href="login.html">
+                            <i class="bi bi-laptop-fill"></i> Campus Virtual
+                        </a>
+                    </li>
                 </ul>
                 <div class="d-flex gap-2">
                     <a href="#contacto" class="btn btn-pink text-white fw-bold px-3 py-1 small">¡Inscríbete!</a>
@@ -90,7 +95,7 @@
                         <i class="bi bi-phone-fill me-1"></i>Campus</a>
                     <a href="https://wa.me/524191070127?text=Hola%2C%20quiero%20información%20sobre%20las%20carreras."
                         class="btn btn-outline-light bg-white text-primary fw-bold px-2 py-1 small d-flex align-items-center"
-                        target="_blank"><i class="bi bi-whatsapp"></i></a>
+                        target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp"><i class="bi bi-whatsapp"></i></a>
                 </div>
             </div>
         </div>
@@ -101,9 +106,9 @@
     <header id="inicio" class="hero-carousel">
         <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-label="Diapositiva 1" title="Diapositiva 1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Diapositiva 2" title="Diapositiva 2"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Diapositiva 3" title="Diapositiva 3"></button>
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active" style="background: url('assets/robotics.png') center/cover;">
@@ -137,11 +142,11 @@
                     </div>
                 </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="Diapositiva anterior" title="Anterior">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="Siguiente diapositiva" title="Siguiente">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
             </button>
         </div>
     </header>
@@ -574,24 +579,24 @@
                         <div class="row g-4">
                             <div class="col-md-9 mx-auto">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold text-blue">Promedio Actual:</label>
-                                    <select class="form-select border-2 py-2" id="calcPromedio">
+                                    <label class="form-label fw-bold text-blue" for="calcPromedio">Promedio Actual:</label>
+                                    <select class="form-select border-2 py-2" id="calcPromedio" title="Promedio actual" aria-label="Promedio actual">
                                         <option value="alto">9.0 a 10</option>
                                         <option value="medio" selected>8.0 a 8.9</option>
                                         <option value="bajo">Menor a 8.0</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold text-blue">Programa de interés:</label>
-                                    <select class="form-select border-2 py-2" id="calcCarrera">
+                                    <label class="form-label fw-bold text-blue" for="calcCarrera">Programa de interés:</label>
+                                    <select class="form-select border-2 py-2" id="calcCarrera" title="Programa de interés" aria-label="Programa de interés">
                                         <option value="software" selected>Ingeniería en Software</option>
                                         <option value="telematica">Ingeniería en Telemática</option>
                                         <option value="Preparatoria">Preparatoria (2 años)</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold text-blue">Modalidad:</label>
-                                    <select class="form-select border-2 py-2" id="calcModalidad">
+                                    <label class="form-label fw-bold text-blue" for="calcModalidad">Modalidad:</label>
+                                    <select class="form-select border-2 py-2" id="calcModalidad" title="Modalidad" aria-label="Modalidad">
                                         <option value="presencial" selected>Presencial Intensiva</option>
                                         <option value="virtual">Virtual / Presencial Sabatino</option>
                                     </select>
@@ -657,7 +662,7 @@
                                 <p class="text-muted mb-2">Mándanos un WhatsApp o llámanos. Te damos toda la información
                                     sobre programas, costos y becas disponibles.</p>
                                 <a href="https://wa.me/524191070127?text=Hola%2C%20quiero%20info%20de%20inscripci%C3%B3n"
-                                    target="_blank" class="btn btn-sm btn-outline-primary rounded-pill"><i
+                                    target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary rounded-pill"><i
                                         class="bi bi-whatsapp me-1"></i> Escríbenos</a>
                             </div>
                         </div>
@@ -808,8 +813,6 @@
                 </div>
             </div>
         </div>
-    </section>
-    </div>
     </section>
 
     <!-- Historias de Éxito -->
@@ -1060,7 +1063,7 @@
                             allowfullscreen="" loading="lazy"></iframe>
                     </div>
                     <a href="https://www.google.com/maps/dir//Manuel+Capetillo+40,+Loma+de+Guadalupe,+37980+San+Jos%C3%A9+Iturbide,+Gto.,+Mexico/"
-                        target="_blank" class="btn btn-blue text-white w-100 py-3 fw-bold rounded-pill shadow"
+                        target="_blank" rel="noopener noreferrer" class="btn btn-blue text-white w-100 py-3 fw-bold rounded-pill shadow"
                         style="background-color: var(--primary-blue);">
                         <i class="bi bi-geo-alt-fill me-2"></i>Ver en Google Maps
                     </a>
@@ -1129,17 +1132,17 @@
                     <p class="text-muted small">Forjando el futuro tecnológico de Guanajuato.</p>
                     <div class="d-flex gap-2 justify-content-center justify-content-md-start">
                         <a href="https://www.facebook.com/profile.php?id=61577786609467"
-                            class="btn btn-outline-light rounded-circle p-2" target="_blank"
+                            class="btn btn-outline-light rounded-circle p-2" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
                             style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i
-                                class="bi bi-facebook"></i></a>
+                                class="bi bi-facebook" aria-hidden="true"></i></a>
                         <a href="https://www.instagram.com/metaeducacionsanjose/"
-                            class="btn btn-outline-light rounded-circle p-2" target="_blank"
+                            class="btn btn-outline-light rounded-circle p-2" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
                             style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i
-                                class="bi bi-instagram"></i></a>
+                                class="bi bi-instagram" aria-hidden="true"></i></a>
                         <a href="https://www.tiktok.com/@legionaxolot?lang=es"
-                            class="btn btn-outline-light rounded-circle p-2" target="_blank"
+                            class="btn btn-outline-light rounded-circle p-2" target="_blank" rel="noopener noreferrer" aria-label="TikTok"
                             style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;"><i
-                                class="bi bi-tiktok"></i></a>
+                                class="bi bi-tiktok" aria-hidden="true"></i></a>
                     </div>
                 </div>
                 <div class="col-md-4 text-center">
@@ -1170,7 +1173,7 @@
                                 Trabaja con Nosotros</a></li>
                         <li class="mb-2"><a
                                 href="https://wa.me/524191070127?text=Hola%2C%20me%20interesa%20solicitar%20una%20alianza%20con%20MetaEducaci%C3%B3n"
-                                target="_blank" class="text-blue text-decoration-none fw-bold"><i
+                                target="_blank" rel="noopener noreferrer" class="text-blue text-decoration-none fw-bold"><i
                                     class="bi bi-handshake me-1"></i>
                                 Solicita una Alianza</a></li>
                     </ul>
@@ -1184,7 +1187,7 @@
 
     <!-- WhatsApp Button -->
     <a href="https://wa.me/524191070127?text=Hola%2C%20me%20interesa%20información%20sobre%20MetaEducación."
-        class="whatsapp-float" target="_blank">
+        class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
         <i class="bi bi-whatsapp"></i>
     </a>
 
@@ -1244,7 +1247,7 @@
                     </button>
                 </div>
                 <p class="axo-input-disclaimer">Axo te orienta con info general. Para detalles, contacta por <a
-                        href="https://wa.me/524191070127" target="_blank">WhatsApp</a>.</p>
+                        href="https://wa.me/524191070127" target="_blank" rel="noopener noreferrer">WhatsApp</a>.</p>
             </div>
         </div>
     </div>

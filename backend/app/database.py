@@ -1,14 +1,21 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+from .config import settings
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@db:5432/plataforma")
+SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
+    from sqlalchemy.pool import StaticPool
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL, 
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool
+    )
+else:
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

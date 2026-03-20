@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Docentes | Legión Axolot</title>
+    <link rel="icon" type="image/png" href="assets/logo_white.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1a3db6;
+            --secondary-blue: #14309c;
+            --accent-pink: #d81b60;
+            --teacher-dark: #1e293b;
+            --teacher-darker: #0f172a;
+            --bg-light: #f8fafc;
+            --sidebar-width: 280px;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Teacher Sidebar Styling - Dark Theme */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--teacher-dark);
+            color: #94a3b8;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.1) transparent;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            background: var(--teacher-darker);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h5 {
+            color: white;
+            letter-spacing: 2px;
+        }
+        .sidebar-header .badge {
+            background-color: var(--accent-pink) !important;
+        }
+
+        .nav-menu {
+            padding: 0 15px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            list-style: none;
+            margin-bottom: 5px;
+        }
+
+        .sidebar .nav-link {
+            color: #94a3b8;
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar .nav-link.active {
+            background: var(--primary-blue);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(26, 61, 182, 0.4);
+        }
+
+        .sidebar .nav-link i {
+            font-size: 1.3rem;
+            transition: all 0.2s;
+        }
+
+        .sidebar .nav-link.active i {
+            color: white;
+        }
+
+        /* Main Content Styling */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background: white;
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .content-area {
+            padding: 40px 50px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: var(--card-shadow);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .table-admin th {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .table-admin td {
+            padding: 15px;
+            vertical-align: middle;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* Common Elements */
+        .view-section {
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .view-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 991px) {
+            .sidebar {
+                left: -100%;
+                z-index: 1050;
+            }
+            .sidebar.show {
+                left: 0;
+            }
+            .main-wrapper {
+                margin-left: 0 !important;
+            }
+            .top-navbar {
+                padding: 15px 20px;
+            }
+            .content-area {
+                padding: 20px 15px;
+            }
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+        }
+        .sidebar-overlay.show { display: block; }
+
+        .bg-primary-subtle {
+            background-color: rgba(26, 61, 182, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Teacher Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="assets/logo_white.png" height="40" alt="Unives" class="mb-2">
+            <h5 class="fw-bold italic m-0">DOCENTES</h5>
+            <span class="badge bg-primary mt-2 rounded-pill px-3">Legión Axolot</span>
+        </div>
+        
+        <ul class="nav-menu mt-3">
+            <li class="nav-item">
+                <a href="#" class="nav-link active" data-target="view-dashboard">
+                    <i class="bi bi-grid-1x2"></i> Inicio
+                </a>
+            </li>
+            <li class="nav-item mt-3 mb-1 px-3">
+                <small class="text-uppercase fw-bold" style="font-size: 0.65rem; color: #475569;">Académico</small>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-target="view-materias">
+                    <i class="bi bi-journal-bookmark"></i> Mis Materias
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-target="view-calificaciones">
+                    <i class="bi bi-check2-square"></i> Calificaciones
+                </a>
+            </li>
+            <li class="nav-item mt-3 mb-1 px-3">
+                <small class="text-uppercase fw-bold" style="font-size: 0.65rem; color: #475569;">Personal</small>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-target="view-perfil">
+                    <i class="bi bi-person-badge"></i> Mi Perfil
+                </a>
+            </li>
+            <li class="nav-item mt-auto pt-4">
+                <a href="#" class="nav-link text-danger" onclick="logout()">
+                    <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <nav class="top-navbar d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn d-lg-none" onclick="toggleSidebar()" title="Abrir menú lateral" aria-label="Abrir menú lateral"><i class="bi bi-list fs-3"></i></button>
+                <h4 class="mb-0 fw-bold text-dark d-none d-md-block">Panel Docente</h4>
+            </div>
+            
+            <div class="d-flex align-items-center gap-4">
+                <div class="dropdown">
+                    <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown" title="Notificaciones" aria-label="Notificaciones">
+                        <i class="bi bi-bell-fill text-muted fs-5" aria-hidden="true"></i>
+                    </a>
+                </div>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-sm-block">
+                        <p class="mb-0 fw-bold text-dark" id="teacherName">Cargando...</p>
+                        <span class="badge bg-primary-subtle text-primary px-2" style="font-size: 0.7rem;">DOCENTE</span>
+                    </div>
+                    <div class="avatar-circle bg-dark text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 45px; height: 45px;">
+                        <i class="bi bi-person-badge fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            
+            <!-- SECTION: DASHBOARD -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+                    <div>
+                        <h2 class="fw-800 mb-1 text-dark">Bienvenido, Docente</h2>
+                        <p class="text-muted mb-0">Resumen de tus actividades académicas.</p>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="row g-4 mb-5">
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="dashboard-card stat-card">
+                            <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="bi bi-journal-bookmark-fill"></i>
+                            </div>
+                            <div>
+                            <p class="text-muted small fw-bold mb-1">Materias Asignadas</p>
+                            <h3 class="fw-800 mb-0" id="teacherSubjectsCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="dashboard-card stat-card">
+                            <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted small fw-bold mb-1">Total de Alumnos</p>
+                                <h3 class="fw-800 mb-0" id="teacherStudentsCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-4">
+                        <div class="dashboard-card stat-card">
+                            <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                <i class="bi bi-check2-square"></i>
+                            </div>
+                            <div>
+                                <p class="text-muted small fw-bold mb-1">Periodo Actual</p>
+                                <h3 class="fw-800 mb-0">2026-1</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Próximas Clases / Avisos -->
+                <div class="row g-4">
+                    <div class="col-lg-12">
+                        <div class="dashboard-card h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold m-0">Avisos Recientes</h5>
+                            </div>
+                            <div class="alert alert-info border-0 rounded-4">
+                                <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>Cierre de actas</h6>
+                                <p class="mb-0 small">Recuerda que el periodo para subir calificaciones del primer parcial termina este viernes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: CALIFICACIONES -->
+            <section id="view-calificaciones" class="view-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Captura de Calificaciones</h2>
+                </div>
+                <div class="dashboard-card">
+                    <div class="d-flex gap-3 mb-4">
+                        <select id="selectSubjectForGrades" class="form-select" style="max-width: 300px;" onchange="loadStudentsForSubject()">
+                            <option value="">Selecciona una materia...</option>
+                        </select>
+                    </div>
+                    
+                    <div id="gradingArea" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-admin">
+                                <thead>
+                                    <tr>
+                                        <th>Matrícula</th>
+                                        <th>Nombre del Alumno</th>
+                                        <th>Calificación Actual</th>
+                                        <th>Estatus</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gradingTableBody">
+                                    <!-- Llenado por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="gradingPlaceholder" class="text-center py-5 text-muted">
+                        <i class="bi bi-arrow-up-circle fs-1 d-block mb-3"></i>
+                        <p>Selecciona una materia en el menú superior para comenzar a evaluar.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: MATERIAS -->
+            <section id="view-materias" class="view-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Mis Materias</h2>
+                </div>
+                <div class="dashboard-card">
+                    <div class="table-responsive">
+                        <table class="table table-admin">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre de la Materia</th>
+                                    <th>Carrera</th>
+                                    <th>Semestre</th>
+                                    <th>Créditos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacherSubjectsTableBody">
+                                <tr><td colspan="5" class="text-center py-4 text-muted">Cargando materias...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: MI PERFIL -->
+            <section id="view-perfil" class="view-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0">Mi Perfil</h2>
+                    <button class="btn btn-primary rounded-pill" onclick="saveProfile()"><i class="bi bi-save me-2"></i>Guardar Cambios</button>
+                </div>
+                <div class="dashboard-card">
+                    <div class="row">
+                        <div class="col-md-4 text-center border-end">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 120px; height: 120px; font-size: 3rem;" id="profileInitials"></div>
+                            <h4 class="fw-bold mb-1" id="profileNameDisplay"></h4>
+                            <p class="text-muted mb-3" id="profileUsernameDisplay"></p>
+                        </div>
+                        <div class="col-md-8 px-4">
+                            <form id="profileForm">
+                                <h5 class="fw-bold mb-3 border-bottom pb-2">Datos Personales</h5>
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Nombre Completo</label>
+                                    <input type="text" class="form-control" id="profileName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Correo Electrónico</label>
+                                    <input type="email" class="form-control" id="profileEmail" required>
+                                </div>
+                                
+                                <h5 class="fw-bold mb-3 mt-4 border-bottom pb-2">Seguridad</h5>
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Nueva Contraseña (dejar en blanco para no cambiar)</label>
+                                    <input type="password" class="form-control" id="profilePassword">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1060;">
+        <div id="teacherToast" class="toast align-items-center text-white bg-success border-0 rounded-3" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="teacherToastMessage">¡Acción realizada con éxito!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" title="Cerrar notificación" aria-label="Cerrar notificación"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/api.js"></script>
+    <script>
+        let currentTeacher = null;
+        let allSubjects = [];
+        let allStudents = [];
+
+        function showToast(message, type = 'success') {
+            const toastEl = document.getElementById('teacherToast');
+            const toastMessage = document.getElementById('teacherToastMessage');
+            
+            toastEl.className = `toast align-items-center text-white bg-${type} border-0 rounded-3`;
+            toastMessage.textContent = message;
+            
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        async function loadTeacherData() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // Cargar perfil
+                const userResponse = await fetch('http://localhost:8000/users/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!userResponse.ok) throw new Error('Error al cargar perfil');
+                currentTeacher = await userResponse.json();
+
+                // Actualizar UI
+                document.getElementById('teacherName').textContent = currentTeacher.full_name || currentTeacher.username;
+                document.getElementById('profileNameDisplay').textContent = currentTeacher.full_name || currentTeacher.username;
+                document.getElementById('profileUsernameDisplay').textContent = `@${currentTeacher.username}`;
+                
+                document.getElementById('profileName').value = currentTeacher.full_name || '';
+                document.getElementById('profileEmail').value = currentTeacher.email || '';
+
+                if (currentTeacher.full_name) {
+                    const initials = currentTeacher.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    document.getElementById('profileInitials').textContent = initials;
+                } else {
+                    document.getElementById('profileInitials').textContent = currentTeacher.username.substring(0, 2).toUpperCase();
+                }
+
+                // Cargar materias
+                const subjectsResponse = await fetch('http://localhost:8000/teacher/subjects', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (subjectsResponse.ok) {
+                    allSubjects = await subjectsResponse.json();
+                    document.getElementById('teacherSubjectsCount').textContent = allSubjects.length;
+                    renderSubjects();
+                    populateSubjectsSelect();
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error al cargar los datos del docente', 'danger');
+            }
+        }
+
+        function renderSubjects() {
+            const tbody = document.getElementById('teacherSubjectsTableBody');
+            tbody.innerHTML = '';
+
+            if (allSubjects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No tienes materias asignadas.</td></tr>';
+                return;
+            }
+
+            // allSubjects viene del endpoint /teacher/subjects que ahora devuelve asignaciones
+            // Cada elemento tiene: id (=assignment_id), name, career, semester, credits
+            allSubjects.forEach(subject => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge bg-light text-dark border">#${subject.subject_id}</span></td>
+                    <td class="fw-bold">${subject.name}</td>
+                    <td>${subject.career}</td>
+                    <td>${subject.semester}</td>
+                    <td>${subject.credits}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function populateSubjectsSelect() {
+            const select = document.getElementById('selectSubjectForGrades');
+            select.innerHTML = '<option value="">Selecciona una materia...</option>';
+
+            // Usar assignment_id (subject.id) como valor del select
+            allSubjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;  // assignment_id
+                option.textContent = `${subject.name} (${subject.career})`;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadStudentsForSubject() {
+            const assignmentId = document.getElementById('selectSubjectForGrades').value;
+            const gradingArea = document.getElementById('gradingArea');
+            const placeholder = document.getElementById('gradingPlaceholder');
+            const tbody = document.getElementById('gradingTableBody');
+
+            if (!assignmentId) {
+                gradingArea.style.display = 'none';
+                placeholder.style.display = 'block';
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`http://localhost:8000/teacher/students/${assignmentId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Error al cargar alumnos');
+
+                const students = await response.json();
+                document.getElementById('teacherStudentsCount').textContent = students.length;
+
+                gradingArea.style.display = 'block';
+                placeholder.style.display = 'none';
+                tbody.innerHTML = '';
+
+                if (students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No hay alumnos inscritos en esta materia.</td></tr>';
+                    return;
+                }
+
+                students.forEach(student => {
+                    const attemptBadge = student.attempt_type === 'Extemporaneo'
+                        ? '<span class="badge bg-warning text-dark ms-1">Extemporáneo</span>'
+                        : '';
+                    const canAddExtemporaneo = student.status === 'Reprobada' && student.attempt_type === 'Regular';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><span class="badge bg-light text-dark border">${student.username}</span></td>
+                        <td class="fw-bold">${student.full_name || 'Sin nombre'}${attemptBadge}</td>
+                        <td>
+                            <input type="number" class="form-control form-control-sm" style="width: 70px;"
+                                id="score_${student.grade_id}" value="${student.score !== null ? student.score : ''}" min="0" max="10" step="0.1" placeholder="0-10">
+                        </td>
+                        <td>
+                            <span class="badge ${student.status === 'Aprobada' ? 'bg-success' : student.status === 'Reprobada' ? 'bg-danger' : 'bg-secondary'}" id="status_${student.grade_id}">
+                                ${student.status}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-primary me-1" onclick="saveGrade(${student.grade_id})">Guardar</button>
+                            ${canAddExtemporaneo ? `<button class="btn btn-sm btn-outline-warning" onclick="addExtemporaneo(${assignmentId}, ${student.student_id})" title="Registrar examen extemporáneo"><i class="bi bi-pencil-square"></i></button>` : ''}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error al cargar los alumnos de la materia', 'danger');
+            }
+        }
+
+        async function saveGrade(gradeId) {
+            const scoreInput = document.getElementById(`score_${gradeId}`).value;
+            if (scoreInput === '') { showToast('Ingresa una calificación (0-10)', 'warning'); return; }
+            const score = parseFloat(scoreInput);
+            if (isNaN(score) || score < 0 || score > 10) { showToast('La calificación debe ser entre 0 y 10', 'danger'); return; }
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`http://localhost:8000/teacher/grades/${gradeId}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ score })
+                });
+
+                if (response.ok) {
+                    const updated = await response.json();
+                    // Actualizar badge de estatus sin recargar
+                    const badge = document.getElementById(`status_${gradeId}`);
+                    if (badge) {
+                        badge.textContent = updated.status;
+                        badge.className = `badge ${updated.status === 'Aprobada' ? 'bg-success' : 'bg-danger'}`;
+                    }
+                    showToast(`Calificación ${score} guardada — ${updated.status}`);
+                } else {
+                    const err = await response.json();
+                    showToast(err.detail || 'Error al guardar calificación', 'danger');
+                }
+            } catch (error) {
+                showToast('Error de conexión', 'danger');
+            }
+        }
+
+        async function addExtemporaneo(assignmentId, studentId) {
+            if (!confirm('¿Registrar examen extemporáneo para este alumno? Podrás capturar su calificación después.')) return;
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`http://localhost:8000/teacher/assignments/${assignmentId}/extemporaneo/${studentId}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'Cursando' })
+                });
+                if (response.ok) {
+                    showToast('Examen extemporáneo registrado. Captura la calificación.');
+                    loadStudentsForSubject();
+                } else {
+                    const err = await response.json();
+                    showToast(err.detail || 'Error al registrar extemporáneo', 'danger');
+                }
+            } catch (e) {
+                showToast('Error de conexión', 'danger');
+            }
+        }
+
+        async function saveProfile() {
+            const name = document.getElementById('profileName').value;
+            const email = document.getElementById('profileEmail').value;
+            const password = document.getElementById('profilePassword').value;
+
+            const updateData = {
+                full_name: name,
+                email: email
+            };
+
+            if (password) {
+                updateData.password = password;
+            }
+
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch('http://localhost:8000/users/me', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (response.ok) {
+                    showToast('Perfil actualizado correctamente');
+                    document.getElementById('profilePassword').value = '';
+                    loadTeacherData();
+                } else {
+                    throw new Error('Error al actualizar perfil');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error al actualizar el perfil', 'danger');
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        function switchView(targetId) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const activeLink = document.querySelector(`.nav-link[data-target="${targetId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+
+            if (window.innerWidth < 992) {
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('sidebarOverlay').classList.remove('show');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTeacherData();
+            
+            const links = document.querySelectorAll('.nav-link[data-target]');
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    switchView(targetId);
+                });
+            });
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

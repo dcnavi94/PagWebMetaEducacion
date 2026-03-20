@@ -21,7 +21,14 @@ temp/
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+pytest_tmp_*/
+temp_pytest_accessible/
+backend/tmp_files/pytest-*/
 backend/.env
+.env
+.env.local
+.env.*.local
 backend/venv/
 
 # Docker
