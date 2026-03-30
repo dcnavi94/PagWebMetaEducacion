@@ -16,6 +16,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#14309c">
@@ -66,7 +70,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <header class="text-white text-center position-relative"
+    <header id="hero" class="text-white text-center position-relative"
         style="background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1400&q=80&fit=crop') center/cover no-repeat;">
         <!-- Overlay institucional: Rosa y Azul Marino -->
         <div
@@ -103,7 +107,7 @@
     </div>
 
     <!-- Info Section -->
-    <section class="py-5 bg-white">
+    <section id="info-section" class="py-5 bg-white">
         <div class="container py-5">
             <div class="row g-5 align-items-center">
                 <div class="col-lg-7">
@@ -157,7 +161,7 @@
     </section>
 
     <!-- Curriculum -->
-    <section class="py-5" style="background-color: #f8f9fa;">
+    <section id="curriculum-section" class="py-5" style="background-color: #f8f9fa;">
         <div class="container py-5">
             <div class="text-center mb-5">
                 <h2 class="display-5 fw-bolder text-blue">Trayecto <span class="text-pink">Educativo</span></h2>
@@ -473,6 +477,127 @@
     </a>
 
     <script src="script.js"></script>
+
+    <!-- GSAP Animations -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ── Navbar ────────────────────────────────────────────────────
+        gsap.from('nav', {
+            y: -80, opacity: 0, duration: 0.7, ease: 'power3.out'
+        });
+
+        // ── Social sidebar ────────────────────────────────────────────
+        gsap.from('.social-sidebar', {
+            x: -60, opacity: 0, duration: 0.9, delay: 0.8, ease: 'power3.out'
+        });
+
+        // ── Hero: cascada al cargar ───────────────────────────────────
+        const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        heroTl
+            .from('#hero .bi-mortarboard', {
+                scale: 0, opacity: 0, duration: 0.7, ease: 'back.out(1.7)'
+            })
+            .from('#hero h1', { y: 60, opacity: 0, duration: 0.8 }, '-=0.3')
+            .from('#hero p.lead', { y: 40, opacity: 0, duration: 0.6 }, '-=0.4')
+            .from('#hero .badge', {
+                y: 25, opacity: 0, stagger: 0.15, duration: 0.5
+            }, '-=0.3')
+            .from('#hero .btn', {
+                scale: 0.7, opacity: 0, duration: 0.6, ease: 'back.out(1.5)'
+            }, '-=0.2');
+
+        // ── RVOE Banner ───────────────────────────────────────────────
+        gsap.from('.bg-light.border-bottom.border-top .badge', {
+            scrollTrigger: { trigger: '.bg-light.border-bottom.border-top', start: 'top 88%' },
+            x: -50, opacity: 0, duration: 0.7, ease: 'power3.out'
+        });
+
+        // ── Info Section ──────────────────────────────────────────────
+        gsap.from('#info-section h2', {
+            scrollTrigger: { trigger: '#info-section h2', start: 'top 82%' },
+            x: -60, opacity: 0, duration: 0.8, ease: 'power3.out'
+        });
+
+        gsap.from('#info-section .underline', {
+            scrollTrigger: { trigger: '#info-section .underline', start: 'top 85%' },
+            scaleX: 0, transformOrigin: 'left center', duration: 0.6, ease: 'power2.out'
+        });
+
+        gsap.from('#info-section p.lead', {
+            scrollTrigger: { trigger: '#info-section p.lead', start: 'top 85%' },
+            y: 35, opacity: 0, duration: 0.7, ease: 'power2.out'
+        });
+
+        gsap.utils.toArray('#info-section h4').forEach((el, i) => {
+            gsap.from(el, {
+                scrollTrigger: { trigger: el, start: 'top 88%' },
+                x: -40, opacity: 0, duration: 0.6, ease: 'power2.out', delay: i * 0.05
+            });
+        });
+
+        gsap.utils.toArray('#info-section ul.text-muted li').forEach((li, i) => {
+            gsap.from(li, {
+                scrollTrigger: { trigger: li, start: 'top 92%' },
+                x: -30, opacity: 0, duration: 0.5, ease: 'power2.out', delay: i * 0.08
+            });
+        });
+
+        gsap.utils.toArray('.list-group-item').forEach((item, i) => {
+            gsap.from(item, {
+                scrollTrigger: { trigger: item, start: 'top 92%' },
+                y: 20, opacity: 0, duration: 0.5, ease: 'power2.out', delay: i * 0.1
+            });
+        });
+
+        gsap.from('#info-section .d-flex.flex-wrap .badge', {
+            scrollTrigger: { trigger: '#info-section .d-flex.flex-wrap', start: 'top 88%' },
+            scale: 0, opacity: 0, stagger: 0.12, duration: 0.5, ease: 'back.out(1.7)'
+        });
+
+        gsap.from('.col-lg-5 img', {
+            scrollTrigger: { trigger: '.col-lg-5 img', start: 'top 80%' },
+            scale: 0.5, opacity: 0, rotation: -10, duration: 1.1, ease: 'elastic.out(1, 0.5)'
+        });
+
+        // ── Curriculum Section ────────────────────────────────────────
+        gsap.from('#curriculum-section .text-center h2', {
+            scrollTrigger: { trigger: '#curriculum-section .text-center', start: 'top 82%' },
+            y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+        });
+
+        gsap.from('#curriculum-section .text-center p', {
+            scrollTrigger: { trigger: '#curriculum-section .text-center', start: 'top 82%' },
+            y: 25, opacity: 0, duration: 0.7, delay: 0.2, ease: 'power2.out'
+        });
+
+        ScrollTrigger.batch('#curriculum-section .card', {
+            start: 'top 88%',
+            onEnter: (elements) => {
+                gsap.from(elements, {
+                    y: 70, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out'
+                });
+            },
+            once: true
+        });
+
+        gsap.from('#curriculum-section .border-top', {
+            scrollTrigger: { trigger: '#curriculum-section .border-top', start: 'top 92%' },
+            y: 30, opacity: 0, duration: 0.7, ease: 'power2.out'
+        });
+
+        // ── Footer ────────────────────────────────────────────────────
+        gsap.from('footer', {
+            scrollTrigger: { trigger: 'footer', start: 'top 95%' },
+            y: 40, opacity: 0, duration: 0.7, ease: 'power2.out'
+        });
+
+        // ── WhatsApp float ────────────────────────────────────────────
+        gsap.from('.whatsapp-float', {
+            scale: 0, opacity: 0, duration: 0.6, delay: 1.5, ease: 'back.out(2)'
+        });
+    </script>
+
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {

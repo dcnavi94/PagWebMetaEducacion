@@ -1380,3 +1380,146 @@ body {
         height: 60px;
     }
 }
+
+/* ═══════════════════════════════════════════════════════
+   COMUNIDAD AXOLOT — Galería
+═══════════════════════════════════════════════════════ */
+#comunidad {
+    background: linear-gradient(135deg, #0d1a6e 0%, #1a3db6 65%, #d81b60 100%);
+}
+
+.comunidad-badge {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.comunidad-underline {
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.comunidad-lead {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.comunidad-cta-btn { color: #1a3db6; }
+
+.gallery-card {
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.gallery-card-tall { height: 280px; }
+.gallery-card-sm   { height: 200px; }
+
+.gallery-img { object-fit: cover; }
+
+.gallery-overlay {
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.35s;
+}
+
+.gallery-overlay-blue {
+    background: linear-gradient(0deg, rgba(10, 26, 110, 0.85) 0%, transparent 65%);
+}
+
+.gallery-overlay-pink {
+    background: linear-gradient(0deg, rgba(216, 27, 96, 0.85) 0%, transparent 65%);
+}
+
+.gallery-card:hover .gallery-overlay { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════════
+   TALLERES — Actividades
+═══════════════════════════════════════════════════════ */
+.taller-card {
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.taller-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+.taller-img-wrap {
+    height: 200px;
+    overflow: hidden;
+}
+
+.taller-img {
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.taller-card:hover .taller-img { transform: scale(1.08); }
+
+.taller-icon {
+    width: 48px;
+    height: 48px;
+}
+
+.taller-icon-blue     { background: linear-gradient(135deg, #1a3db6, #0d1a6e); }
+.taller-icon-pink     { background: linear-gradient(135deg, #d81b60, #9c0042); }
+.taller-icon-orange   { background: linear-gradient(135deg, #ff6b00, #cc5500); }
+.taller-icon-reading  { background: linear-gradient(135deg, #1a3db6, #d81b60); }
+.taller-icon-green    { background: linear-gradient(135deg, #4caf50, #1b5e20); }
+
+.taller-cta-card {
+    background: linear-gradient(135deg, #1a3db6 0%, #d81b60 100%);
+    min-height: 340px;
+}
+
+.btn-primary-color { color: #1a3db6; }
+
+/* Badges suaves compartidos */
+.badge-blue-soft   { background: #e8f0fe; color: #1a3db6; }
+.badge-pink-soft   { background: #fce4ec; color: #d81b60; }
+.badge-orange-soft { background: #fff3e0; color: #e65100; }
+.badge-purple-soft { background: #f3e5f5; color: #9c27b0; }
+.badge-green-soft  { background: #e8f5e9; color: #2e7d32; }
+
+/* ═══════════════════════════════════════════════════════
+   COMUNIDADES — Grupos estudiantiles
+═══════════════════════════════════════════════════════ */
+#comunidades { background-color: #f0f4ff; }
+
+.com-card {
+    background: #fff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.com-card-blue   { border-left: 5px solid #1a3db6; box-shadow: 0 4px 20px rgba(26, 61, 182, 0.08); }
+.com-card-pink   { border-left: 5px solid #d81b60; box-shadow: 0 4px 20px rgba(216, 27, 96, 0.08); }
+.com-card-orange { border-left: 5px solid #ff6b00; box-shadow: 0 4px 20px rgba(255, 107, 0, 0.08); }
+.com-card-purple { border-left: 5px solid #9c27b0; box-shadow: 0 4px 20px rgba(156, 39, 176, 0.08); }
+.com-card-green  { border-left: 5px solid #4caf50; box-shadow: 0 4px 20px rgba(76, 175, 80, 0.08); }
+
+.com-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.com-icon-blue   { background: #e8f0fe; color: #1a3db6; }
+.com-icon-pink   { background: #fce4ec; color: #d81b60; }
+.com-icon-orange { background: #fff3e0; color: #ff6b00; }
+.com-icon-purple { background: #f3e5f5; color: #9c27b0; }
+.com-icon-green  { background: #e8f5e9; color: #4caf50; }
+
+.com-cta-card {
+    background: linear-gradient(135deg, #1a3db6 0%, #d81b60 100%);
+    min-height: 160px;
+    border-radius: 1rem;
+}

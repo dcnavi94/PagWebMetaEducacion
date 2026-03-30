@@ -22,6 +22,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#14309c">
@@ -80,6 +84,8 @@
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#admisiones">Inscripción</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#portafolio">Portfolio</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#convenios">Convenios</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#comunidad">Comunidad</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="#talleres">Talleres</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#faq">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link fw-semibold" href="#nosotros">Nosotros</a></li>
                     <li class="nav-item d-lg-none">
@@ -876,6 +882,326 @@
     </section>
 
 
+    <!-- ═══════════════════════════════════════════════════════
+         Comunidad Axolot — Galería
+    ═══════════════════════════════════════════════════════ -->
+    <section id="comunidad" class="py-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <span class="badge comunidad-badge px-3 py-2 mb-3 fs-6 fw-semibold">Legión Axolot</span>
+                <h2 class="display-5 fw-bolder text-white mb-2">Comunidad <span class="text-pink">Axolot</span></h2>
+                <div class="underline comunidad-underline mx-auto mb-3"></div>
+                <p class="lead comunidad-lead mb-0">Más que estudiantes — somos una familia que crece junta.</p>
+            </div>
+
+            <!-- Galería -->
+            <div class="row g-3" id="comunidad-gallery">
+                <div class="col-12 col-md-8">
+                    <div class="gallery-card gallery-card-tall rounded-4 overflow-hidden position-relative">
+                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80&fit=crop" alt="Equipo Axolot" class="w-100 h-100 gallery-img">
+                        <div class="gallery-overlay gallery-overlay-blue position-absolute d-flex flex-column justify-content-end p-4">
+                            <span class="text-white fw-bold fs-5">Equipo Axolot</span>
+                            <span class="text-white-50 small">Campus MetaEducación</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="gallery-card gallery-card-tall rounded-4 overflow-hidden position-relative">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&q=80&fit=crop" alt="Estudio en equipo" class="w-100 h-100 gallery-img">
+                        <div class="gallery-overlay gallery-overlay-pink position-absolute d-flex flex-column justify-content-end p-4">
+                            <span class="text-white fw-bold">Estudio en Equipo</span>
+                            <span class="text-white-50 small">Biblioteca</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
+                        <img src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=500&q=80&fit=crop" alt="Laboratorio" class="w-100 h-100 gallery-img">
+                        <div class="gallery-overlay gallery-overlay-blue position-absolute d-flex flex-column justify-content-end p-3">
+                            <span class="text-white fw-bold small">Laboratorio Tech</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
+                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&q=80&fit=crop" alt="Evento campus" class="w-100 h-100 gallery-img">
+                        <div class="gallery-overlay gallery-overlay-pink position-absolute d-flex flex-column justify-content-end p-3">
+                            <span class="text-white fw-bold small">Eventos Campus</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&q=80&fit=crop" alt="Presentaciones" class="w-100 h-100 gallery-img">
+                        <div class="gallery-overlay gallery-overlay-blue position-absolute d-flex flex-column justify-content-end p-3">
+                            <span class="text-white fw-bold small">Presentaciones</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
+                        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500&q=80&fit=crop" alt="Hackathon" class="w-100 h-100 gallery-img">
+                        <div class="gallery-overlay gallery-overlay-pink position-absolute d-flex flex-column justify-content-end p-3">
+                            <span class="text-white fw-bold small">Hackathon</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
+                        <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=500&q=80&fit=crop" alt="Campus Axolot" class="w-100 h-100 gallery-img">
+                        <div class="gallery-overlay gallery-overlay-blue position-absolute d-flex flex-column justify-content-end p-3">
+                            <span class="text-white fw-bold small">Campus Axolot</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4">
+                    <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
+                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=500&q=80&fit=crop" alt="Proyectos" class="w-100 h-100 gallery-img">
+                        <div class="gallery-overlay gallery-overlay-pink position-absolute d-flex flex-column justify-content-end p-3">
+                            <span class="text-white fw-bold small">Proyectos Finales</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="https://wa.me/524191070127?text=Quiero%20unirme%20a%20la%20Legión%20Axolot" target="_blank" rel="noopener noreferrer"
+                    class="btn btn-light btn-lg fw-bold px-5 rounded-pill shadow comunidad-cta-btn">
+                    <i class="bi bi-people-fill me-2"></i>Únete a la Legión
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Talleres — Actividades de formación
+    ═══════════════════════════════════════════════════════ -->
+    <section id="talleres" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bolder text-blue">Talleres & <span class="text-pink">Actividades</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="lead text-muted">Desarrolla nuevas habilidades fuera del aula. Cada taller forja líderes completos.</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Camping -->
+                <div class="col-sm-6 col-lg-4">
+                    <div class="taller-card rounded-4 overflow-hidden shadow-sm h-100 border-0">
+                        <div class="taller-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80&fit=crop" alt="Taller Camping" class="w-100 h-100 taller-img">
+                        </div>
+                        <div class="p-4">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="taller-icon taller-icon-blue rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                    <i class="bi bi-tree-fill text-white fs-5"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0 text-blue">Camping Axolot</h5>
+                            </div>
+                            <p class="text-muted small mb-3">Expediciones en la naturaleza donde desarrollamos liderazgo, trabajo en equipo y resiliencia. Salidas trimestrales a destinos del Bajío.</p>
+                            <span class="badge badge-blue-soft rounded-pill px-3 py-2">
+                                <i class="bi bi-calendar3 me-1"></i>Trimestral
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Programación -->
+                <div class="col-sm-6 col-lg-4">
+                    <div class="taller-card rounded-4 overflow-hidden shadow-sm h-100 border-0">
+                        <div class="taller-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80&fit=crop" alt="Taller Programación" class="w-100 h-100 taller-img">
+                        </div>
+                        <div class="p-4">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="taller-icon taller-icon-pink rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                    <i class="bi bi-code-slash text-white fs-5"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0 text-blue">Club de Código</h5>
+                            </div>
+                            <p class="text-muted small mb-3">Competencias de programación, hackathons internos y proyectos open-source. Aprende a construir productos reales desde el primer cuatrimestre.</p>
+                            <span class="badge badge-pink-soft rounded-pill px-3 py-2">
+                                <i class="bi bi-calendar3 me-1"></i>Semanal
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ajedrez -->
+                <div class="col-sm-6 col-lg-4">
+                    <div class="taller-card rounded-4 overflow-hidden shadow-sm h-100 border-0">
+                        <div class="taller-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?w=600&q=80&fit=crop" alt="Taller Ajedrez" class="w-100 h-100 taller-img">
+                        </div>
+                        <div class="p-4">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="taller-icon taller-icon-orange rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                    <i class="bi bi-grid-3x3 text-white fs-5"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0 text-blue">Ajedrez Estratégico</h5>
+                            </div>
+                            <p class="text-muted small mb-3">Torneo interno mensual y entrenamiento con análisis de partidas. El ajedrez potencia el pensamiento lógico y la concentración técnica.</p>
+                            <span class="badge badge-orange-soft rounded-pill px-3 py-2">
+                                <i class="bi bi-calendar3 me-1"></i>Mensual
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lectura -->
+                <div class="col-sm-6 col-lg-4">
+                    <div class="taller-card rounded-4 overflow-hidden shadow-sm h-100 border-0">
+                        <div class="taller-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80&fit=crop" alt="Taller Lectura" class="w-100 h-100 taller-img">
+                        </div>
+                        <div class="p-4">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="taller-icon taller-icon-reading rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                    <i class="bi bi-book-fill text-white fs-5"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0 text-blue">Club de Lectura</h5>
+                            </div>
+                            <p class="text-muted small mb-3">Un libro al mes: tecnología, emprendimiento, filosofía e historia. Debates en círculo que amplían tu visión del mundo profesional.</p>
+                            <span class="badge badge-blue-soft rounded-pill px-3 py-2">
+                                <i class="bi bi-calendar3 me-1"></i>Mensual
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inglés -->
+                <div class="col-sm-6 col-lg-4">
+                    <div class="taller-card rounded-4 overflow-hidden shadow-sm h-100 border-0">
+                        <div class="taller-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&q=80&fit=crop" alt="Taller Inglés" class="w-100 h-100 taller-img">
+                        </div>
+                        <div class="p-4">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="taller-icon taller-icon-green rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                    <i class="bi bi-translate text-white fs-5"></i>
+                                </div>
+                                <h5 class="fw-bold mb-0 text-blue">English Corner</h5>
+                            </div>
+                            <p class="text-muted small mb-3">Sesiones de conversación, presentaciones técnicas en inglés y preparación para certificaciones TOEFL/Cambridge. El idioma que abre fronteras.</p>
+                            <span class="badge badge-green-soft rounded-pill px-3 py-2">
+                                <i class="bi bi-calendar3 me-1"></i>Semanal
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Card -->
+                <div class="col-sm-6 col-lg-4">
+                    <div class="taller-cta-card rounded-4 h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                        <i class="bi bi-plus-circle-fill text-white display-4 mb-3"></i>
+                        <h5 class="fw-bold text-white mb-2">¿Tienes una idea?</h5>
+                        <p class="text-white-50 small mb-4">Propón tu propio taller y lidera tu comunidad dentro de la Legión Axolot.</p>
+                        <a href="https://wa.me/524191070127?text=Quiero%20proponer%20un%20taller%20en%20MetaEducación" target="_blank" rel="noopener noreferrer"
+                            class="btn btn-light fw-bold px-4 rounded-pill btn-primary-color">Proponer Taller</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         Comunidades — Grupos estudiantiles
+    ═══════════════════════════════════════════════════════ -->
+    <section id="comunidades" class="py-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bolder text-blue">Nuestras <span class="text-pink">Comunidades</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="lead text-muted">Cinco comunidades, una misión: hacer de ti un profesional completo.</p>
+            </div>
+
+            <div class="row g-4 align-items-stretch">
+                <!-- Camping -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="com-card com-card-blue h-100 d-flex gap-3">
+                        <div class="com-icon com-icon-blue flex-shrink-0">
+                            <i class="bi bi-tree-fill fs-3"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-blue mb-1">Exploradores Axolot</h5>
+                            <p class="text-muted small mb-2">Comunidad de aventureros del campus. Organizamos rutas, senderismo y convivios al aire libre para conectar con la naturaleza y entre nosotros.</p>
+                            <span class="badge badge-blue-soft">38 miembros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Programación -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="com-card com-card-pink h-100 d-flex gap-3">
+                        <div class="com-icon com-icon-pink flex-shrink-0">
+                            <i class="bi bi-code-slash fs-3"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-blue mb-1">Dev Squad</h5>
+                            <p class="text-muted small mb-2">El grupo de builders de MetaEducación. Proyectos colaborativos, code reviews, y mentoría peer-to-peer para dominar el stack moderno.</p>
+                            <span class="badge badge-pink-soft">72 miembros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ajedrez -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="com-card com-card-orange h-100 d-flex gap-3">
+                        <div class="com-icon com-icon-orange flex-shrink-0">
+                            <i class="bi bi-grid-3x3 fs-3"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-blue mb-1">Gran Maestros Axolot</h5>
+                            <p class="text-muted small mb-2">La comunidad de estrategas. Torneos internos, análisis de partidas históricas y competencias inter-campus para afinar el pensamiento lógico.</p>
+                            <span class="badge badge-orange-soft">24 miembros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lectura -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="com-card com-card-purple h-100 d-flex gap-3">
+                        <div class="com-icon com-icon-purple flex-shrink-0">
+                            <i class="bi bi-book-fill fs-3"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-blue mb-1">Biblionautas</h5>
+                            <p class="text-muted small mb-2">Lectores apasionados de tecnología, ciencia y filosofía. Recomendaciones, reseñas y debates que amplían la visión más allá del código.</p>
+                            <span class="badge badge-purple-soft">45 miembros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inglés -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="com-card com-card-green h-100 d-flex gap-3">
+                        <div class="com-icon com-icon-green flex-shrink-0">
+                            <i class="bi bi-translate fs-3"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-blue mb-1">English Nerds</h5>
+                            <p class="text-muted small mb-2">Comunidad bilingüe que practica inglés técnico diariamente. Podcasts, series, artículos de tech y conversaciones para alcanzar fluidez laboral.</p>
+                            <span class="badge badge-green-soft">61 miembros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="col-md-6 col-xl-4">
+                    <div class="com-cta-card h-100 d-flex flex-column align-items-center justify-content-center text-center p-4">
+                        <i class="bi bi-person-plus-fill text-white display-5 mb-3"></i>
+                        <h5 class="fw-bold text-white mb-2">¿Tu comunidad no está aquí?</h5>
+                        <p class="text-white-50 small mb-3">Fúndala. La Legión Axolot apoya cualquier iniciativa estudiantil.</p>
+                        <a href="https://wa.me/524191070127?text=Quiero%20crear%20una%20comunidad%20en%20MetaEducación" target="_blank" rel="noopener noreferrer"
+                            class="btn btn-light fw-bold rounded-pill px-4 btn-primary-color">
+                            <i class="bi bi-plus-lg me-1"></i>Crear Comunidad
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- FAQ Section -->
     <section id="faq" class="faq py-5" style="background-color: #fff;">
         <div class="container py-5">
@@ -1357,6 +1683,160 @@
         });
     </script>
     <script src="script.js"></script>
+
+    <!-- GSAP Animations -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ── Navbar & elementos fijos ──────────────────────────────────
+        gsap.from('nav', { y: -80, opacity: 0, duration: 0.7, ease: 'power3.out' });
+        gsap.from('.social-sidebar', { x: -60, opacity: 0, duration: 0.9, delay: 1, ease: 'power3.out' });
+        gsap.from('.whatsapp-float', { scale: 0, opacity: 0, duration: 0.6, delay: 1.8, ease: 'back.out(2)' });
+        gsap.from('.enrollment-banner', { y: -40, opacity: 0, duration: 0.6, ease: 'power2.out' });
+
+        // ── Hero carousel ─────────────────────────────────────────────
+        gsap.from('.carousel-caption h1', { y: 70, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.3 });
+        gsap.from('.carousel-caption p', { y: 40, opacity: 0, duration: 0.7, ease: 'power2.out', delay: 0.6 });
+        gsap.from('.carousel-caption .btn', { scale: 0.8, opacity: 0, duration: 0.6, ease: 'back.out(1.5)', delay: 0.9 });
+
+        // ── Secciones con ScrollTrigger — helper ──────────────────────
+        function revealSection(trigger, targets, options = {}) {
+            gsap.from(targets, {
+                scrollTrigger: { trigger, start: options.start || 'top 82%' },
+                y: options.y ?? 50,
+                x: options.x ?? 0,
+                opacity: 0,
+                stagger: options.stagger ?? 0,
+                duration: options.duration ?? 0.75,
+                ease: options.ease || 'power3.out',
+                delay: options.delay ?? 0
+            });
+        }
+
+        // Oferta educativa
+        revealSection('#oferta', '#oferta h2', { y: 40 });
+        ScrollTrigger.batch('#oferta .card', {
+            start: 'top 88%',
+            onEnter: els => gsap.from(els, { y: 60, opacity: 0, stagger: 0.1, duration: 0.65, ease: 'power3.out' }),
+            once: true
+        });
+
+        // Modalidades
+        revealSection('#modalidades', '#modalidades h2', { y: 40 });
+        ScrollTrigger.batch('#modalidades .col-lg-4', {
+            start: 'top 88%',
+            onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
+            once: true
+        });
+
+        // Portafolio
+        revealSection('#portafolio', '#portafolio h2', { x: -50, y: 0 });
+        ScrollTrigger.batch('#portafolio .card', {
+            start: 'top 88%',
+            onEnter: els => gsap.from(els, { y: 60, opacity: 0, stagger: 0.1, duration: 0.65, ease: 'power3.out' }),
+            once: true
+        });
+
+        // ¿Por qué nosotros?
+        revealSection('#porque', '#porque h2', { y: 40 });
+        ScrollTrigger.batch('#porque .col-lg-4', {
+            start: 'top 85%',
+            onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
+            once: true
+        });
+
+        // Calculadora
+        revealSection('#calculadora', '#calculadora h2', { y: 40 });
+        gsap.from('#calculadora .card', {
+            scrollTrigger: { trigger: '#calculadora .card', start: 'top 85%' },
+            y: 50, opacity: 0, duration: 0.8, ease: 'power3.out'
+        });
+
+        // Admisiones
+        revealSection('#admisiones', '#admisiones h2', { y: 40 });
+
+        // Campo laboral
+        revealSection('#campo-laboral', '#campo-laboral h2', { x: -50, y: 0 });
+        ScrollTrigger.batch('#campo-laboral .list-group-item', {
+            start: 'top 90%',
+            onEnter: els => gsap.from(els, { x: -30, opacity: 0, stagger: 0.08, duration: 0.5, ease: 'power2.out' }),
+            once: true
+        });
+
+        // Convenios
+        revealSection('#convenios', '#convenios h2', { y: 40 });
+        ScrollTrigger.batch('#convenios img', {
+            start: 'top 88%',
+            onEnter: els => gsap.from(els, { scale: 0.7, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'back.out(1.4)' }),
+            once: true
+        });
+
+        // Egresados
+        revealSection('#egresados', '#egresados h2', { y: 40 });
+        ScrollTrigger.batch('#egresados .col-lg-4', {
+            start: 'top 85%',
+            onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
+            once: true
+        });
+
+        // ── Comunidad Axolot — Galería ────────────────────────────────
+        gsap.from('#comunidad .text-center h2', {
+            scrollTrigger: { trigger: '#comunidad .text-center', start: 'top 82%' },
+            y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+        });
+        gsap.from('#comunidad .comunidad-lead', {
+            scrollTrigger: { trigger: '#comunidad .text-center', start: 'top 82%' },
+            y: 25, opacity: 0, duration: 0.7, delay: 0.2, ease: 'power2.out'
+        });
+        ScrollTrigger.batch('#comunidad-gallery .gallery-card', {
+            start: 'top 88%',
+            onEnter: els => gsap.from(els, { scale: 0.85, opacity: 0, stagger: 0.08, duration: 0.65, ease: 'power3.out' }),
+            once: true
+        });
+        gsap.from('#comunidad .text-center.mt-5 .btn', {
+            scrollTrigger: { trigger: '#comunidad .text-center.mt-5', start: 'top 90%' },
+            scale: 0.8, opacity: 0, duration: 0.6, ease: 'back.out(1.5)'
+        });
+
+        // ── Talleres ──────────────────────────────────────────────────
+        gsap.from('#talleres h2', {
+            scrollTrigger: { trigger: '#talleres h2', start: 'top 82%' },
+            y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+        });
+        ScrollTrigger.batch('#talleres .taller-card, #talleres .taller-cta-card', {
+            start: 'top 88%',
+            onEnter: els => gsap.from(els, { y: 70, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
+            once: true
+        });
+
+        // ── Comunidades ───────────────────────────────────────────────
+        gsap.from('#comunidades h2', {
+            scrollTrigger: { trigger: '#comunidades h2', start: 'top 82%' },
+            y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+        });
+        ScrollTrigger.batch('#comunidades .com-card, #comunidades .com-cta-card', {
+            start: 'top 88%',
+            onEnter: els => gsap.from(els, { x: -40, opacity: 0, stagger: 0.1, duration: 0.65, ease: 'power3.out' }),
+            once: true
+        });
+
+        // ── FAQ ───────────────────────────────────────────────────────
+        revealSection('#faq', '#faq h2', { x: -50, y: 0 });
+        ScrollTrigger.batch('#faq .accordion-item', {
+            start: 'top 90%',
+            onEnter: els => gsap.from(els, { y: 30, opacity: 0, stagger: 0.08, duration: 0.5, ease: 'power2.out' }),
+            once: true
+        });
+
+        // ── Nosotros ──────────────────────────────────────────────────
+        revealSection('#nosotros', '#nosotros h2', { y: 40 });
+
+        // ── Footer ────────────────────────────────────────────────────
+        gsap.from('footer', {
+            scrollTrigger: { trigger: 'footer', start: 'top 95%' },
+            y: 40, opacity: 0, duration: 0.7, ease: 'power2.out'
+        });
+    </script>
     <!-- PWA Service Worker Registration -->
     <script>
         if ('serviceWorker' in navigator) {
