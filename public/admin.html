@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de AdministraciÃ³n | LegiÃ³n Axolot</title>
+    <title>Panel de Administración | Legión Axolot</title>
     <link rel="icon" type="image/png" href="assets/logo_white.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -234,8 +234,8 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="assets/logo_white.png" height="40" alt="Unives" class="mb-2">
-            <h5 class="fw-bold italic m-0">ADMINISTRACIÃ“N</h5>
-            <span class="badge bg-primary mt-2 rounded-pill px-3">LegiÃ³n Axolot</span>
+            <h5 class="fw-bold italic m-0">ADMINISTRACIÓN</h5>
+            <span class="badge bg-primary mt-2 rounded-pill px-3">Legión Axolot</span>
         </div>
         
         <ul class="nav-menu mt-3">
@@ -250,7 +250,7 @@
                 </a>
             </li>
             <li class="nav-item mt-3 mb-1 px-3">
-                <small class="text-uppercase fw-bold" style="font-size: 0.65rem; color: #475569;">GestiÃ³n AcadÃ©mica</small>
+                <small class="text-uppercase fw-bold" style="font-size: 0.65rem; color: #475569;">Gestión Académica</small>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-target="view-alumnos">
@@ -264,7 +264,7 @@
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-target="view-materias">
-                    <i class="bi bi-journal-bookmark"></i> Oferta AcadÃƒÂ©mica
+                    <i class="bi bi-journal-bookmark"></i> Oferta Académica
                 </a>
             </li>
             <li class="nav-item">
@@ -283,11 +283,11 @@
                 </a>
             </li>
             <li class="nav-item mt-3 mb-1 px-3">
-                <small class="text-uppercase fw-bold" style="font-size: 0.65rem; color: #475569;">AdministraciÃ³n</small>
+                <small class="text-uppercase fw-bold" style="font-size: 0.65rem; color: #475569;">Administración</small>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-target="view-finanzas">
-                    <i class="bi bi-cash-coin"></i> TesorerÃƒÂ­a
+                    <i class="bi bi-cash-coin"></i> Tesorería
                 </a>
             </li>
             <li class="nav-item">
@@ -300,12 +300,17 @@
                     <i class="bi bi-graph-up"></i> Reportes
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" data-target="view-pagweb">
+                    <i class="bi bi-globe2"></i> P&aacute;gina Web
+                </a>
+            </li>
             <li class="nav-item mt-3 mb-1 px-3">
                 <small class="text-uppercase fw-bold" style="font-size: 0.65rem; color: #475569;">Sistema</small>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" data-target="view-configuracion">
-                    <i class="bi bi-gear"></i> ConfiguraciÃ³n
+                    <i class="bi bi-gear"></i> Configuración
                 </a>
             </li>
             <li class="nav-item mt-auto pt-4">
@@ -321,13 +326,13 @@
         <!-- Top Navbar -->
         <nav class="top-navbar d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                <button class="btn d-lg-none" onclick="toggleSidebar()" type="button" title="Abrir menÃº" aria-label="Abrir menÃº lateral"><i class="bi bi-list fs-3"></i></button>
+                <button class="btn d-lg-none" onclick="toggleSidebar()" type="button" title="Abrir menú" aria-label="Abrir menú lateral"><i class="bi bi-list fs-3"></i></button>
                 <h4 class="mb-0 fw-bold text-dark d-none d-md-block">Resumen General</h4>
             </div>
             
             <div class="d-none d-lg-flex align-items-center bg-light rounded-pill px-3 py-2 mx-4" style="flex: 1; max-width: 400px; border: 1px solid #e2e8f0;">
                 <i class="bi bi-search text-muted me-2"></i>
-                <input type="text" class="form-control border-0 bg-transparent shadow-none p-0" placeholder="Buscar matrÃ­cula, nombre, folio...">
+                <input type="text" class="form-control border-0 bg-transparent shadow-none p-0" placeholder="Buscar matrícula, nombre, folio...">
             </div>
 
             <div class="d-flex align-items-center gap-4">
@@ -359,7 +364,7 @@
                 <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
                     <div>
                         <h2 class="fw-800 mb-1 text-dark">Panel de Control</h2>
-                        <p class="text-muted mb-0">Monitorea la actividad de la instituciÃ³n en tiempo real.</p>
+                        <p class="text-muted mb-0">Monitorea la actividad de la institución en tiempo real.</p>
                     </div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-outline-primary rounded-pill fw-bold px-4"><i class="bi bi-cloud-download me-2"></i>Exportar Datos</button>
@@ -399,9 +404,9 @@
                                 <i class="bi bi-file-earmark-text-fill"></i>
                             </div>
                             <div>
-                                <p class="text-muted small fw-bold mb-1">TrÃ¡mites Pendientes</p>
+                                <p class="text-muted small fw-bold mb-1">Trámites Pendientes</p>
                                 <h3 class="fw-800 mb-0" id="pendingServicesCount">0</h3>
-                                <small class="text-danger fw-bold"><i class="bi bi-exclamation-circle"></i> Requieren atenciÃ³n</small>
+                                <small class="text-danger fw-bold"><i class="bi bi-exclamation-circle"></i> Requieren atención</small>
                             </div>
                         </div>
                     </div>
@@ -424,14 +429,14 @@
                     <div class="col-xl-8">
                         <div class="dashboard-card p-0 overflow-hidden">
                             <div class="p-4 border-bottom d-flex justify-content-between align-items-center bg-light bg-opacity-50">
-                                <h5 class="fw-bold mb-0">Ãšltimos Alumnos Registrados</h5>
+                                <h5 class="fw-bold mb-0">Últimos Alumnos Registrados</h5>
                                 <a href="#" class="text-decoration-none fw-bold small" onclick="switchView('view-alumnos')">Ver todos</a>
                             </div>
                             <div class="table-responsive">
                             <table class="table table-admin mb-0">
                                 <thead>
                                     <tr>
-                                        <th>MatrÃ­cula</th>
+                                        <th>Matrícula</th>
                                         <th>Nombre Completo</th>
                                         <th>Carrera / Nivel</th>
                                         <th>Estatus</th>
@@ -459,7 +464,7 @@
                                     </div>
                                     <div>
                                         <h6 class="fw-bold mb-1">Mantenimiento Programado</h6>
-                                        <p class="text-muted small mb-0">El servidor se reiniciarÃ¡ el domingo a las 02:00 AM.</p>
+                                        <p class="text-muted small mb-0">El servidor se reiniciará el domingo a las 02:00 AM.</p>
                                     </div>
                                 </div>
                                 <div class="d-flex gap-3 mb-4">
@@ -468,7 +473,7 @@
                                     </div>
                                     <div>
                                         <h6 class="fw-bold mb-1">Corte de Caja Pendiente</h6>
-                                        <p class="text-muted small mb-0">Falta realizar la conciliaciÃ³n bancaria del dÃ­a de ayer.</p>
+                                        <p class="text-muted small mb-0">Falta realizar la conciliación bancaria del día de ayer.</p>
                                     </div>
                                 </div>
                                 <div class="d-flex gap-3">
@@ -477,7 +482,7 @@
                                     </div>
                                     <div>
                                         <h6 class="fw-bold mb-1">Nuevas Solicitudes</h6>
-                                        <p class="text-muted small mb-0">Hay 15 prospectos esperando validaciÃ³n de documentos.</p>
+                                        <p class="text-muted small mb-0">Hay 15 prospectos esperando validación de documentos.</p>
                                     </div>
                                 </div>
                             </div>
@@ -569,7 +574,7 @@
                         <table class="table table-admin">
                             <thead>
                                 <tr>
-                                    <th>MatrÃ­cula</th>
+                                    <th>Matrícula</th>
                                     <th>Alumno</th>
                                     <th>Carrera</th>
                                     <th>Modalidad</th>
@@ -589,7 +594,7 @@
 
                 <div class="dashboard-card">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold mb-0">AuditorÃ­a de migraciÃ³n</h5>
+                        <h5 class="fw-bold mb-0">Auditoría de migración</h5>
                         <span class="badge bg-dark-subtle text-dark" id="controlAuditLinkedGrades">Calificaciones enlazadas: 0</span>
                     </div>
                     <div class="row g-3">
@@ -601,13 +606,13 @@
                         </div>
                         <div class="col-md-4">
                             <div class="border rounded-4 p-3 h-100">
-                                <div class="text-muted small">MembresÃ­as de grupo en ciclo activo</div>
+                                <div class="text-muted small">Membresías de grupo en ciclo activo</div>
                                 <div class="fs-4 fw-bold" id="controlAuditGroupMemberships">0</div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="border rounded-4 p-3 h-100">
-                                <div class="text-muted small">Calificaciones sin enlace acadÃ©mico</div>
+                                <div class="text-muted small">Calificaciones sin enlace académico</div>
                                 <div class="fs-4 fw-bold" id="controlAuditOrphanGrades">0</div>
                             </div>
                         </div>
@@ -621,12 +626,12 @@
             <!-- SECTION: ALUMNOS -->
             <section id="view-alumnos" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold mb-0">GestiÃ³n de Alumnos</h2>
+                    <h2 class="fw-bold mb-0">Gestión de Alumnos</h2>
                     <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#registerStudentModal"><i class="bi bi-person-plus me-2"></i>Registrar Alumno</button>
                 </div>
                 <div class="dashboard-card">
                     <div class="d-flex flex-wrap gap-3 mb-4">
-                        <input type="text" id="filterSearch" class="form-control" placeholder="Buscar por nombre o matrÃ­cula..." style="max-width: 260px;" oninput="filterStudents()">
+                        <input type="text" id="filterSearch" class="form-control" placeholder="Buscar por nombre o matrícula..." style="max-width: 260px;" oninput="filterStudents()">
                         <select id="filterCareer" class="form-select" style="max-width: 220px;" onchange="filterStudents()" title="Filtrar por carrera" aria-label="Filtrar por carrera">
                             <option value="">Todas las carreras / niveles</option>
                         </select>
@@ -640,7 +645,7 @@
                                 <option value="cuenta:Baja">Baja</option>
                                 <option value="cuenta:Bloqueado">Bloqueado</option>
                             </optgroup>
-                            <optgroup label="InscripciÃ³n">
+                            <optgroup label="Inscripción">
                                 <option value="inscripcion:Inscrito">Inscrito</option>
                                 <option value="inscripcion:No Inscrito">No Inscrito</option>
                                 <option value="inscripcion:Baja Temporal">Baja Temporal</option>
@@ -653,13 +658,13 @@
                         <table class="table table-admin">
                             <thead>
                                 <tr>
-                                    <th>MatrÃ­cula</th>
+                                    <th>Matrícula</th>
                                     <th>Nombre</th>
                                     <th>Nivel/Carrera</th>
                                     <th>Semestre</th>
                                     <th>Promedio</th>
                                     <th>Cuenta</th>
-                                    <th>InscripciÃ³n</th>
+                                    <th>Inscripción</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -674,7 +679,7 @@
             <!-- SECTION: DOCENTES -->
             <section id="view-docentes" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold mb-0">GestiÃ³n de Docentes</h2>
+                    <h2 class="fw-bold mb-0">Gestión de Docentes</h2>
                     <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#registerTeacherModal"><i class="bi bi-person-plus me-2"></i>Nuevo Docente</button>
                 </div>
                 <div class="dashboard-card">
@@ -704,8 +709,8 @@
             <section id="view-materias" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h2 class="fw-bold mb-1">Oferta AcadÃ©mica</h2>
-                        <p class="text-muted mb-0">CatÃ¡logo de materias y operaciÃ³n docente separada del expediente escolar.</p>
+                        <h2 class="fw-bold mb-1">Oferta Académica</h2>
+                        <p class="text-muted mb-0">Catálogo de materias y operación docente separada del expediente escolar.</p>
                     </div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-outline-primary rounded-pill" onclick="switchView('view-docentes')"><i class="bi bi-person-badge me-2"></i>Docentes</button>
@@ -748,7 +753,7 @@
                                     <th>Nombre de la Materia</th>
                                     <th>Carrera</th>
                                     <th>Semestre/Periodo</th>
-                                    <th>CrÃ©ditos</th>
+                                    <th>Créditos</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -764,7 +769,7 @@
             <section id="view-asignaciones" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="fw-bold mb-0">Asignaciones de Docentes</h2>
-                    <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#createAssignmentModal"><i class="bi bi-person-check me-2"></i>Nueva AsignaciÃ³n</button>
+                    <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#createAssignmentModal"><i class="bi bi-person-check me-2"></i>Nueva Asignación</button>
                 </div>
                 <div class="dashboard-card">
                     <p class="text-muted small mb-3">Asigna un docente a una materia en el ciclo activo. Varios docentes pueden impartir la misma materia en grupos distintos.</p>
@@ -793,7 +798,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
                         <h2 class="fw-bold mb-1">Grupos Reales</h2>
-                        <p class="text-muted mb-0 small">Gestiona grupos formales del ciclo activo con alumnos, tutor y carga acadÃ©mica.</p>
+                        <p class="text-muted mb-0 small">Gestiona grupos formales del ciclo activo con alumnos, tutor y carga académica.</p>
                     </div>
                 </div>
 
@@ -887,24 +892,24 @@
                 <div class="dashboard-card">
                     <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
                         <select id="gradeAssignmentSelector" class="form-select" style="max-width: 460px;" onchange="loadGradeAssignmentStudents()" title="Seleccionar asignación para calificaciones" aria-label="Seleccionar asignación para calificaciones">
-                            <option value="">Selecciona una asignaciÃ³n...</option>
+                            <option value="">Selecciona una asignación...</option>
                         </select>
-                        <span class="badge bg-dark-subtle text-dark px-3 py-2" id="gradeAssignmentMeta">Sin selecciÃ³n</span>
+                        <span class="badge bg-dark-subtle text-dark px-3 py-2" id="gradeAssignmentMeta">Sin selección</span>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-admin">
                             <thead>
                                 <tr>
-                                    <th>MatrÃ­cula</th>
+                                    <th>Matrícula</th>
                                     <th>Alumno</th>
                                     <th>Intento</th>
-                                    <th>CalificaciÃ³n Final</th>
+                                    <th>Calificación Final</th>
                                     <th>Estatus</th>
-                                    <th>AcciÃ³n</th>
+                                    <th>Acción</th>
                                 </tr>
                             </thead>
                             <tbody id="gradeCenterTableBody">
-                                <tr><td colspan="6" class="text-center py-4 text-muted">Selecciona una asignaciÃ³n para capturar.</td></tr>
+                                <tr><td colspan="6" class="text-center py-4 text-muted">Selecciona una asignación para capturar.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -914,7 +919,7 @@
             <!-- SECTION: FINANZAS -->
             <section id="view-finanzas" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold mb-0">TesorerÃ­a</h2>
+                    <h2 class="fw-bold mb-0">Tesorería</h2>
                     <div>
                         <button class="btn btn-primary rounded-pill me-2" data-bs-toggle="modal" data-bs-target="#createPaymentModal"><i class="bi bi-plus-lg me-2"></i>Nuevo Cargo</button>
                         <button class="btn btn-success rounded-pill"><i class="bi bi-file-earmark-excel me-2"></i>Reporte Contable</button>
@@ -957,7 +962,7 @@
                         <table class="table table-admin mb-0">
                             <thead>
                                 <tr>
-                                    <th>MatrÃ­cula</th>
+                                    <th>Matrícula</th>
                                     <th>Alumno</th>
                                     <th>Cargos vencidos</th>
                                     <th>Monto vencido</th>
@@ -1001,7 +1006,7 @@
                                     <th>Concepto</th>
                                     <th>Monto</th>
                                     <th>Periodo</th>
-                                    <th>Fecha LÃ­mite</th>
+                                    <th>Fecha Límite</th>
                                     <th>Estatus</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -1026,7 +1031,7 @@
                                     <th>Alumno</th>
                                     <th>Concepto</th>
                                     <th>Monto</th>
-                                    <th>Fecha LÃ­mite</th>
+                                    <th>Fecha Límite</th>
                                     <th>Estatus</th>
                                 </tr>
                             </thead>
@@ -1041,8 +1046,8 @@
             <!-- SECTION: TRAMITES -->
             <section id="view-tramites" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold mb-0">TrÃ¡mites y Documentos</h2>
-                    <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#createServiceModal"><i class="bi bi-plus-lg me-2"></i>Nuevo TrÃ¡mite</button>
+                    <h2 class="fw-bold mb-0">Trámites y Documentos</h2>
+                    <button class="btn btn-primary rounded-pill" data-bs-toggle="modal" data-bs-target="#createServiceModal"><i class="bi bi-plus-lg me-2"></i>Nuevo Trámite</button>
                 </div>
                 <div class="dashboard-card">
                     <div class="d-flex gap-3 mb-4">
@@ -1060,14 +1065,14 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Alumno</th>
-                                    <th>Tipo de TrÃ¡mite</th>
+                                    <th>Tipo de Trámite</th>
                                     <th>Fecha de Solicitud</th>
                                     <th>Estatus</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="allServicesTableBody">
-                                <tr><td colspan="6" class="text-center py-4 text-muted">Cargando trÃ¡mites...</td></tr>
+                                <tr><td colspan="6" class="text-center py-4 text-muted">Cargando trámites...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1078,8 +1083,8 @@
             <section id="view-reportes" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h2 class="fw-bold mb-1">Reportes de GestiÃ³n</h2>
-                        <p class="text-muted mb-0">Indicadores administrativos, acadÃ©micos, financieros y de servicios con filtros operativos.</p>
+                        <h2 class="fw-bold mb-1">Reportes de Gestión</h2>
+                        <p class="text-muted mb-0">Indicadores administrativos, académicos, financieros y de servicios con filtros operativos.</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button class="btn btn-outline-success rounded-pill" onclick="exportReportsCsv()"><i class="bi bi-filetype-csv me-2"></i>Exportar CSV</button>
@@ -1139,7 +1144,7 @@
                 <div class="row g-4 mb-4">
                     <div class="col-md-6 col-xl-3">
                         <div class="dashboard-card h-100">
-                            <p class="text-muted small fw-bold mb-2">MatrÃ­cula Filtrada</p>
+                            <p class="text-muted small fw-bold mb-2">Matrícula Filtrada</p>
                             <h3 class="fw-800 mb-0" id="reportOverviewStudents">0</h3>
                         </div>
                     </div>
@@ -1151,7 +1156,7 @@
                     </div>
                     <div class="col-md-6 col-xl-3">
                         <div class="dashboard-card h-100">
-                            <p class="text-muted small fw-bold mb-2">Tasa de AprobaciÃ³n</p>
+                            <p class="text-muted small fw-bold mb-2">Tasa de Aprobación</p>
                             <h3 class="fw-800 mb-0 text-success" id="reportOverviewApproval">0%</h3>
                         </div>
                     </div>
@@ -1166,7 +1171,7 @@
                 <div class="row g-4 mb-4">
                     <div class="col-md-6">
                         <div class="dashboard-card h-100">
-                            <h5 class="fw-bold mb-4">DistribuciÃ³n de Alumnos por Carrera</h5>
+                            <h5 class="fw-bold mb-4">Distribución de Alumnos por Carrera</h5>
                             <div class="d-flex justify-content-center align-items-center" style="height: 250px;">
                                 <div class="text-center text-muted" id="chartCareerPlaceholder">
                                     <i class="bi bi-pie-chart fs-1 d-block mb-2"></i>
@@ -1191,7 +1196,7 @@
                 </div>
 
                 <div class="dashboard-card">
-                    <h5 class="fw-bold mb-4">Resumen AcadÃ©mico Global</h5>
+                    <h5 class="fw-bold mb-4">Resumen Académico Global</h5>
                     <div class="row text-center">
                         <div class="col-md-4 border-end">
                             <h3 class="fw-bold text-primary mb-1" id="reportAvgGpa">0.0</h3>
@@ -1199,11 +1204,11 @@
                         </div>
                         <div class="col-md-4 border-end">
                             <h3 class="fw-bold text-success mb-1" id="reportApprovedRate">0%</h3>
-                            <p class="text-muted small mb-0">Tasa de AprobaciÃ³n</p>
+                            <p class="text-muted small mb-0">Tasa de Aprobación</p>
                         </div>
                         <div class="col-md-4">
                             <h3 class="fw-bold text-danger mb-1" id="reportFailedRate">0%</h3>
-                            <p class="text-muted small mb-0">Ãndice de ReprobaciÃ³n</p>
+                            <p class="text-muted small mb-0">Índice de Reprobación</p>
                         </div>
                     </div>
                 </div>
@@ -1211,7 +1216,7 @@
                 <div class="row g-4 mt-1">
                     <div class="col-xl-6">
                         <div class="dashboard-card h-100">
-                            <h5 class="fw-bold mb-3">Estatus de InscripciÃ³n</h5>
+                            <h5 class="fw-bold mb-3">Estatus de Inscripción</h5>
                             <div class="table-responsive">
                                 <table class="table table-admin mb-0">
                                     <thead>
@@ -1241,11 +1246,11 @@
                     </div>
                     <div class="col-xl-6">
                         <div class="dashboard-card h-100">
-                            <h5 class="fw-bold mb-3">Alumnos en Riesgo AcadÃ©mico</h5>
+                            <h5 class="fw-bold mb-3">Alumnos en Riesgo Académico</h5>
                             <div class="table-responsive">
                                 <table class="table table-admin mb-0">
                                     <thead>
-                                        <tr><th>MatrÃ­cula</th><th>Alumno</th><th>Reprobadas</th><th>Cursando</th><th>Promedio</th></tr>
+                                        <tr><th>Matrícula</th><th>Alumno</th><th>Reprobadas</th><th>Cursando</th><th>Promedio</th></tr>
                                     </thead>
                                     <tbody id="reportAcademicRiskTable">
                                         <tr><td colspan="5" class="text-center py-4 text-muted">Cargando...</td></tr>
@@ -1305,7 +1310,7 @@
             <!-- SECTION: CONFIGURACION -->
             <section id="view-configuracion" class="view-section">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold mb-0">ConfiguraciÃ³n del Sistema</h2>
+                    <h2 class="fw-bold mb-0">Configuración del Sistema</h2>
                     <button class="btn btn-primary rounded-pill" onclick="saveSettings()"><i class="bi bi-save me-2"></i>Guardar Cambios</button>
                 </div>
                 
@@ -1341,7 +1346,7 @@
                     
                     <div class="col-md-6">
                         <div class="dashboard-card h-100">
-                            <h5 class="fw-bold mb-4 border-bottom pb-2"><i class="bi bi-building me-2 text-primary"></i>Datos de la InstituciÃ³n</h5>
+                            <h5 class="fw-bold mb-4 border-bottom pb-2"><i class="bi bi-building me-2 text-primary"></i>Datos de la Institución</h5>
                             <form id="settingsInstitutionForm">
                                 <div class="mb-3">
                                     <label class="form-label text-muted small">Nombre Oficial</label>
@@ -1352,7 +1357,7 @@
                                     <input type="email" class="form-control" id="settingInstEmail" value="soporte@unives.edu.mx" required title="Correo de contacto institucional" aria-label="Correo de contacto institucional">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small">TelÃ©fono Principal</label>
+                                    <label class="form-label text-muted small">Teléfono Principal</label>
                                     <input type="text" class="form-control" id="settingInstPhone" value="+52 (55) 1234-5678" title="Teléfono principal de la institución" aria-label="Teléfono principal de la institución">
                                 </div>
                             </form>
@@ -1387,6 +1392,290 @@
                 </div>
             </section>
 
+            <!-- ── PÁGINA WEB ──────────────────────────────────────────── -->
+            <section id="view-pagweb" class="view-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="fw-bold mb-0"><i class="bi bi-globe2 me-2 text-primary"></i>P&aacute;gina Web</h2>
+                </div>
+
+                <!-- Tabs -->
+                <ul class="nav nav-pills mb-4" id="pagwebTabs">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-pw-tab="portafolio">
+                            <i class="bi bi-grid me-1"></i>Portafolio
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-pw-tab="eventos">
+                            <i class="bi bi-calendar-event me-1"></i>Eventos
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-pw-tab="leads">
+                            <i class="bi bi-person-lines-fill me-1"></i>Leads / Contactos
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-pw-tab="comunidades">
+                            <i class="bi bi-people-fill me-1"></i>Comunidades Axolot
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- ── PORTAFOLIO tab ── -->
+                <div id="pw-tab-portafolio">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Proyectos de Alumnos</h5>
+                        <button class="btn btn-primary rounded-pill btn-sm" onclick="pwOpenProjectModal(null,'portfolio')">
+                            <i class="bi bi-plus-lg me-1"></i>Nuevo Proyecto
+                        </button>
+                    </div>
+                    <div class="dashboard-card p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Imagen</th>
+                                        <th>T&iacute;tulo</th>
+                                        <th>Descripci&oacute;n</th>
+                                        <th>Activo</th>
+                                        <th>Creado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pw-portfolio-tbody">
+                                    <tr><td colspan="6" class="text-center text-muted py-4">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── EVENTOS tab ── -->
+                <div id="pw-tab-eventos" style="display:none">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Eventos Institucionales</h5>
+                        <button class="btn btn-primary rounded-pill btn-sm" onclick="pwOpenProjectModal(null,'evento')">
+                            <i class="bi bi-plus-lg me-1"></i>Nuevo Evento
+                        </button>
+                    </div>
+                    <div class="dashboard-card p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Imagen</th>
+                                        <th>T&iacute;tulo</th>
+                                        <th>Fecha</th>
+                                        <th>Lugar</th>
+                                        <th>Activo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pw-eventos-tbody">
+                                    <tr><td colspan="6" class="text-center text-muted py-4">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── LEADS tab ── -->
+                <div id="pw-tab-leads" style="display:none">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Leads del Formulario de Contacto</h5>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm rounded-pill" id="pw-leads-filter" onchange="pwLoadLeads()">
+                                <option value="">Todos</option>
+                                <option value="nuevo">Nuevo</option>
+                                <option value="contactado">Contactado</option>
+                                <option value="inscrito">Inscrito</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dashboard-card p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Tel&eacute;fono</th>
+                                        <th>Email</th>
+                                        <th>Programa</th>
+                                        <th>Mensaje</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pw-leads-tbody">
+                                    <tr><td colspan="8" class="text-center text-muted py-4">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── COMUNIDADES tab ── -->
+                <div id="pw-tab-comunidades" style="display:none">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Comunidades de la Legi&oacute;n Axolot</h5>
+                        <button class="btn btn-primary rounded-pill btn-sm" onclick="pwOpenCommunityModal(null)">
+                            <i class="bi bi-plus-lg me-1"></i>Nueva Comunidad
+                        </button>
+                    </div>
+                    <div class="dashboard-card p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Icono</th>
+                                        <th>Nombre</th>
+                                        <th>Descripci&oacute;n</th>
+                                        <th>Color</th>
+                                        <th>Frecuencia</th>
+                                        <th>Miembros</th>
+                                        <th>Orden</th>
+                                        <th>Activa</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pw-communities-tbody">
+                                    <tr><td colspan="9" class="text-center text-muted py-4">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- COMMUNITY MODAL -->
+    <div class="modal fade" id="pwCommunityModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="pwCommunityModalTitle">Nueva Comunidad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <form id="pwCommunityForm">
+                        <input type="hidden" id="pwCommunityId">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pwCommName" required maxlength="80" placeholder="Ej. Exploradores Axolot">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Color</label>
+                                <select class="form-select" id="pwCommColor">
+                                    <option value="blue">Azul</option>
+                                    <option value="pink">Rosa</option>
+                                    <option value="orange">Naranja</option>
+                                    <option value="purple">Morado</option>
+                                    <option value="green">Verde</option>
+                                    <option value="teal">Teal</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Descripci&oacute;n <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="pwCommDesc" rows="2" required maxlength="300"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Icono Bootstrap</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i id="pwCommIconPreview" class="bi bi-people-fill"></i></span>
+                                    <input type="text" class="form-control" id="pwCommIcon" placeholder="bi-people-fill"
+                                           oninput="document.getElementById('pwCommIconPreview').className='bi '+this.value">
+                                </div>
+                                <small class="text-muted">Busca en <a href="https://icons.getbootstrap.com" target="_blank" rel="noopener noreferrer">icons.getbootstrap.com</a></small>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Frecuencia</label>
+                                <input type="text" class="form-control" id="pwCommFreq" placeholder="Ej. Semanal" maxlength="40">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">N&ordm; Miembros</label>
+                                <input type="number" class="form-control" id="pwCommMembers" min="0" placeholder="0">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">URL de Imagen</label>
+                                <input type="url" class="form-control" id="pwCommImage" placeholder="https://...">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Orden de aparici&oacute;n</label>
+                                <input type="number" class="form-control" id="pwCommOrder" value="0" min="0">
+                            </div>
+                            <div class="col-md-8 d-flex align-items-end pb-1">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="pwCommActive" checked>
+                                    <label class="form-check-label" for="pwCommActive">Visible en la p&aacute;gina p&uacute;blica</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary rounded-pill" onclick="pwSaveCommunity()">
+                        <i class="bi bi-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROJECT/EVENT MODAL -->
+    <div class="modal fade" id="pwProjectModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="pwProjectModalTitle">Nuevo Proyecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <form id="pwProjectForm">
+                        <input type="hidden" id="pwProjectId">
+                        <input type="hidden" id="pwProjectCategory">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">T&iacute;tulo <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pwProjectTitle" required maxlength="120">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Descripci&oacute;n corta</label>
+                                <textarea class="form-control" id="pwProjectDesc" rows="2" maxlength="300"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">URL de Imagen</label>
+                                <input type="url" class="form-control" id="pwProjectImage" placeholder="https://...">
+                            </div>
+                            <div class="col-md-6 pw-event-only" style="display:none">
+                                <label class="form-label fw-semibold">Fecha del Evento</label>
+                                <input type="datetime-local" class="form-control" id="pwProjectDate">
+                            </div>
+                            <div class="col-md-6 pw-event-only" style="display:none">
+                                <label class="form-label fw-semibold">Lugar</label>
+                                <input type="text" class="form-control" id="pwProjectLocation" maxlength="120">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="pwProjectActive" checked>
+                                    <label class="form-check-label" for="pwProjectActive">Visible en la p&aacute;gina p&uacute;blica</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary rounded-pill" onclick="pwSaveProject()">
+                        <i class="bi bi-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1402,8 +1691,8 @@
                     <form id="registerStudentForm">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted">MatrÃ­cula</label>
-                                <input type="text" class="form-control rounded-3" id="newUsername" required placeholder="Ej. ALU-26005" title="MatrÃ­cula del alumno">
+                                <label class="form-label fw-bold small text-muted">Matrícula</label>
+                                <input type="text" class="form-control rounded-3" id="newUsername" required placeholder="Ej. ALU-26005" title="Matrícula del alumno">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small text-muted">Nombre Completo</label>
@@ -1414,8 +1703,8 @@
                                 <input type="email" class="form-control rounded-3" id="newEmail" required placeholder="alumno@unives.edu.mx" title="Correo institucional del alumno">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted">ContraseÃ±a Provisional</label>
-                                <input type="text" class="form-control rounded-3" id="newPassword" required value="Unives12345" title="ContraseÃ±a provisional del alumno">
+                                <label class="form-label fw-bold small text-muted">Contraseña Provisional</label>
+                                <input type="text" class="form-control rounded-3" id="newPassword" required value="Unives12345" title="Contraseña provisional del alumno">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold small text-muted">Carrera</label>
@@ -1464,33 +1753,33 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Campo trampa para engaÃ±ar al autocompletado del browser -->
+                    <!-- Campo trampa para engañar al autocompletado del browser -->
                     <input type="text" style="display:none" aria-hidden="true">
                     <input type="password" style="display:none" aria-hidden="true">
                     <form id="registerTeacherForm" onsubmit="registerTeacher(event)" autocomplete="off">
                         <div class="mb-3">
                             <label class="form-label text-muted small fw-semibold">Nombre Completo</label>
                             <input type="text" class="form-control" id="newTeacherName" title="Nombre completo del docente"
-                                   placeholder="Ej. Juan PÃ©rez LÃ³pez"
+                                   placeholder="Ej. Juan Pérez López"
                                    autocomplete="off" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted small fw-semibold">Usuario / Alias de inicio de sesiÃ³n</label>
+                            <label class="form-label text-muted small fw-semibold">Usuario / Alias de inicio de sesión</label>
                             <input type="text" class="form-control" id="newTeacherUsername" title="Usuario del docente"
-                                   placeholder="Ej. JPEREZ o DOC001 (4â€“32 caracteres)"
+                                   placeholder="Ej. JPEREZ o DOC001 (4–32 caracteres)"
                                    autocomplete="off" required>
-                            <div class="form-text">Solo letras, nÃºmeros, punto, guiÃ³n o guiÃ³n bajo.</div>
+                            <div class="form-text">Solo letras, números, punto, guión o guión bajo.</div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted small fw-semibold">Correo ElectrÃ³nico</label>
-                            <input type="email" class="form-control" id="newTeacherEmail" title="Correo electrÃ³nico del docente"
+                            <label class="form-label text-muted small fw-semibold">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="newTeacherEmail" title="Correo electrónico del docente"
                                    placeholder="docente@unives.edu.mx"
                                    autocomplete="off" required>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label text-muted small fw-semibold">ContraseÃ±a Temporal</label>
-                            <input type="password" class="form-control" id="newTeacherPassword" title="ContraseÃ±a temporal del docente"
-                                   placeholder="MÃ­nimo 6 caracteres"
+                            <label class="form-label text-muted small fw-semibold">Contraseña Temporal</label>
+                            <input type="password" class="form-control" id="newTeacherPassword" title="Contraseña temporal del docente"
+                                   placeholder="Mínimo 6 caracteres"
                                    autocomplete="new-password" required>
                         </div>
                         <div id="registerTeacherError" class="alert alert-danger py-2 small" style="display:none;"></div>
@@ -1519,12 +1808,12 @@
                             <input type="text" class="form-control" id="editTeacherName" required title="Nombre completo del docente">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Correo ElectrÃ³nico</label>
-                            <input type="email" class="form-control" id="editTeacherEmail" required title="Correo electrÃ³nico del docente">
+                            <label class="form-label text-muted small">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="editTeacherEmail" required title="Correo electrónico del docente">
                         </div>
                         <div class="mb-4">
-                            <label class="form-label text-muted small">Nueva ContraseÃ±a (dejar en blanco para no cambiar)</label>
-                            <input type="password" class="form-control" id="editTeacherPassword" title="Nueva contraseÃ±a del docente">
+                            <label class="form-label text-muted small">Nueva Contraseña (dejar en blanco para no cambiar)</label>
+                            <input type="password" class="form-control" id="editTeacherPassword" title="Nueva contraseña del docente">
                         </div>
                         <button type="submit" class="btn btn-primary w-100 rounded-pill">Guardar Cambios</button>
                     </form>
@@ -1562,7 +1851,7 @@
                             <tbody id="teacherSubjectsTableBody">
                                 <tr><td colspan="3" class="text-center text-muted py-4">
                                     <i class="bi bi-tools fs-2 d-block mb-2"></i>
-                                    MÃ³dulo en construcciÃ³n.<br>PrÃ³ximamente se mostrarÃ¡n las materias asignadas a este docente.
+                                    Módulo en construcción.<br>Próximamente se mostrarán las materias asignadas a este docente.
                                 </td></tr>
                             </tbody>
                         </table>
@@ -1597,8 +1886,8 @@
                             <input type="text" class="form-control" id="newSubjectSemester" placeholder="Ej. 1, 2, 2024-1" required title="Semestre o periodo de la materia">
                         </div>
                         <div class="mb-4">
-                            <label class="form-label text-muted small">CrÃ©ditos</label>
-                            <input type="number" class="form-control" id="newSubjectCredits" value="0" required title="CrÃ©ditos de la materia">
+                            <label class="form-label text-muted small">Créditos</label>
+                            <input type="number" class="form-control" id="newSubjectCredits" value="0" required title="Créditos de la materia">
                         </div>
                         <button type="submit" class="btn btn-primary w-100 rounded-pill">Crear Materia</button>
                     </form>
@@ -1633,8 +1922,8 @@
                             <input type="text" class="form-control" id="editSubjectSemester" required title="Semestre o periodo de la materia">
                         </div>
                         <div class="mb-4">
-                            <label class="form-label text-muted small">CrÃ©ditos</label>
-                            <input type="number" class="form-control" id="editSubjectCredits" required title="CrÃ©ditos de la materia">
+                            <label class="form-label text-muted small">Créditos</label>
+                            <input type="number" class="form-control" id="editSubjectCredits" required title="Créditos de la materia">
                         </div>
                         <button type="submit" class="btn btn-primary w-100 rounded-pill">Guardar Cambios</button>
                     </form>
@@ -1665,8 +1954,8 @@
                                 <option value="">Seleccionar docente...</option>
                             </select>
                         </div>
-                        <p class="text-muted small">Se asignarÃ¡ al <strong>ciclo activo</strong> automÃ¡ticamente.</p>
-                        <button type="submit" class="btn btn-primary w-100 rounded-pill">Guardar AsignaciÃ³n</button>
+                        <p class="text-muted small">Se asignará al <strong>ciclo activo</strong> automáticamente.</p>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill">Guardar Asignación</button>
                     </form>
                 </div>
             </div>
@@ -1684,8 +1973,8 @@
                 <div class="modal-body">
                     <form id="createPaymentForm" onsubmit="createPayment(event)">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">MatrÃ­cula del Alumno</label>
-                            <input type="text" class="form-control" id="newPaymentStudent" placeholder="Ej. ALU-26005" required title="MatrÃ­cula del alumno">
+                            <label class="form-label text-muted small">Matrícula del Alumno</label>
+                            <input type="text" class="form-control" id="newPaymentStudent" placeholder="Ej. ALU-26005" required title="Matrícula del alumno">
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-muted small">Concepto</label>
@@ -1696,8 +1985,8 @@
                             <input type="number" step="0.01" class="form-control" id="newPaymentAmount" required title="Monto del cargo">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Fecha LÃ­mite</label>
-                            <input type="date" class="form-control" id="newPaymentDueDate" required title="Fecha lÃ­mite del cargo">
+                            <label class="form-label text-muted small">Fecha Límite</label>
+                            <input type="date" class="form-control" id="newPaymentDueDate" required title="Fecha límite del cargo">
                         </div>
                         <div class="mb-4">
                             <label class="form-label text-muted small">Estatus Inicial</label>
@@ -1734,8 +2023,8 @@
                             <input type="number" step="0.01" class="form-control" id="editGlobalPaymentAmount" required title="Monto del cargo">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Fecha LÃ­mite</label>
-                            <input type="date" class="form-control" id="editGlobalPaymentDueDate" required title="Fecha lÃ­mite del cargo">
+                            <label class="form-label text-muted small">Fecha Límite</label>
+                            <input type="date" class="form-control" id="editGlobalPaymentDueDate" required title="Fecha límite del cargo">
                         </div>
                         <div class="mb-4">
                             <label class="form-label text-muted small">Estatus</label>
@@ -1757,14 +2046,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Registrar Nuevo TrÃ¡mite</h5>
+                    <h5 class="modal-title fw-bold">Registrar Nuevo Trámite</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <form id="createServiceForm" onsubmit="createService(event)">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">MatrÃ­cula del Alumno</label>
-                            <input type="text" class="form-control" id="newServiceStudent" placeholder="Ej. ALU-26005" list="serviceStudentOptions" oninput="filterServiceStudentPicker()" required title="MatrÃ­cula del alumno">
+                            <label class="form-label text-muted small">Matrícula del Alumno</label>
+                            <input type="text" class="form-control" id="newServiceStudent" placeholder="Ej. ALU-26005" list="serviceStudentOptions" oninput="filterServiceStudentPicker()" required title="Matrícula del alumno">
                             <datalist id="serviceStudentOptions"></datalist>
                             <div id="selectedServiceStudent" class="small text-primary mt-2"></div>
                             <div class="border rounded-3 mt-2" style="max-height: 180px; overflow:auto;">
@@ -1774,13 +2063,13 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Tipo de TrÃ¡mite</label>
-                            <select class="form-select" id="newServiceType" required title="Tipo de trÃ¡mite">
+                            <label class="form-label text-muted small">Tipo de Trámite</label>
+                            <select class="form-select" id="newServiceType" required title="Tipo de trámite">
                                 <option value="Constancia de Estudios">Constancia de Estudios</option>
                                 <option value="Kardex">Kardex</option>
                                 <option value="Credencial">Credencial</option>
                                 <option value="Baja Temporal">Baja Temporal</option>
-                                <option value="TitulaciÃ³n">TitulaciÃ³n</option>
+                                <option value="Titulación">Titulación</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -1789,13 +2078,13 @@
                         </div>
                         <div class="mb-4">
                             <label class="form-label text-muted small">Estatus Inicial</label>
-                            <select class="form-select" id="newServiceStatus" required title="Estatus inicial del trÃ¡mite">
+                            <select class="form-select" id="newServiceStatus" required title="Estatus inicial del trámite">
                                 <option value="En Proceso">En Proceso</option>
                                 <option value="Listo">Listo</option>
                                 <option value="Entregado">Entregado</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 rounded-pill">Registrar TrÃ¡mite</button>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill">Registrar Trámite</button>
                     </form>
                 </div>
             </div>
@@ -1807,20 +2096,20 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Editar TrÃ¡mite</h5>
+                    <h5 class="modal-title fw-bold">Editar Trámite</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editGlobalServiceForm" onsubmit="updateGlobalService(event)">
                         <input type="hidden" id="editGlobalServiceId">
                         <div class="mb-3">
-                            <label class="form-label text-muted small">Tipo de TrÃ¡mite</label>
-                            <select class="form-select" id="editGlobalServiceType" required title="Tipo de trÃ¡mite">
+                            <label class="form-label text-muted small">Tipo de Trámite</label>
+                            <select class="form-select" id="editGlobalServiceType" required title="Tipo de trámite">
                                 <option value="Constancia de Estudios">Constancia de Estudios</option>
                                 <option value="Kardex">Kardex</option>
                                 <option value="Credencial">Credencial</option>
                                 <option value="Baja Temporal">Baja Temporal</option>
-                                <option value="TitulaciÃ³n">TitulaciÃ³n</option>
+                                <option value="Titulación">Titulación</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -1829,7 +2118,7 @@
                         </div>
                         <div class="mb-4">
                             <label class="form-label text-muted small">Estatus</label>
-                            <select class="form-select" id="editGlobalServiceStatus" required title="Estatus del trÃ¡mite">
+                            <select class="form-select" id="editGlobalServiceStatus" required title="Estatus del trámite">
                                 <option value="En Proceso">En Proceso</option>
                                 <option value="Listo">Listo</option>
                                 <option value="Entregado">Entregado</option>
@@ -1854,8 +2143,8 @@
                     <form id="editStudentForm">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted">MatrÃ­cula</label>
-                                <input type="text" class="form-control rounded-3 bg-light" id="editUsername" readonly title="MatrÃ­cula del alumno">
+                                <label class="form-label fw-bold small text-muted">Matrícula</label>
+                                <input type="text" class="form-control rounded-3 bg-light" id="editUsername" readonly title="Matrícula del alumno">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold small text-muted">Nombre Completo</label>
@@ -1866,8 +2155,8 @@
                                 <input type="email" class="form-control rounded-3" id="editEmail" required title="Correo institucional del alumno">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold small text-muted">Nueva ContraseÃ±a (Opcional)</label>
-                                <input type="text" class="form-control rounded-3" id="editPassword" placeholder="Dejar en blanco para no cambiar" title="Nueva contraseÃ±a del alumno">
+                                <label class="form-label fw-bold small text-muted">Nueva Contraseña (Opcional)</label>
+                                <input type="text" class="form-control rounded-3" id="editPassword" placeholder="Dejar en blanco para no cambiar" title="Nueva contraseña del alumno">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold small text-muted">Carrera</label>
@@ -1908,7 +2197,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label fw-bold small text-muted">Estatus de InscripciÃ³n</label>
+                                <label class="form-label fw-bold small text-muted">Estatus de Inscripción</label>
                                 <select class="form-select rounded-3" id="editEnrollmentStatus" title="Estatus de inscripción del alumno" aria-label="Estatus de inscripción del alumno">
                                     <option value="Inscrito">Inscrito</option>
                                     <option value="No Inscrito">No Inscrito</option>
@@ -1936,7 +2225,7 @@
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold">Perfil del Alumno</h5>
                     <div class="d-flex gap-2 me-3">
-                        <button class="btn btn-sm btn-outline-warning rounded-pill" onclick="openResetPassword(document.getElementById('viewStudentUsername').textContent)" title="Restablecer contraseÃ±a"><i class="bi bi-key me-1"></i>ContraseÃ±a</button>
+                        <button class="btn btn-sm btn-outline-warning rounded-pill" onclick="openResetPassword(document.getElementById('viewStudentUsername').textContent)" title="Restablecer contraseña"><i class="bi bi-key me-1"></i>Contraseña</button>
                         <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="openEnrollStudent(document.getElementById('viewStudentUsername').textContent)" title="Inscribir en materia"><i class="bi bi-journal-plus me-1"></i>Inscribir</button>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
@@ -1961,7 +2250,7 @@
                             </div>
                         </div>
                         
-                        <!-- Tabs de InformaciÃ³n -->
+                        <!-- Tabs de Información -->
                         <div class="col-md-8">
                             <div class="card border-0 shadow-sm rounded-4 h-100 d-flex flex-column">
                                 <div class="card-header bg-white border-0 pt-3 pb-0">
@@ -1986,15 +2275,15 @@
                                                 <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold" onclick="downloadBoleta()"><i class="bi bi-download me-2"></i>Descargar Boleta</button>
                                             </div>
                                             <div id="viewStudentCurrentGrades" class="mb-4">
-                                                <!-- Llenado dinÃ¡micamente -->
+                                                <!-- Llenado dinámicamente -->
                                             </div>
 
-                                            <h6 class="fw-bold mb-3 border-top pt-4 text-primary"><i class="bi bi-journal-check me-2"></i>Historial AcadÃ©mico</h6>
+                                            <h6 class="fw-bold mb-3 border-top pt-4 text-primary"><i class="bi bi-journal-check me-2"></i>Historial Académico</h6>
                                             <div id="viewStudentHistoryGrades">
-                                                <!-- Llenado dinÃ¡micamente -->
+                                                <!-- Llenado dinámicamente -->
                                             </div>
                                             <div id="viewStudentGradesPagination" class="mt-3 d-flex justify-content-center">
-                                                <!-- PaginaciÃ³n -->
+                                                <!-- Paginación -->
                                             </div>
                                         </div>
                                         
@@ -2012,7 +2301,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="viewStudentPayments">
-                                                        <!-- Llenado dinÃ¡micamente -->
+                                                        <!-- Llenado dinámicamente -->
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -2024,14 +2313,14 @@
                                                 <table class="table table-hover align-middle">
                                                     <thead class="table-light">
                                                         <tr>
-                                                            <th>TrÃ¡mite</th>
+                                                            <th>Trámite</th>
                                                             <th>Fecha</th>
                                                             <th>Estatus</th>
                                                             <th>Acciones</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="viewStudentServices">
-                                                        <!-- Llenado dinÃ¡micamente -->
+                                                        <!-- Llenado dinámicamente -->
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -2050,38 +2339,38 @@
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1060;">
         <div id="adminToast" class="toast align-items-center text-white bg-success border-0 rounded-3" role="alert">
             <div class="d-flex">
-                <div class="toast-body" id="adminToastMessage">Â¡AcciÃ³n realizada con Ã©xito!</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" title="Cerrar notificaciÃ³n" aria-label="Cerrar notificaciÃ³n"></button>
+                <div class="toast-body" id="adminToastMessage">¡Acción realizada con éxito!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" title="Cerrar notificación" aria-label="Cerrar notificación"></button>
             </div>
         </div>
     </div>
 
-    <!-- Modals para ediciÃ³n rÃ¡pida -->
+    <!-- Modals para edición rápida -->
     <!-- Edit Grade Modal -->
     <div class="modal fade" id="editGradeModal" tabindex="-1">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content border-0 rounded-4">
                 <div class="modal-header border-0 pb-0">
-                    <h6 class="modal-title fw-bold">Editar CalificaciÃ³n</h6>
+                    <h6 class="modal-title fw-bold">Editar Calificación</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="editGradeId">
                     <div class="mb-2">
-                        <label class="form-label small text-muted">CalificaciÃ³n (0â€“10) â€” deja vacÃ­o para cambiar solo el estatus</label>
-                        <input type="number" class="form-control rounded-3" id="editGradeScore" title="CalificaciÃ³n final" step="0.5" min="0" max="10" placeholder="0.0 â€“ 10.0">
+                        <label class="form-label small text-muted">Calificación (0–10) — deja vacío para cambiar solo el estatus</label>
+                        <input type="number" class="form-control rounded-3" id="editGradeScore" title="Calificación final" step="0.5" min="0" max="10" placeholder="0.0 – 10.0">
                     </div>
                     <div class="mb-2">
-                        <label class="form-label small text-muted">Estatus manual (se ignora si hay calificaciÃ³n)</label>
-                        <select class="form-select rounded-3" id="editGradeStatus" title="Estatus de la calificaciÃ³n">
-                            <option value="">â€” Auto (por calificaciÃ³n) â€”</option>
+                        <label class="form-label small text-muted">Estatus manual (se ignora si hay calificación)</label>
+                        <select class="form-select rounded-3" id="editGradeStatus" title="Estatus de la calificación">
+                            <option value="">— Auto (por calificación) —</option>
                             <option value="Cursando">Cursando</option>
                             <option value="Aprobada">Aprobada</option>
                             <option value="Reprobada">Reprobada</option>
-                            <option value="Proximamente">PrÃ³ximamente</option>
+                            <option value="Proximamente">Próximamente</option>
                         </select>
                     </div>
-                    <div class="alert alert-info py-2 small mb-0"><i class="bi bi-info-circle me-1"></i>Si hay calificaciÃ³n, el estatus se calcula automÃ¡tico (â‰¥6 = Aprobada).</div>
+                    <div class="alert alert-info py-2 small mb-0"><i class="bi bi-info-circle me-1"></i>Si hay calificación, el estatus se calcula automático (â‰¥6 = Aprobada).</div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-sm btn-primary rounded-pill w-100" onclick="saveGrade()">Guardar</button>
@@ -2095,15 +2384,15 @@
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content border-0 rounded-4">
                 <div class="modal-header border-0 pb-0">
-                    <h6 class="modal-title fw-bold"><i class="bi bi-key me-2"></i>Restablecer ContraseÃ±a</h6>
+                    <h6 class="modal-title fw-bold"><i class="bi bi-key me-2"></i>Restablecer Contraseña</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="resetPasswordUsername">
                     <p class="small text-muted mb-2">Usuario: <strong id="resetPasswordUsernameDisplay"></strong></p>
                     <div class="mb-2">
-                        <label class="form-label small text-muted">Nueva ContraseÃ±a</label>
-                        <input type="text" class="form-control rounded-3" id="resetPasswordValue" title="Nueva contraseÃ±a" placeholder="MÃ­nimo 6 caracteres" value="Unives12345">
+                        <label class="form-label small text-muted">Nueva Contraseña</label>
+                        <input type="text" class="form-control rounded-3" id="resetPasswordValue" title="Nueva contraseña" placeholder="Mínimo 6 caracteres" value="Unives12345">
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -2118,16 +2407,16 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4">
                 <div class="modal-header border-0 pb-0">
-                    <h6 class="modal-title fw-bold"><i class="bi bi-journal-plus me-2"></i>Inscribir en AsignaciÃ³n</h6>
+                    <h6 class="modal-title fw-bold"><i class="bi bi-journal-plus me-2"></i>Inscribir en Asignación</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="enrollStudentUsername">
                     <p class="small text-muted mb-3">Alumno: <strong id="enrollStudentUsernameDisplay"></strong></p>
                     <div class="mb-3">
-                        <label class="form-label small text-muted">AsignaciÃ³n (Materia â€“ Docente)</label>
-                        <select class="form-select rounded-3" id="enrollAssignmentId" title="AsignaciÃ³n de materia y docente">
-                            <option value="">Seleccionar asignaciÃ³n...</option>
+                        <label class="form-label small text-muted">Asignación (Materia – Docente)</label>
+                        <select class="form-select rounded-3" id="enrollAssignmentId" title="Asignación de materia y docente">
+                            <option value="">Seleccionar asignación...</option>
                         </select>
                     </div>
                 </div>
@@ -2170,14 +2459,14 @@
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content border-0 rounded-4">
                 <div class="modal-header border-0 pb-0">
-                    <h6 class="modal-title fw-bold">Editar TrÃ¡mite</h6>
+                    <h6 class="modal-title fw-bold">Editar Trámite</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="editServiceId">
                     <div class="mb-3">
                         <label class="form-label small text-muted">Estatus</label>
-                        <select class="form-select rounded-3" id="editServiceStatus" title="Estatus del trÃ¡mite">
+                        <select class="form-select rounded-3" id="editServiceStatus" title="Estatus del trámite">
                             <option value="En Proceso">En Proceso</option>
                             <option value="Listo">Listo</option>
                             <option value="Entregado">Entregado</option>
@@ -2248,16 +2537,16 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4">
                 <div class="modal-header border-0 pb-0">
-                    <h6 class="modal-title fw-bold"><i class="bi bi-person-check me-2 text-primary"></i>Cambiar InscripciÃ³n del Grupo</h6>
+                    <h6 class="modal-title fw-bold"><i class="bi bi-person-check me-2 text-primary"></i>Cambiar Inscripción del Grupo</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" title="Cerrar" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="bulkEnrollGrupo">
                     <input type="hidden" id="bulkEnrollCarrera">
-                    <p class="text-muted small mb-3">Se actualizarÃ¡ el estado de inscripciÃ³n de <strong id="bulkEnrollCount">todos</strong> los alumnos del grupo <strong id="bulkEnrollGroupName"></strong>.</p>
+                    <p class="text-muted small mb-3">Se actualizará el estado de inscripción de <strong id="bulkEnrollCount">todos</strong> los alumnos del grupo <strong id="bulkEnrollGroupName"></strong>.</p>
                     <div class="mb-3">
-                        <label class="form-label small text-muted">Nuevo Estatus de InscripciÃ³n</label>
-                        <select class="form-select rounded-3" id="bulkEnrollStatus" title="Nuevo estatus de inscripciÃ³n">
+                        <label class="form-label small text-muted">Nuevo Estatus de Inscripción</label>
+                        <select class="form-select rounded-3" id="bulkEnrollStatus" title="Nuevo estatus de inscripción">
                             <option value="Inscrito">Inscrito</option>
                             <option value="No Inscrito">No Inscrito</option>
                             <option value="Baja Temporal">Baja Temporal</option>
@@ -2285,10 +2574,10 @@
                 <div class="modal-body">
                     <input type="hidden" id="bulkAssignGrupo">
                     <input type="hidden" id="bulkAssignCarrera">
-                    <p class="text-muted small mb-3">Se inscribirÃ¡ a <strong id="bulkAssignCount">todos</strong> los alumnos del grupo <strong id="bulkAssignGroupName"></strong> en la asignaciÃ³n seleccionada.</p>
+                    <p class="text-muted small mb-3">Se inscribirá a <strong id="bulkAssignCount">todos</strong> los alumnos del grupo <strong id="bulkAssignGroupName"></strong> en la asignación seleccionada.</p>
                     <div class="mb-3">
-                        <label class="form-label small text-muted">AsignaciÃ³n (Materia + Docente)</label>
-                        <select class="form-select rounded-3" id="bulkAssignAssignmentId" title="AsignaciÃ³n para el grupo">
+                        <label class="form-label small text-muted">Asignación (Materia + Docente)</label>
+                        <select class="form-select rounded-3" id="bulkAssignAssignmentId" title="Asignación para el grupo">
                             <option value="">Cargando asignaciones...</option>
                         </select>
                     </div>
@@ -2358,7 +2647,7 @@
                     </div>
                     <div class="alert alert-light border small mb-0">
                         <i class="bi bi-info-circle me-1 text-primary"></i>
-                        Incluye: matrÃ­cula, nombre, carrera, semestre, materia, calificaciÃ³n, estatus, docente y ciclo.
+                        Incluye: matrícula, nombre, carrera, semestre, materia, calificación, estatus, docente y ciclo.
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -2415,8 +2704,8 @@
             { value: 'Especial', label: 'Especial' }
         ];
         const DEFAULT_CAREERS = [
-            { name: 'IngenierÃ­a en Software' },
-            { name: 'IngenierÃ­a en TelemÃ¡tica' },
+            { name: 'Ingeniería en Software' },
+            { name: 'Ingeniería en Telemática' },
             { name: 'Preparatoria' }
         ];
         const DEFAULT_MODALITIES = [
@@ -2464,7 +2753,7 @@
         }
 
         function syncCatalogsFromStudents() {
-            // Solo usa defaults como fallback si el API aÃºn no devolviÃ³ datos
+            // Solo usa defaults como fallback si el API aún no devolvió datos
             if (catalogCareers.length === 0) {
                 catalogCareers = [...DEFAULT_CAREERS];
             }
@@ -2547,7 +2836,7 @@
         }
 
         function formatDateShort(value) {
-            if (!value) return 'â€”';
+            if (!value) return '—';
             return new Date(value).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
@@ -2621,7 +2910,7 @@
 
                 await loadCatalogs();
 
-                // Cargar estadÃ­sticas
+                // Cargar estadísticas
                 const statsResponse = await fetch('http://localhost:8000/admin/stats', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -2701,7 +2990,7 @@
                     renderCharges(filteredCharges);
                 }
 
-                // Cargar trÃ¡mites
+                // Cargar trámites
                 const servicesResponse = await fetch('http://localhost:8000/admin/services', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -2839,7 +3128,7 @@
             const table = document.getElementById('allServicesTableBody');
             
             if (services.length === 0) {
-                table.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No hay trÃ¡mites registrados.</td></tr>';
+                table.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No hay trámites registrados.</td></tr>';
                 return;
             }
 
@@ -2909,7 +3198,7 @@
             const student = allStudents.find(item => item.username === username);
             if (selectedLabel) {
                 selectedLabel.textContent = student
-                    ? `${student.full_name || 'Sin nombre'} Â· ${student.carrera || 'Sin carrera'}`
+                    ? `${student.full_name || 'Sin nombre'} · ${student.carrera || 'Sin carrera'}`
                     : '';
             }
         }
@@ -2988,7 +3277,7 @@
                 link.remove();
                 URL.revokeObjectURL(url);
             } catch (error) {
-                showToast('Error de conexion', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -3041,9 +3330,9 @@
                         <div class="small text-muted">${escHtml(c.student?.full_name || 'Desconocido')}</div>
                     </td>
                     <td>${escHtml(c.charge_type || 'Otro')}</td>
-                    <td>${escHtml(c.concept || 'â€”')}</td>
+                    <td>${escHtml(c.concept || '—')}</td>
                     <td>${formatMoney(c.amount)}</td>
-                    <td>${escHtml(c.period_label || 'â€”')}</td>
+                    <td>${escHtml(c.period_label || '—')}</td>
                     <td>${formatDateShort(c.due_date)}</td>
                     <td>${renderPaymentStatusBadge(c.status)}</td>
                     <td>
@@ -3225,7 +3514,7 @@
                     if (audit.legacy_students_missing_enrollment?.length) {
                         missingList.innerHTML = `
                             <div class="alert alert-warning mb-0">
-                                <strong>Pendientes de migraciÃ³n:</strong>
+                                <strong>Pendientes de migración:</strong>
                                 ${audit.legacy_students_missing_enrollment.map(username => `<span class="badge bg-dark me-1 mt-1">${escHtml(username)}</span>`).join('')}
                             </div>`;
                     } else {
@@ -3269,7 +3558,7 @@
                     <td>${escHtml(enrollment.student?.full_name || 'Sin nombre')}</td>
                     <td>${escHtml(enrollment.career?.name || 'Sin carrera')}</td>
                     <td>${escHtml(enrollment.modality?.name || 'Sin modalidad')}</td>
-                    <td>${escHtml(enrollment.semester || 'â€”')}</td>
+                    <td>${escHtml(enrollment.semester || '—')}</td>
                     <td>${escHtml(enrollment.group?.name || 'Sin grupo')}</td>
                     <td>${renderEnrollmentBadge(enrollment.enrollment_status || 'No Inscrito')}</td>
                     <td>
@@ -3696,8 +3985,8 @@
             if (!select) return;
 
             const currentValue = select.value;
-            select.innerHTML = '<option value="">Selecciona una asignaciÃ³n...</option>' +
-                allAssignments.map(a => `<option value="${a.id}">${escHtml(a.subject?.name || 'Materia')} Â· ${escHtml(a.teacher?.full_name || a.teacher?.username || 'Sin docente')} Â· ${escHtml(a.subject?.career || 'Sin carrera')}</option>`).join('');
+            select.innerHTML = '<option value="">Selecciona una asignación...</option>' +
+                allAssignments.map(a => `<option value="${a.id}">${escHtml(a.subject?.name || 'Materia')} · ${escHtml(a.teacher?.full_name || a.teacher?.username || 'Sin docente')} · ${escHtml(a.subject?.career || 'Sin carrera')}</option>`).join('');
             if (currentValue) select.value = currentValue;
         }
 
@@ -3707,13 +3996,13 @@
             const table = document.getElementById('gradeCenterTableBody');
 
             if (!assignmentId) {
-                meta.textContent = 'Sin selecciÃ³n';
-                table.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Selecciona una asignaciÃ³n para capturar.</td></tr>';
+                meta.textContent = 'Sin selección';
+                table.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Selecciona una asignación para capturar.</td></tr>';
                 return;
             }
 
             const assignment = allAssignments.find(a => String(a.id) === String(assignmentId));
-            meta.textContent = `${assignment?.subject?.name || 'Materia'} Â· ${assignment?.teacher?.full_name || assignment?.teacher?.username || 'Sin docente'}`;
+            meta.textContent = `${assignment?.subject?.name || 'Materia'} · ${assignment?.teacher?.full_name || assignment?.teacher?.username || 'Sin docente'}`;
             table.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Cargando alumnos...</td></tr>';
 
             try {
@@ -3734,7 +4023,7 @@
             if (!table) return;
 
             if (!rows.length) {
-                table.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No hay alumnos inscritos en esta asignaciÃ³n.</td></tr>';
+                table.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No hay alumnos inscritos en esta asignación.</td></tr>';
                 return;
             }
 
@@ -3776,15 +4065,15 @@
                 });
                 if (!response.ok) {
                     const error = await response.json();
-                    showToast(error.detail || 'No se pudo guardar la calificaciÃ³n', 'danger');
+                    showToast(error.detail || 'No se pudo guardar la calificación', 'danger');
                     return;
                 }
-                showToast('CalificaciÃ³n final actualizada', 'success');
+                showToast('Calificación final actualizada', 'success');
                 await loadGradeAssignmentStudents();
                 await loadGradeCenter();
             } catch (error) {
                 console.error('Error saving final grade', error);
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -3792,7 +4081,7 @@
         let paymentChartInstance = null;
 
         function generateCharts() {
-            // Preparar datos para grÃ¡fica de carreras
+            // Preparar datos para gráfica de carreras
             const careerCounts = {};
             allStudents.forEach(s => {
                 const career = s.carrera || 'Sin Asignar';
@@ -3826,7 +4115,7 @@
                 }
             });
 
-            // Preparar datos para grÃ¡fica de pagos
+            // Preparar datos para gráfica de pagos
             const sourcePayments = allCharges.length ? allCharges : allPayments;
             const paymentCounts = { 'Pagado': 0, 'Pendiente': 0, 'Vencido': 0 };
             sourcePayments.forEach(p => {
@@ -3899,7 +4188,7 @@
                 showToast('No hay datos de alumnos para exportar', 'warning');
                 return;
             }
-            const headers = ['MatrÃ­cula', 'Nombre Completo', 'Correo', 'Carrera', 'Modalidad', 'Semestre', 'Grupo', 'Rol'];
+            const headers = ['Matrícula', 'Nombre Completo', 'Correo', 'Carrera', 'Modalidad', 'Semestre', 'Grupo', 'Rol'];
             const rows = allStudents.map(s => [
                 s.username || '',
                 s.full_name || '',
@@ -3962,7 +4251,7 @@
                 URL.revokeObjectURL(a.href);
                 bootstrap.Modal.getInstance(document.getElementById('exportGradesModal')).hide();
                 showToast('CSV descargado correctamente', 'success');
-            } catch(e) { showToast('Error de conexiÃ³n', 'danger'); }
+            } catch(e) { showToast('Error de conexión', 'danger'); }
         }
 
         async function loadSchoolCycle() {
@@ -4091,14 +4380,14 @@
                 });
                 if (payRes.ok) {
                     const result = await payRes.json();
-                    showToast(`âœ… Ciclo guardado. ${result.payments_created} pagos generados para ${result.students_affected} alumnos activos.`, 'success');
+                    showToast(`✅ Ciclo guardado. ${result.payments_created} pagos generados para ${result.students_affected} alumnos activos.`, 'success');
                     updateCyclePreview();
                     loadAdminData();
                 } else {
                     showToast('Ciclo guardado. Error al generar pagos.', 'warning');
                 }
             } catch(e) {
-                showToast('Error de conexiÃ³n con el servidor.', 'danger');
+                showToast('Error de conexión con el servidor.', 'danger');
             }
         }
 
@@ -4189,7 +4478,7 @@
                     showToast('Error al actualizar', 'danger');
                 }
             } catch(e) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -4213,7 +4502,7 @@
             const recentTable = document.getElementById('recentStudentsTableBody');
             const allTable = document.getElementById('allStudentsTableBody');
             
-            // Ya no actualizamos totalStudentsCount aquÃ­, se hace con /admin/stats
+            // Ya no actualizamos totalStudentsCount aquí, se hace con /admin/stats
             
             if (students.length === 0) {
                 recentTable.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No hay alumnos registrados.</td></tr>';
@@ -4224,7 +4513,7 @@
             let recentHtml = '';
             let allHtml = '';
 
-            // Mostrar los Ãºltimos 4 en el dashboard
+            // Mostrar los últimos 4 en el dashboard
             const recentStudents = [...students].reverse().slice(0, 4);
             
             recentStudents.forEach(s => {
@@ -4251,7 +4540,7 @@
                 `;
             });
 
-            // Mostrar todos en la tabla de gestiÃ³n con paginaciÃ³n
+            // Mostrar todos en la tabla de gestión con paginación
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
             const paginatedStudents = students.slice(startIndex, endIndex);
@@ -4291,11 +4580,11 @@
                         </td>
                         <td>
                             <div class="dropdown d-inline">
-                                <span class="badge-clickable" data-bs-toggle="dropdown" style="cursor:pointer;" title="Cambiar estatus de inscripciÃ³n">
+                                <span class="badge-clickable" data-bs-toggle="dropdown" style="cursor:pointer;" title="Cambiar estatus de inscripción">
                                     ${renderEnrollmentBadge(s.enrollment_status)}
                                 </span>
                                 <ul class="dropdown-menu dropdown-menu-sm shadow-sm">
-                                    <li><h6 class="dropdown-header small">Estatus de InscripciÃ³n</h6></li>
+                                    <li><h6 class="dropdown-header small">Estatus de Inscripción</h6></li>
                                     <li><a class="dropdown-item small" href="#" onclick="quickUpdateStatus('${s.username}','enrollment_status','Inscrito');return false;"><span class="badge bg-primary me-1">Inscrito</span></a></li>
                                     <li><a class="dropdown-item small" href="#" onclick="quickUpdateStatus('${s.username}','enrollment_status','No Inscrito');return false;"><span class="badge bg-secondary me-1">No Inscrito</span></a></li>
                                     <li><a class="dropdown-item small" href="#" onclick="quickUpdateStatus('${s.username}','enrollment_status','Baja Temporal');return false;"><span class="badge bg-warning text-dark me-1">Baja Temporal</span></a></li>
@@ -4307,7 +4596,7 @@
                         <td>
                             <button class="btn btn-sm btn-light" onclick="openViewStudent('${s.username}')" title="Ver Perfil"><i class="bi bi-eye"></i></button>
                             <button class="btn btn-sm btn-light" onclick="openEditStudent('${s.username}')" title="Editar"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-warning" onclick="openResetPassword('${s.username}')" title="Restablecer ContraseÃ±a"><i class="bi bi-key"></i></button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="openResetPassword('${s.username}')" title="Restablecer Contraseña"><i class="bi bi-key"></i></button>
                             <button class="btn btn-sm btn-outline-primary" onclick="openEnrollStudent('${s.username}')" title="Inscribir en Materia"><i class="bi bi-journal-plus"></i></button>
                         </td>
                     </tr>
@@ -4487,17 +4776,17 @@
                             </tr>
                         `).join('');
                     } else {
-                        servicesTbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No hay trÃ¡mites registrados</td></tr>';
+                        servicesTbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No hay trámites registrados</td></tr>';
                     }
 
                     const viewModal = new bootstrap.Modal(document.getElementById('viewStudentModal'));
                     viewModal.show();
                 } else {
-                    showToast('Error al cargar la informaciÃ³n del alumno', true);
+                    showToast('Error al cargar la información del alumno', true);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showToast('Error de conexiÃ³n', true);
+                showToast('Error de conexión', true);
             }
         }
 
@@ -4518,7 +4807,7 @@
         async function doResetPassword() {
             const username = document.getElementById('resetPasswordUsername').value;
             const password = document.getElementById('resetPasswordValue').value.trim();
-            if (!password || password.length < 6) { showToast('La contraseÃ±a debe tener al menos 6 caracteres', true); return; }
+            if (!password || password.length < 6) { showToast('La contraseña debe tener al menos 6 caracteres', true); return; }
             try {
                 const res = await fetch(`http://localhost:8000/admin/students/${username}/password`, {
                     method: 'PUT',
@@ -4526,13 +4815,13 @@
                     body: JSON.stringify({ password })
                 });
                 if (res.ok) {
-                    showToast(`ContraseÃ±a de ${username} restablecida`);
+                    showToast(`Contraseña de ${username} restablecida`);
                     bootstrap.Modal.getInstance(document.getElementById('resetPasswordModal')).hide();
                 } else {
                     const err = await res.json();
                     showToast(err.detail || 'Error al restablecer', true);
                 }
-            } catch (e) { showToast('Error de conexiÃ³n', true); }
+            } catch (e) { showToast('Error de conexión', true); }
         }
 
         function openEnrollStudent(username) {
@@ -4540,11 +4829,11 @@
             document.getElementById('enrollStudentUsernameDisplay').textContent = username;
             // Populate assignments dropdown
             const sel = document.getElementById('enrollAssignmentId');
-            sel.innerHTML = '<option value="">Seleccionar asignaciÃ³n...</option>' +
+            sel.innerHTML = '<option value="">Seleccionar asignación...</option>' +
                 allAssignments.map(a => {
                     const sub = a.subject || {};
                     const tch = a.teacher || {};
-                    return `<option value="${a.id}">${sub.name || 'â€”'} â€” ${tch.full_name || 'Sin docente'} (${sub.career || 'â€”'})</option>`;
+                    return `<option value="${a.id}">${sub.name || '—'} — ${tch.full_name || 'Sin docente'} (${sub.career || '—'})</option>`;
                 }).join('');
             new bootstrap.Modal(document.getElementById('enrollStudentModal')).show();
         }
@@ -4552,7 +4841,7 @@
         async function doEnrollStudent() {
             const username = document.getElementById('enrollStudentUsername').value;
             const assignmentId = parseInt(document.getElementById('enrollAssignmentId').value);
-            if (!assignmentId) { showToast('Selecciona una asignaciÃ³n', true); return; }
+            if (!assignmentId) { showToast('Selecciona una asignación', true); return; }
             try {
                 const res = await fetch('http://localhost:8000/admin/enrollments', {
                     method: 'POST',
@@ -4571,7 +4860,7 @@
                     const err = await res.json();
                     showToast(err.detail || 'Error al inscribir', true);
                 }
-            } catch (e) { showToast('Error de conexiÃ³n', true); }
+            } catch (e) { showToast('Error de conexión', true); }
         }
 
         function getSemesterSortValue(label) {
@@ -4715,12 +5004,12 @@
                     <div class="p-3 p-md-4 text-white" style="background: ${theme.bg};">
                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                             <div>
-                                <div class="text-uppercase small fw-bold opacity-75 mb-1">Trayecto acadÃ©mico</div>
+                                <div class="text-uppercase small fw-bold opacity-75 mb-1">Trayecto académico</div>
                                 <h5 class="fw-bold mb-0">Periodo ${period}</h5>
                             </div>
                             <div class="d-flex flex-wrap gap-2">
                                 <span class="badge rounded-pill px-3 py-2" style="background:${theme.chip}; color:#fff;">${grades.length} materias</span>
-                                <span class="badge rounded-pill px-3 py-2" style="background:${theme.chip}; color:#fff;">${totalCredits} crÃ©ditos</span>
+                                <span class="badge rounded-pill px-3 py-2" style="background:${theme.chip}; color:#fff;">${totalCredits} créditos</span>
                                 <span class="badge rounded-pill px-3 py-2" style="background:${theme.chip}; color:#fff;">Promedio ${average}</span>
                             </div>
                         </div>
@@ -4743,11 +5032,11 @@
                                 ${grades.map(g => {
                                     const subjectName = g.subject ? g.subject.name : (g.subject_name || 'Materia Desconocida');
                                     const credits = g.subject && g.subject.credits ? g.subject.credits : (g.subject_credits || '-');
-                                    const teacher = g.teacher || '<span class="text-muted">â€”</span>';
-                                    const cycle = g.cycle || 'â€”';
+                                    const teacher = g.teacher || '<span class="text-muted">—</span>';
+                                    const cycle = g.cycle || '—';
                                     const scoreVal = g.score !== null && g.score !== undefined ? g.score : null;
                                     const isApproved = scoreVal !== null && scoreVal >= 6;
-                                    const scoreTxt = scoreVal !== null ? scoreVal : 'â€”';
+                                    const scoreTxt = scoreVal !== null ? scoreVal : '—';
                                     const scoreClass = scoreVal !== null ? (isApproved ? 'text-success fw-bold' : 'text-danger fw-bold') : 'text-muted';
                                     const statusBadge = g.status === 'Aprobada' ? 'bg-success'
                                         : g.status === 'Reprobada'       ? 'bg-danger'
@@ -4765,7 +5054,7 @@
                                             <td>${attemptBadge}</td>
                                             <td><span class="badge ${statusBadge}">${g.status}</span></td>
                                             <td>
-                                                <button class="btn btn-sm btn-light rounded-pill" title="Editar calificaciÃ³n" onclick="openEditGrade(${g.id}, ${scoreVal !== null ? scoreVal : 'null'})"><i class="bi bi-pencil"></i></button>
+                                                <button class="btn btn-sm btn-light rounded-pill" title="Editar calificación" onclick="openEditGrade(${g.id}, ${scoreVal !== null ? scoreVal : 'null'})"><i class="bi bi-pencil"></i></button>
                                             </td>
                                         </tr>
                                     `;
@@ -4793,12 +5082,12 @@
         }
 
         function changeHistoryPage(page) {
-            // FunciÃ³n mantenida por compatibilidad pero ya no se usa
+            // Función mantenida por compatibilidad pero ya no se usa
         }
 
         async function downloadBoleta() {
             const username = document.getElementById('viewStudentUsername').textContent.trim();
-            if (!username) { showToast('No se identificÃ³ el alumno', 'warning'); return; }
+            if (!username) { showToast('No se identificó el alumno', 'warning'); return; }
             showToast('Generando boleta PDF...', 'info');
             try {
                 const res = await fetch(`http://localhost:8000/admin/students/${encodeURIComponent(username)}/boleta`, {
@@ -4814,7 +5103,7 @@
                 URL.revokeObjectURL(url);
                 showToast('Boleta descargada correctamente', 'success');
             } catch (e) {
-                showToast('Error de conexiÃ³n al generar boleta', 'danger');
+                showToast('Error de conexión al generar boleta', 'danger');
             }
         }
 
@@ -4831,7 +5120,7 @@
             }
 
             if (!('score' in payload) && !payload.status) {
-                showToast('Ingresa una calificaciÃ³n o selecciona un estatus', true);
+                showToast('Ingresa una calificación o selecciona un estatus', true);
                 return;
             }
 
@@ -4846,14 +5135,14 @@
                 });
 
                 if (response.ok) {
-                    showToast('CalificaciÃ³n actualizada');
+                    showToast('Calificación actualizada');
                     bootstrap.Modal.getInstance(document.getElementById('editGradeModal')).hide();
                     openViewStudent(document.getElementById('viewStudentUsername').textContent);
                 } else {
                     showToast('Error al actualizar', true);
                 }
             } catch (e) {
-                showToast('Error de conexiÃ³n', true);
+                showToast('Error de conexión', true);
             }
         }
 
@@ -4885,7 +5174,7 @@
                     showToast('Error al actualizar', true);
                 }
             } catch (e) {
-                showToast('Error de conexiÃ³n', true);
+                showToast('Error de conexión', true);
             }
         }
 
@@ -4910,14 +5199,14 @@
                 });
 
                 if (response.ok) {
-                    showToast('TrÃ¡mite actualizado');
+                    showToast('Trámite actualizado');
                     bootstrap.Modal.getInstance(document.getElementById('editServiceModal')).hide();
                     openViewStudent(document.getElementById('viewStudentUsername').textContent);
                 } else {
                     showToast('Error al actualizar', true);
                 }
             } catch (e) {
-                showToast('Error de conexiÃ³n', true);
+                showToast('Error de conexión', true);
             }
         }
 
@@ -4968,7 +5257,7 @@
                     showToast(error.detail || 'Error al actualizar docente', 'danger');
                 }
             } catch (error) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -5002,13 +5291,13 @@
                     const activeBadge = c.is_active
                         ? '<span class="badge bg-success">Activo</span>'
                         : '<span class="badge bg-secondary">Inactivo</span>';
-                    const amount = c.monthly_amount !== null && c.monthly_amount !== undefined ? `$${parseFloat(c.monthly_amount).toFixed(2)}` : 'â€”';
+                    const amount = c.monthly_amount !== null && c.monthly_amount !== undefined ? `$${parseFloat(c.monthly_amount).toFixed(2)}` : '—';
                     html += `<tr>
-                        <td class="fw-bold">${c.period || 'â€”'}</td>
-                        <td>${c.start_date || 'â€”'}</td>
-                        <td>${c.end_date || 'â€”'}</td>
+                        <td class="fw-bold">${c.period || '—'}</td>
+                        <td>${c.start_date || '—'}</td>
+                        <td>${c.end_date || '—'}</td>
                         <td>${amount}</td>
-                        <td><small class="text-muted">${months.join(', ') || 'â€”'}</small></td>
+                        <td><small class="text-muted">${months.join(', ') || '—'}</small></td>
                         <td><span class="badge bg-info text-dark rounded-pill">${c.payment_count ?? 0}</span></td>
                         <td>${activeBadge}</td>
                     </tr>`;
@@ -5019,7 +5308,7 @@
         }
 
         async function generateCyclePayments() {
-            if (!confirm('Â¿Generar los pagos del ciclo activo para TODOS los alumnos inscritos? Esto puede tardar unos segundos.')) return;
+            if (!confirm('¿Generar los pagos del ciclo activo para TODOS los alumnos inscritos? Esto puede tardar unos segundos.')) return;
             try {
                 const res = await fetch('http://localhost:8000/admin/school-cycle/generate-payments', {
                     method: 'POST',
@@ -5033,7 +5322,7 @@
                     const err = await res.json();
                     showToast(err.detail || 'Error al generar pagos', true);
                 }
-            } catch (e) { showToast('Error de conexiÃ³n', true); }
+            } catch (e) { showToast('Error de conexión', true); }
         }
 
         // â”€â”€â”€ Asignaciones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -5042,7 +5331,7 @@
 
         function populateAssignmentSelects() {
             const subjectOptions = '<option value="">Seleccionar materia...</option>' +
-                allSubjects.map(s => `<option value="${s.id}">${s.name} â€“ ${s.career} (Sem ${s.semester})</option>`).join('');
+                allSubjects.map(s => `<option value="${s.id}">${s.name} – ${s.career} (Sem ${s.semester})</option>`).join('');
             document.getElementById('assignmentSubjectId').innerHTML = subjectOptions;
 
             const teacherOptions = '<option value="">Seleccionar docente...</option>' +
@@ -5076,11 +5365,11 @@
                 const teacher = a.teacher || {};
                 html += `
                     <tr>
-                        <td>${subject.name || 'â€”'}</td>
-                        <td><span class="badge bg-secondary">${subject.career || 'â€”'}</span></td>
-                        <td>${subject.semester || 'â€”'}</td>
+                        <td>${subject.name || '—'}</td>
+                        <td><span class="badge bg-secondary">${subject.career || '—'}</span></td>
+                        <td>${subject.semester || '—'}</td>
                         <td>${teacher.full_name || '<span class="text-muted">Sin docente</span>'}</td>
-                        <td><span class="badge bg-info text-dark">${a.cycle_id ? 'Ciclo ' + a.cycle_id : 'â€”'}</span></td>
+                        <td><span class="badge bg-info text-dark">${a.cycle_id ? 'Ciclo ' + a.cycle_id : '—'}</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="deleteAssignment(${a.id})">
                                 <i class="bi bi-trash"></i>
@@ -5108,36 +5397,36 @@
                     const result = await response.json();
                     const linked = result._auto_linked ?? result.auto_linked ?? null;
                     const msg = linked !== null && linked > 0
-                        ? `AsignaciÃ³n creada y ${linked} alumno(s) vinculados automÃ¡ticamente al docente`
-                        : 'AsignaciÃ³n creada exitosamente';
+                        ? `Asignación creada y ${linked} alumno(s) vinculados automáticamente al docente`
+                        : 'Asignación creada exitosamente';
                     showToast(msg, 'success');
                     bootstrap.Modal.getInstance(document.getElementById('createAssignmentModal')).hide();
                     document.getElementById('createAssignmentForm').reset();
                     loadAssignments();
                 } else {
                     const err = await response.json();
-                    showToast(err.detail || 'Error al crear asignaciÃ³n', 'danger');
+                    showToast(err.detail || 'Error al crear asignación', 'danger');
                 }
             } catch (e) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
         async function deleteAssignment(id) {
-            if (!confirm('Â¿Eliminar esta asignaciÃ³n? Los alumnos inscritos en ella perderÃ¡n la referencia al docente.')) return;
+            if (!confirm('¿Eliminar esta asignación? Los alumnos inscritos en ella perderán la referencia al docente.')) return;
             try {
                 const response = await fetch(`http://localhost:8000/admin/subject-assignments/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (response.ok) {
-                    showToast('AsignaciÃ³n eliminada', 'success');
+                    showToast('Asignación eliminada', 'success');
                     loadAssignments();
                 } else {
-                    showToast('Error al eliminar asignaciÃ³n', 'danger');
+                    showToast('Error al eliminar asignación', 'danger');
                 }
             } catch (e) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -5182,7 +5471,7 @@
                     showToast(error.detail || 'Error al crear materia', 'danger');
                 }
             } catch (error) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -5230,7 +5519,7 @@
                     showToast(error.detail || 'Error al actualizar materia', 'danger');
                 }
             } catch (error) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -5268,7 +5557,7 @@
                     showToast(error.detail || 'Error al registrar cargo', 'danger');
                 }
             } catch (error) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -5323,7 +5612,7 @@
                     showToast(error.detail || 'Error al actualizar cargo', 'danger');
                 }
             } catch (error) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -5349,7 +5638,7 @@
                 });
 
                 if (response.ok) {
-                    showToast('TrÃ¡mite registrado exitosamente', 'success');
+                    showToast('Trámite registrado exitosamente', 'success');
                     const modal = bootstrap.Modal.getInstance(document.getElementById('createServiceModal'));
                     modal.hide();
                     document.getElementById('createServiceForm').reset();
@@ -5359,10 +5648,10 @@
                     loadAdminData(); // Recargar lista
                 } else {
                     const error = await response.json();
-                    showToast(error.detail || 'Error al registrar trÃ¡mite', 'danger');
+                    showToast(error.detail || 'Error al registrar trámite', 'danger');
                 }
             } catch (error) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -5412,16 +5701,16 @@
                 });
 
                 if (response.ok) {
-                    showToast('TrÃ¡mite actualizado exitosamente', 'success');
+                    showToast('Trámite actualizado exitosamente', 'success');
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editGlobalServiceModal'));
                     modal.hide();
                     loadAdminData(); // Recargar lista
                 } else {
                     const error = await response.json();
-                    showToast(error.detail || 'Error al actualizar trÃ¡mite', 'danger');
+                    showToast(error.detail || 'Error al actualizar trámite', 'danger');
                 }
             } catch (error) {
-                showToast('Error de conexiÃ³n', 'danger');
+                showToast('Error de conexión', 'danger');
             }
         }
 
@@ -5431,7 +5720,7 @@
 
             document.getElementById('viewTeacherInitials').textContent = getInitials(teacher.full_name);
             document.getElementById('viewTeacherName').textContent = teacher.full_name || 'Sin nombre';
-            document.getElementById('viewTeacherUsernameDisplay').textContent = `MatrÃ­cula: ${teacher.username}`;
+            document.getElementById('viewTeacherUsernameDisplay').textContent = `Matrícula: ${teacher.username}`;
             document.getElementById('viewTeacherEmailDisplay').textContent = teacher.email || 'Sin correo';
 
             // Materias asignadas: filtrar de allAssignments
@@ -5445,10 +5734,10 @@
             } else {
                 tbody.innerHTML = assigned.map(a => {
                     const subject = a.subject || {};
-                    const cnt = a.student_count ?? a.students_count ?? 'â€”';
+                    const cnt = a.student_count ?? a.students_count ?? '—';
                     return `<tr>
                         <td class="fw-semibold">${escHtml(subject.name || 'Sin nombre')}</td>
-                        <td><span class="badge bg-light text-dark border">${escHtml(subject.semester || 'â€”')}</span></td>
+                        <td><span class="badge bg-light text-dark border">${escHtml(subject.semester || '—')}</span></td>
                         <td><span class="badge bg-primary rounded-pill">${cnt}</span></td>
                     </tr>`;
                 }).join('');
@@ -5535,7 +5824,7 @@
                 });
 
                 if (response.ok) {
-                    showToast('Â¡Alumno actualizado exitosamente!');
+                    showToast('¡Alumno actualizado exitosamente!');
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editStudentModal'));
                     modal.hide();
                     loadAdminData();
@@ -5545,7 +5834,7 @@
                     errorDiv.style.display = 'block';
                 }
             } catch (error) {
-                errorDiv.textContent = 'Error de conexiÃ³n';
+                errorDiv.textContent = 'Error de conexión';
                 errorDiv.style.display = 'block';
             }
         }
@@ -5604,7 +5893,7 @@
                 });
 
                 if (response.ok) {
-                    showToast('Â¡Alumno registrado exitosamente!');
+                    showToast('¡Alumno registrado exitosamente!');
                     const modal = bootstrap.Modal.getInstance(document.getElementById('registerStudentModal'));
                     modal.hide();
                     form.reset();
@@ -5617,7 +5906,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                errorDiv.textContent = 'Error de conexiÃ³n con el servidor';
+                errorDiv.textContent = 'Error de conexión con el servidor';
                 errorDiv.style.display = 'block';
             }
         }
@@ -5649,7 +5938,7 @@
                 });
 
                 if (response.ok) {
-                    showToast('Â¡Docente registrado exitosamente!');
+                    showToast('¡Docente registrado exitosamente!');
                     bootstrap.Modal.getInstance(document.getElementById('registerTeacherModal')).hide();
                     form.reset();
                     loadAdminData();
@@ -5659,7 +5948,7 @@
                     errorDiv.style.display = 'block';
                 }
             } catch (e) {
-                errorDiv.textContent = 'No se pudo conectar con el servidor. Verifica que el backend estÃ© activo.';
+                errorDiv.textContent = 'No se pudo conectar con el servidor. Verifica que el backend esté activo.';
                 errorDiv.style.display = 'block';
             }
         }
@@ -5680,7 +5969,7 @@
             document.getElementById('sidebarOverlay').classList.toggle('show');
         }
 
-        // â”€â”€â”€ GestiÃ³n de Grupos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // â”€â”€â”€ Gestión de Grupos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         async function reloadStudents() {
             try {
@@ -5744,10 +6033,10 @@
                     <div class="flex-grow-1 min-w-0">
                         <div class="fw-semibold small text-truncate">${escHtml(s.full_name || s.username)}</div>
                         <div class="text-muted" style="font-size:0.72rem">${escHtml(s.username)}
-                            ${s.carrera ? `Â· ${escHtml(s.carrera)}` : ''}
+                            ${s.carrera ? `· ${escHtml(s.carrera)}` : ''}
                         </div>
                     </div>
-                    ${s.grupo ? `<span class="badge bg-warning text-dark flex-shrink-0" title="SerÃ¡ movido de este grupo">Grupo ${escHtml(s.grupo)}</span>` : ''}
+                    ${s.grupo ? `<span class="badge bg-warning text-dark flex-shrink-0" title="Será movido de este grupo">Grupo ${escHtml(s.grupo)}</span>` : ''}
                 </label>`;
 
             let html = '';
@@ -5756,7 +6045,7 @@
                 html += sinGrupo.map(renderRow).join('');
             }
             if (conGrupo.length) {
-                html += `<div class="px-3 py-1 bg-warning bg-opacity-10 border-bottom border-top mt-1"><small class="text-warning fw-semibold"><i class="bi bi-arrow-left-right me-1"></i>Ya en otro grupo â€” serÃ¡n movidos (${conGrupo.length})</small></div>`;
+                html += `<div class="px-3 py-1 bg-warning bg-opacity-10 border-bottom border-top mt-1"><small class="text-warning fw-semibold"><i class="bi bi-arrow-left-right me-1"></i>Ya en otro grupo — serán movidos (${conGrupo.length})</small></div>`;
                 html += conGrupo.map(renderRow).join('');
             }
 
@@ -5801,7 +6090,7 @@
             const toMove = allStudents.filter(s => usernames.includes(s.username) && s.grupo && s.grupo !== grupo);
             if (toMove.length > 0) {
                 const names = toMove.map(s => `${s.full_name || s.username} (Grupo ${s.grupo})`).join(', ');
-                if (!confirm(`Los siguientes alumnos serÃ¡n MOVIDOS de su grupo actual:\n\n${names}\n\nÂ¿Continuar?`)) return;
+                if (!confirm(`Los siguientes alumnos serán MOVIDOS de su grupo actual:\n\n${names}\n\n¿Continuar?`)) return;
             }
 
             try {
@@ -5833,7 +6122,7 @@
 
             bootstrap.Modal.getOrCreateInstance(document.getElementById('createGroupModal')).hide();
             if (!usernames.length) {
-                showToast(`Grupo "${grupo}" creado. Puedes asignar alumnos despuÃƒÂ©s.`, 'success');
+                showToast(`Grupo "${grupo}" creado. Puedes asignar alumnos después.`, 'success');
             } else if (fail) {
                 showToast(`Grupo creado con ${ok} alumnos. ${fail} fallaron.`, 'warning');
             } else {
@@ -5958,7 +6247,7 @@
                             </div>
                             <div class="d-flex gap-2 flex-wrap">
                                 <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="openBulkEnroll()">
-                                    <i class="bi bi-person-check me-1"></i>Cambiar InscripciÃ³n
+                                    <i class="bi bi-person-check me-1"></i>Cambiar Inscripción
                                 </button>
                                 <button class="btn btn-sm btn-outline-success rounded-pill" onclick="openBulkAssign()">
                                     <i class="bi bi-book me-1"></i>Inscribir Materia
@@ -5975,10 +6264,10 @@
                                 <thead>
                                     <tr>
                                         <th><input type="checkbox" id="groupSelectAll" onchange="toggleSelectAllGroup(this)"></th>
-                                        <th>MatrÃ­cula</th>
+                                        <th>Matrícula</th>
                                         <th>Nombre</th>
                                         <th>Semestre</th>
-                                        <th>InscripciÃ³n</th>
+                                        <th>Inscripción</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -5989,8 +6278,8 @@
                                         <tr>
                                             <td><input type="checkbox" class="group-student-cb" value="${escHtml(s.username)}"></td>
                                             <td><span class="fw-bold text-primary">${escHtml(s.username)}</span></td>
-                                            <td>${escHtml(s.full_name || 'â€”')}</td>
-                                            <td>${escHtml(s.semestre || 'â€”')}</td>
+                                            <td>${escHtml(s.full_name || '—')}</td>
+                                            <td>${escHtml(s.semestre || '—')}</td>
                                             <td>${enrollBadge(s.enrollment_status || 'No Inscrito')}</td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="openViewStudent('${escHtml(s.username)}')">
@@ -6021,7 +6310,7 @@
             const selected = getSelectedGroupUsernames();
             document.getElementById('bulkEnrollGrupo').value = currentGroupGrupo;
             document.getElementById('bulkEnrollCarrera').value = currentGroupCarrera;
-            document.getElementById('bulkEnrollGroupName').textContent = currentGroupGrupo + ' â€” ' + currentGroupCarrera;
+            document.getElementById('bulkEnrollGroupName').textContent = currentGroupGrupo + ' — ' + currentGroupCarrera;
             document.getElementById('bulkEnrollCount').textContent = selected.length ? selected.length : 'todos';
             bootstrap.Modal.getOrCreateInstance(document.getElementById('groupBulkEnrollModal')).show();
         }
@@ -6042,11 +6331,11 @@
                 });
                 const data = await res.json();
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('groupBulkEnrollModal')).hide();
-                showToast(`InscripciÃ³n actualizada: ${data.updated} alumnos â†’ ${status}`, 'success');
+                showToast(`Inscripción actualizada: ${data.updated} alumnos â†’ ${status}`, 'success');
                 await reloadStudents();
                 selectGroup(currentGroupGrupo, currentGroupCarrera);
             } catch(e) {
-                showToast('Error al actualizar inscripciÃ³n', 'danger');
+                showToast('Error al actualizar inscripción', 'danger');
             }
         }
 
@@ -6061,7 +6350,7 @@
                 });
                 const assignments = await res.json();
                 sel.innerHTML = assignments.map(a =>
-                    `<option value="${a.id}">${escHtml(a.subject?.name || `Materia #${a.subject_id}`)} â€” ${escHtml(a.teacher?.full_name || a.teacher?.username || 'Sin docente')} (${escHtml(a.subject?.semester || '')})</option>`
+                    `<option value="${a.id}">${escHtml(a.subject?.name || `Materia #${a.subject_id}`)} — ${escHtml(a.teacher?.full_name || a.teacher?.username || 'Sin docente')} (${escHtml(a.subject?.semester || '')})</option>`
                 ).join('');
             } catch(e) {
                 sel.innerHTML = '<option value="">Error al cargar</option>';
@@ -6070,7 +6359,7 @@
             const selected = getSelectedGroupUsernames();
             document.getElementById('bulkAssignGrupo').value = currentGroupGrupo;
             document.getElementById('bulkAssignCarrera').value = currentGroupCarrera;
-            document.getElementById('bulkAssignGroupName').textContent = currentGroupGrupo + ' â€” ' + currentGroupCarrera;
+            document.getElementById('bulkAssignGroupName').textContent = currentGroupGrupo + ' — ' + currentGroupCarrera;
             document.getElementById('bulkAssignCount').textContent = selected.length ? selected.length : 'todos';
             bootstrap.Modal.getOrCreateInstance(document.getElementById('groupBulkAssignModal')).show();
         }
@@ -6079,7 +6368,7 @@
             const grupo = document.getElementById('bulkAssignGrupo').value;
             const carrera = document.getElementById('bulkAssignCarrera').value;
             const assignmentId = parseInt(document.getElementById('bulkAssignAssignmentId').value);
-            if (!assignmentId) { showToast('Selecciona una asignaciÃ³n', 'warning'); return; }
+            if (!assignmentId) { showToast('Selecciona una asignación', 'warning'); return; }
 
             const selected = getSelectedGroupUsernames();
             const body = { grupo, carrera, assignment_id: assignmentId };
@@ -6121,7 +6410,7 @@
         function renderAddStudentList(students) {
             const container = document.getElementById('addStudentList');
             if (!students.length) {
-                container.innerHTML = '<p class="text-muted small p-3">No hay mÃ¡s alumnos disponibles.</p>';
+                container.innerHTML = '<p class="text-muted small p-3">No hay más alumnos disponibles.</p>';
                 return;
             }
             container.innerHTML = students.map(s => `
@@ -6133,7 +6422,7 @@
                         <div class="fw-semibold small text-truncate">${escHtml(s.full_name || s.username)}</div>
                         <div class="text-muted" style="font-size:0.75rem">${escHtml(s.username)}
                             ${s.grupo ? `<span class="badge bg-secondary ms-1">Grupo ${escHtml(s.grupo)}</span>` : '<span class="text-muted ms-1">Sin grupo</span>'}
-                            ${s.carrera ? `<span class="text-muted ms-1">Â· ${escHtml(s.carrera)}</span>` : ''}
+                            ${s.carrera ? `<span class="text-muted ms-1">· ${escHtml(s.carrera)}</span>` : ''}
                         </div>
                     </div>
                 </label>`).join('');
@@ -6193,7 +6482,7 @@
         }
 
         async function removeStudentFromGroup(username, grupo, carrera) {
-            if (!confirm(`Â¿Quitar a ${username} del grupo ${grupo}?`)) return;
+            if (!confirm(`¿Quitar a ${username} del grupo ${grupo}?`)) return;
             try {
                 const res = await fetch('http://localhost:8000/admin/student-enrollments/move-group', {
                     method: 'PUT',
@@ -6211,20 +6500,20 @@
                 // If group still has students, show it; otherwise clear detail
                 const stillExists = allStudents.some(s => s.grupo === grupo && (s.carrera || 'Sin carrera') === carrera);
                 if (stillExists) selectGroup(grupo, carrera);
-                else document.getElementById('groupDetailPanel').innerHTML = '<div class="dashboard-card text-center py-5 text-muted"><i class="bi bi-people fs-1 d-block mb-3 opacity-25"></i><p class="mb-0">El grupo quedÃ³ vacÃ­o. Selecciona otro grupo.</p></div>';
+                else document.getElementById('groupDetailPanel').innerHTML = '<div class="dashboard-card text-center py-5 text-muted"><i class="bi bi-people fs-1 d-block mb-3 opacity-25"></i><p class="mb-0">El grupo quedó vacío. Selecciona otro grupo.</p></div>';
             } catch(e) {
                 showToast('Error al quitar alumno', 'danger');
             }
         }
 
         function switchView(targetId) {
-            // Ocultar todas las secciones
+            // Ocultar todas las secciónes
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             
-            // Mostrar la secciÃ³n seleccionada
+            // Mostrar la sección seleccionada
             document.getElementById(targetId).classList.add('active');
 
-            // Actualizar el menÃº lateral
+            // Actualizar el menú lateral
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             const activeLink = document.querySelector(`.nav-link[data-target="${targetId}"]`);
             if (activeLink) activeLink.classList.add('active');
@@ -6233,14 +6522,14 @@
                 title.textContent = activeLink.textContent.trim();
             }
 
-            // Cerrar menÃº en mÃ³viles
+            // Cerrar menú en móviles
             if (window.innerWidth < 992) {
                 document.getElementById('sidebar').classList.remove('show');
                 document.getElementById('sidebarOverlay').classList.remove('show');
             }
         }
 
-        // Configurar los enlaces del menÃº
+        // Configurar los enlaces del menú
         document.addEventListener('DOMContentLoaded', () => {
             loadAdminData();
             loadSchoolCycle();
@@ -6267,9 +6556,296 @@
                         loadReportFilterOptions();
                         loadReportsDashboard();
                     }
+                    if (targetId === 'view-pagweb') pwInitSection();
+                });
+            });
+
+            // Página Web tab clicks
+            document.querySelectorAll('#pagwebTabs [data-pw-tab]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#pagwebTabs [data-pw-tab]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const tab = btn.getAttribute('data-pw-tab');
+                    document.querySelectorAll('#pw-tab-portafolio,#pw-tab-eventos,#pw-tab-leads,#pw-tab-comunidades').forEach(el => el.style.display = 'none');
+                    document.getElementById('pw-tab-' + tab).style.display = '';
+                    if (tab === 'portafolio') pwLoadProjects('portfolio');
+                    else if (tab === 'eventos') pwLoadProjects('evento');
+                    else if (tab === 'leads') pwLoadLeads();
+                    else if (tab === 'comunidades') pwLoadCommunities();
                 });
             });
         });
+
+        // ── PÁGINA WEB ───────────────────────────────────────────────────────
+        let _pwInitialized = false;
+
+        function pwInitSection() {
+            if (_pwInitialized) return;
+            _pwInitialized = true;
+            pwLoadProjects('portfolio');
+        }
+
+        async function pwLoadProjects(category) {
+            const tbody = document.getElementById(category === 'portfolio' ? 'pw-portfolio-tbody' : 'pw-eventos-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm me-2"></div>Cargando...</td></tr>';
+            try {
+                const res = await fetch('http://localhost:8000' +`/admin/projects?category=${category}`);
+                if (!res.ok) throw new Error('Error ' + res.status);
+                const items = await res.json();
+                if (!items.length) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Sin registros</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = items.map(p => category === 'portfolio' ? `
+                    <tr>
+                        <td>${p.image_url ? `<img src="${p.image_url}" height="40" class="rounded" alt="${p.title}">` : '<span class="text-muted">—</span>'}</td>
+                        <td class="fw-semibold">${p.title}</td>
+                        <td class="text-muted small" style="max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${p.short_description || '—'}</td>
+                        <td>${p.is_active ? '<span class="badge bg-success-subtle text-success">Sí</span>' : '<span class="badge bg-secondary-subtle text-secondary">No</span>'}</td>
+                        <td class="text-muted small">${new Date(p.created_at).toLocaleDateString('es-MX')}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="pwOpenProjectModal(${JSON.stringify(p).replace(/"/g,'&quot;')},'portfolio')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="pwDeleteProject(${p.id},'portfolio')"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>` : `
+                    <tr>
+                        <td>${p.image_url ? `<img src="${p.image_url}" height="40" class="rounded" alt="${p.title}">` : '<span class="text-muted">—</span>'}</td>
+                        <td class="fw-semibold">${p.title}</td>
+                        <td class="text-muted small">${p.date ? new Date(p.date).toLocaleDateString('es-MX') : '—'}</td>
+                        <td class="text-muted small">${p.location || '—'}</td>
+                        <td>${p.is_active ? '<span class="badge bg-success-subtle text-success">Sí</span>' : '<span class="badge bg-secondary-subtle text-secondary">No</span>'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="pwOpenProjectModal(${JSON.stringify(p).replace(/"/g,'&quot;')},'evento')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="pwDeleteProject(${p.id},'evento')"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-3">Error al cargar datos</td></tr>`;
+            }
+        }
+
+        async function pwLoadLeads() {
+            const tbody = document.getElementById('pw-leads-tbody');
+            const status = document.getElementById('pw-leads-filter').value;
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm me-2"></div>Cargando...</td></tr>';
+            try {
+                const url = status ? `/admin/contacts?status=${status}` : '/admin/contacts';
+                const res = await fetch('http://localhost:8000' +url);
+                if (!res.ok) throw new Error('Error ' + res.status);
+                const items = await res.json();
+                if (!items.length) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">Sin registros</td></tr>';
+                    return;
+                }
+                const statusBadge = { nuevo: 'bg-primary-subtle text-primary', contactado: 'bg-warning-subtle text-warning', inscrito: 'bg-success-subtle text-success' };
+                tbody.innerHTML = items.map(c => `
+                    <tr>
+                        <td class="fw-semibold">${c.nombre}</td>
+                        <td><a href="tel:${c.telefono}" class="text-decoration-none">${c.telefono}</a></td>
+                        <td>${c.email ? `<a href="mailto:${c.email}" class="text-decoration-none">${c.email}</a>` : '—'}</td>
+                        <td class="small">${c.programa || '—'}</td>
+                        <td class="small text-muted" style="max-width:180px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="${c.mensaje || ''}">${c.mensaje || '—'}</td>
+                        <td>
+                            <select class="form-select form-select-sm rounded-pill" style="min-width:120px" onchange="pwUpdateLeadStatus(${c.id},this.value)">
+                                <option value="nuevo" ${c.status==='nuevo'?'selected':''}>Nuevo</option>
+                                <option value="contactado" ${c.status==='contactado'?'selected':''}>Contactado</option>
+                                <option value="inscrito" ${c.status==='inscrito'?'selected':''}>Inscrito</option>
+                            </select>
+                        </td>
+                        <td class="small text-muted">${new Date(c.created_at).toLocaleDateString('es-MX')}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="pwDeleteLead(${c.id})"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-3">Error al cargar datos</td></tr>';
+            }
+        }
+
+        function pwOpenProjectModal(project, category) {
+            const modal = new bootstrap.Modal(document.getElementById('pwProjectModal'));
+            const isEvent = category === 'evento';
+            document.getElementById('pwProjectModalTitle').textContent = project ? (isEvent ? 'Editar Evento' : 'Editar Proyecto') : (isEvent ? 'Nuevo Evento' : 'Nuevo Proyecto');
+            document.getElementById('pwProjectId').value = project ? project.id : '';
+            document.getElementById('pwProjectCategory').value = category;
+            document.getElementById('pwProjectTitle').value = project ? project.title : '';
+            document.getElementById('pwProjectDesc').value = project ? (project.short_description || '') : '';
+            document.getElementById('pwProjectImage').value = project ? (project.image_url || '') : '';
+            document.getElementById('pwProjectActive').checked = project ? project.is_active : true;
+            if (isEvent) {
+                document.querySelectorAll('.pw-event-only').forEach(el => el.style.display = '');
+                document.getElementById('pwProjectDate').value = project && project.date ? project.date.slice(0,16) : '';
+                document.getElementById('pwProjectLocation').value = project ? (project.location || '') : '';
+            } else {
+                document.querySelectorAll('.pw-event-only').forEach(el => el.style.display = 'none');
+            }
+            modal.show();
+        }
+
+        async function pwSaveProject() {
+            const id = document.getElementById('pwProjectId').value;
+            const category = document.getElementById('pwProjectCategory').value;
+            const body = {
+                title: document.getElementById('pwProjectTitle').value.trim(),
+                short_description: document.getElementById('pwProjectDesc').value.trim() || null,
+                image_url: document.getElementById('pwProjectImage').value.trim() || null,
+                is_active: document.getElementById('pwProjectActive').checked,
+                category,
+                date: category === 'evento' ? (document.getElementById('pwProjectDate').value || null) : null,
+                location: category === 'evento' ? (document.getElementById('pwProjectLocation').value.trim() || null) : null,
+            };
+            if (!body.title) { alert('El título es requerido'); return; }
+            try {
+                const res = await fetch('http://localhost:8000' + (id ? `/admin/projects/${id}` : '/admin/projects'), {
+                    method: id ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                if (!res.ok) throw new Error(await res.text());
+                bootstrap.Modal.getInstance(document.getElementById('pwProjectModal')).hide();
+                pwLoadProjects(category);
+            } catch (e) {
+                alert('Error al guardar: ' + e.message);
+            }
+        }
+
+        async function pwDeleteProject(id, category) {
+            if (!confirm('¿Eliminar este registro?')) return;
+            try {
+                const res = await fetch('http://localhost:8000' +`/admin/projects/${id}`, { method: 'DELETE' });
+                if (!res.ok && res.status !== 204) throw new Error('Error ' + res.status);
+                pwLoadProjects(category);
+            } catch (e) {
+                alert('Error al eliminar: ' + e.message);
+            }
+        }
+
+        async function pwUpdateLeadStatus(id, status) {
+            try {
+                const res = await fetch('http://localhost:8000' +`/admin/contacts/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status }),
+                });
+                if (!res.ok) throw new Error('Error ' + res.status);
+            } catch (e) {
+                alert('Error al actualizar estado: ' + e.message);
+                pwLoadLeads();
+            }
+        }
+
+        async function pwDeleteLead(id) {
+            if (!confirm('¿Eliminar este lead?')) return;
+            try {
+                const res = await fetch('http://localhost:8000' +`/admin/contacts/${id}`, { method: 'DELETE' });
+                if (!res.ok && res.status !== 204) throw new Error('Error ' + res.status);
+                pwLoadLeads();
+            } catch (e) {
+                alert('Error al eliminar: ' + e.message);
+            }
+        }
+
+        // ── COMUNIDADES ──────────────────────────────────────────────────────
+        const COLOR_BADGE = {
+            blue:   'bg-primary-subtle text-primary',
+            pink:   'bg-danger-subtle text-danger',
+            orange: 'bg-warning-subtle text-warning',
+            purple: 'bg-purple-subtle text-purple',
+            green:  'bg-success-subtle text-success',
+            teal:   'bg-info-subtle text-info',
+        };
+        const COLOR_ICON_BG = {
+            blue:   '#1a3db6', pink: '#d81b60', orange: '#ff6b00',
+            purple: '#9c27b0', green: '#2e7d32', teal: '#00796b',
+        };
+
+        async function pwLoadCommunities() {
+            const tbody = document.getElementById('pw-communities-tbody');
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm me-2"></div>Cargando...</td></tr>';
+            try {
+                const res = await fetch('http://localhost:8000/admin/communities');
+                if (!res.ok) throw new Error('Error ' + res.status);
+                const items = await res.json();
+                if (!items.length) {
+                    tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">Sin comunidades registradas</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = items.map(c => `
+                    <tr>
+                        <td><span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white" style="width:34px;height:34px;background:${COLOR_ICON_BG[c.color]||'#1a3db6'}"><i class="bi ${c.icon}"></i></span></td>
+                        <td class="fw-semibold">${c.name}</td>
+                        <td class="small text-muted" style="max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${c.description}</td>
+                        <td><span class="badge rounded-pill ${COLOR_BADGE[c.color]||''}">${c.color}</span></td>
+                        <td class="small">${c.frequency||'—'}</td>
+                        <td class="small">${c.member_count!=null?c.member_count:'—'}</td>
+                        <td class="small">${c.sort_order}</td>
+                        <td>${c.is_active?'<span class="badge bg-success-subtle text-success">Sí</span>':'<span class="badge bg-secondary-subtle text-secondary">No</span>'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="pwOpenCommunityModal(${JSON.stringify(c).replace(/"/g,'&quot;')})"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="pwDeleteCommunity(${c.id})"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+            } catch(e) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-danger py-3">Error al cargar comunidades</td></tr>';
+            }
+        }
+
+        function pwOpenCommunityModal(c) {
+            const modal = new bootstrap.Modal(document.getElementById('pwCommunityModal'));
+            document.getElementById('pwCommunityModalTitle').textContent = c ? 'Editar Comunidad' : 'Nueva Comunidad';
+            document.getElementById('pwCommunityId').value = c ? c.id : '';
+            document.getElementById('pwCommName').value    = c ? c.name : '';
+            document.getElementById('pwCommDesc').value    = c ? c.description : '';
+            document.getElementById('pwCommColor').value   = c ? c.color : 'blue';
+            const icon = c ? c.icon : 'bi-people-fill';
+            document.getElementById('pwCommIcon').value    = icon;
+            document.getElementById('pwCommIconPreview').className = 'bi ' + icon;
+            document.getElementById('pwCommFreq').value    = c ? (c.frequency||'') : '';
+            document.getElementById('pwCommMembers').value = c && c.member_count!=null ? c.member_count : '';
+            document.getElementById('pwCommImage').value   = c ? (c.image_url||'') : '';
+            document.getElementById('pwCommOrder').value   = c ? c.sort_order : 0;
+            document.getElementById('pwCommActive').checked = c ? c.is_active : true;
+            modal.show();
+        }
+
+        async function pwSaveCommunity() {
+            const id = document.getElementById('pwCommunityId').value;
+            const body = {
+                name:         document.getElementById('pwCommName').value.trim(),
+                description:  document.getElementById('pwCommDesc').value.trim(),
+                icon:         document.getElementById('pwCommIcon').value.trim() || 'bi-people-fill',
+                color:        document.getElementById('pwCommColor').value,
+                frequency:    document.getElementById('pwCommFreq').value.trim() || null,
+                member_count: document.getElementById('pwCommMembers').value !== '' ? parseInt(document.getElementById('pwCommMembers').value) : null,
+                image_url:    document.getElementById('pwCommImage').value.trim() || null,
+                sort_order:   parseInt(document.getElementById('pwCommOrder').value) || 0,
+                is_active:    document.getElementById('pwCommActive').checked,
+            };
+            if (!body.name || !body.description) { alert('Nombre y descripción son requeridos'); return; }
+            try {
+                const res = await fetch('http://localhost:8000' + (id ? `/admin/communities/${id}` : '/admin/communities'), {
+                    method: id ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                if (!res.ok) throw new Error(await res.text());
+                bootstrap.Modal.getInstance(document.getElementById('pwCommunityModal')).hide();
+                pwLoadCommunities();
+            } catch(e) {
+                alert('Error al guardar: ' + e.message);
+            }
+        }
+
+        async function pwDeleteCommunity(id) {
+            if (!confirm('¿Eliminar esta comunidad?')) return;
+            try {
+                const res = await fetch('http://localhost:8000/admin/communities/' + id, { method: 'DELETE' });
+                if (!res.ok && res.status !== 204) throw new Error('Error ' + res.status);
+                pwLoadCommunities();
+            } catch(e) {
+                alert('Error al eliminar: ' + e.message);
+            }
+        }
 
         function logout() {
             localStorage.removeItem('token');

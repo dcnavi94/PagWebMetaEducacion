@@ -3875,6 +3875,148 @@ def update_student_grade(grade_id: int, grade_update: schemas.GradeUpdate, curre
 
 
 
+# ── Página Web: endpoints públicos ──────────────────────────────────────────
+
+@app.get("/public/projects", response_model=List[schemas.ProjectOut], tags=["Web Pública"])
+def public_get_projects(category: Optional[str] = None, db: Session = Depends(get_db)):
+    """Devuelve proyectos/eventos activos. Filtrable por category=portfolio|evento."""
+    q = db.query(models.Project).filter(models.Project.is_active == True)
+    if category:
+        q = q.filter(models.Project.category == category)
+    return q.order_by(models.Project.created_at.desc()).all()
+
+
+@app.post("/public/contacts", response_model=schemas.ContactOut, status_code=201, tags=["Web Pública"])
+def public_create_contact(data: schemas.ContactCreate, db: Session = Depends(get_db)):
+    """Recibe un lead del formulario de contacto de la landing page."""
+    contact = models.Contact(**data.model_dump())
+    db.add(contact)
+    db.commit()
+    db.refresh(contact)
+    return contact
+
+
+# ── Página Web: endpoints de administración ──────────────────────────────────
+
+@app.get("/admin/projects", response_model=List[schemas.ProjectOut], tags=["Admin Web"])
+def admin_get_projects(category: Optional[str] = None, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    q = db.query(models.Project)
+    if category:
+        q = q.filter(models.Project.category == category)
+    return q.order_by(models.Project.created_at.desc()).all()
+
+
+@app.post("/admin/projects", response_model=schemas.ProjectOut, status_code=201, tags=["Admin Web"])
+def admin_create_project(data: schemas.ProjectCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    project = models.Project(**data.model_dump())
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+    return project
+
+
+@app.put("/admin/projects/{project_id}", response_model=schemas.ProjectOut, tags=["Admin Web"])
+def admin_update_project(project_id: int, data: schemas.ProjectUpdate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    project = db.query(models.Project).filter(models.Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Proyecto no encontrado")
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(project, field, value)
+    db.commit()
+    db.refresh(project)
+    return project
+
+
+@app.delete("/admin/projects/{project_id}", status_code=204, tags=["Admin Web"])
+def admin_delete_project(project_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    project = db.query(models.Project).filter(models.Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Proyecto no encontrado")
+    db.delete(project)
+    db.commit()
+
+
+@app.get("/admin/contacts", response_model=List[schemas.ContactOut], tags=["Admin Web"])
+def admin_get_contacts(status: Optional[str] = None, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    q = db.query(models.Contact)
+    if status:
+        q = q.filter(models.Contact.status == status)
+    return q.order_by(models.Contact.created_at.desc()).all()
+
+
+@app.put("/admin/contacts/{contact_id}/status", response_model=schemas.ContactOut, tags=["Admin Web"])
+def admin_update_contact_status(contact_id: int, data: schemas.ContactStatusUpdate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    valid = {e.value for e in models.ContactStatus}
+    if data.status not in valid:
+        raise HTTPException(status_code=400, detail=f"Status inválido. Opciones: {valid}")
+    contact = db.query(models.Contact).filter(models.Contact.id == contact_id).first()
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contacto no encontrado")
+    contact.status = data.status
+    db.commit()
+    db.refresh(contact)
+    return contact
+
+
+@app.delete("/admin/contacts/{contact_id}", status_code=204, tags=["Admin Web"])
+def admin_delete_contact(contact_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    contact = db.query(models.Contact).filter(models.Contact.id == contact_id).first()
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contacto no encontrado")
+    db.delete(contact)
+    db.commit()
+
+
+# ── Comunidades: endpoints públicos ─────────────────────────────────────────
+
+@app.get("/public/communities", response_model=List[schemas.CommunityOut], tags=["Web Pública"])
+def public_get_communities(db: Session = Depends(get_db)):
+    """Devuelve comunidades activas ordenadas por sort_order."""
+    return (
+        db.query(models.Community)
+        .filter(models.Community.is_active == True)
+        .order_by(models.Community.sort_order, models.Community.id)
+        .all()
+    )
+
+
+# ── Comunidades: endpoints de administración ─────────────────────────────────
+
+@app.get("/admin/communities", response_model=List[schemas.CommunityOut], tags=["Admin Web"])
+def admin_get_communities(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    return db.query(models.Community).order_by(models.Community.sort_order, models.Community.id).all()
+
+
+@app.post("/admin/communities", response_model=schemas.CommunityOut, status_code=201, tags=["Admin Web"])
+def admin_create_community(data: schemas.CommunityCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    community = models.Community(**data.model_dump())
+    db.add(community)
+    db.commit()
+    db.refresh(community)
+    return community
+
+
+@app.put("/admin/communities/{community_id}", response_model=schemas.CommunityOut, tags=["Admin Web"])
+def admin_update_community(community_id: int, data: schemas.CommunityUpdate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    community = db.query(models.Community).filter(models.Community.id == community_id).first()
+    if not community:
+        raise HTTPException(status_code=404, detail="Comunidad no encontrada")
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(community, field, value)
+    db.commit()
+    db.refresh(community)
+    return community
+
+
+@app.delete("/admin/communities/{community_id}", status_code=204, tags=["Admin Web"])
+def admin_delete_community(community_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    community = db.query(models.Community).filter(models.Community.id == community_id).first()
+    if not community:
+        raise HTTPException(status_code=404, detail="Comunidad no encontrada")
+    db.delete(community)
+    db.commit()
+
+
 @app.get("/")
 def read_root():
     return {"message": "Bienvenido a la API de la Plataforma Escolar Unives"}

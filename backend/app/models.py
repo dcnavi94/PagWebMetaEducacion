@@ -400,3 +400,83 @@ class CourseEnrollment(Base):
     student_enrollment = relationship("StudentEnrollment", back_populates="course_enrollments")
     assignment = relationship("SubjectAssignment", back_populates="course_enrollments")
     grades = relationship("Grade", back_populates="course_enrollment", passive_deletes=True)
+
+
+# ── Página Web ──────────────────────────────────────────────────────────────
+
+class ProjectCategory(str, enum.Enum):
+    PORTFOLIO = "portfolio"
+    EVENTO = "evento"
+
+class ContactStatus(str, enum.Enum):
+    NUEVO = "nuevo"
+    CONTACTADO = "contactado"
+    INSCRITO = "inscrito"
+
+class Project(Base):
+    """Portafolio de alumnos y eventos de la institución."""
+    __tablename__ = "projects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    short_description = Column(String, nullable=True)
+    category = Column(
+        SQLEnum(ProjectCategory, name="project_category", values_callable=lambda x: [e.value for e in x]),
+        default=ProjectCategory.PORTFOLIO,
+        server_default=ProjectCategory.PORTFOLIO.value,
+        nullable=False,
+    )
+    image_url = Column(String, nullable=True)
+    date = Column(DateTime, nullable=True)          # solo eventos
+    location = Column(String, nullable=True)        # solo eventos
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class Contact(Base):
+    """Leads capturados desde el formulario de contacto de la landing."""
+    __tablename__ = "contacts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String, nullable=False)
+    telefono = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+    programa = Column(String, nullable=True)
+    mensaje = Column(String, nullable=True)
+    status = Column(
+        SQLEnum(ContactStatus, name="contact_status", values_callable=lambda x: [e.value for e in x]),
+        default=ContactStatus.NUEVO,
+        server_default=ContactStatus.NUEVO.value,
+        nullable=False,
+    )
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class CommunityColor(str, enum.Enum):
+    BLUE   = "blue"
+    PINK   = "pink"
+    ORANGE = "orange"
+    PURPLE = "purple"
+    GREEN  = "green"
+    TEAL   = "teal"
+
+class Community(Base):
+    """Comunidades de la Legión Axolot mostradas en la landing."""
+    __tablename__ = "communities"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    name        = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    icon        = Column(String, nullable=False, default="bi-people-fill")   # Bootstrap icon class
+    color       = Column(
+        SQLEnum(CommunityColor, name="community_color", values_callable=lambda x: [e.value for e in x]),
+        default=CommunityColor.BLUE,
+        server_default=CommunityColor.BLUE.value,
+        nullable=False,
+    )
+    frequency   = Column(String, nullable=True)    # "Semanal", "Mensual", etc.
+    image_url   = Column(String, nullable=True)
+    member_count = Column(Integer, nullable=True)
+    sort_order  = Column(Integer, default=0, nullable=False)
+    is_active   = Column(Boolean, default=True, nullable=False)
+    created_at  = Column(DateTime, default=datetime.utcnow, nullable=False)

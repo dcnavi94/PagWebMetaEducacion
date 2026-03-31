@@ -1382,6 +1382,119 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════
+   FORMULARIO DE CONTACTO — Estados y validación
+═══════════════════════════════════════════════════════ */
+
+/* Inputs: borde de color al estado valid/invalid solo si ya fue tocado */
+#contactForm .form-control:not(:placeholder-shown):valid,
+#contactForm .form-select:valid {
+    border-color: #4caf50;
+    background-image: none;
+}
+
+#contactForm.was-validated .form-control:invalid,
+#contactForm.was-validated .form-select:invalid {
+    border-color: #e53935;
+    /* shake se maneja vía GSAP para evitar repaint en @keyframes */
+}
+
+/* Botón submit: estados */
+#cf-submit:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+/* Panel de feedback (success / error) — mismo alto mínimo que el form */
+.cf-feedback-state {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Checkmark bounce al aparecer */
+#cf-check-icon i {
+    display: inline-block;
+}
+
+/* btn outline-pink reutilizable */
+.btn-outline-pink {
+    border: 2px solid var(--accent-pink, #d81b60);
+    color: var(--accent-pink, #d81b60);
+    background: transparent;
+}
+.btn-outline-pink:hover {
+    background: var(--accent-pink, #d81b60);
+    color: #fff;
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVBAR — Dropdown mega-menu
+═══════════════════════════════════════════════════════ */
+.ls-wide { letter-spacing: 0.07em; }
+
+.nav-dropdown {
+    min-width: 230px;
+    background: #ffffff;
+    border-radius: 1rem !important;
+    overflow: hidden;
+    transform-origin: top center;
+}
+
+.nav-dropdown .dropdown-header {
+    color: #aab0c0;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.55rem 0.9rem 0.2rem;
+}
+
+.nav-drop-item {
+    color: #222;
+    font-size: 0.875rem;
+    padding: 0.55rem 0.9rem !important;
+    border-left: 3px solid transparent;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    display: flex;
+    align-items: center;
+}
+
+.nav-drop-item:hover,
+.nav-drop-item:focus {
+    background-color: #f0f4ff !important;
+    border-left-color: #1a3db6;
+    color: #1a3db6 !important;
+}
+
+.nav-drop-icon {
+    font-size: 1rem;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.nav-drop-icon-orange { color: #ff6b00; }
+
+.dropdown-divider { border-color: #eef0f5; }
+
+/* Animación suave al abrir — GSAP la controla, esto evita parpadeo */
+.nav-dropdown.show { display: block; }
+
+/* En móvil, el dropdown queda como lista normal */
+@media (max-width: 991.98px) {
+    .nav-dropdown {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 0.75rem !important;
+        margin: 0.25rem 0;
+    }
+    .nav-drop-item { color: rgba(255, 255, 255, 0.85); }
+    .nav-drop-item:hover { background-color: rgba(255,255,255,0.12) !important; color: #fff !important; }
+    .nav-dropdown .dropdown-header { color: rgba(255,255,255,0.4); }
+    .nav-dropdown .dropdown-divider { border-color: rgba(255,255,255,0.15); }
+    .text-blue { color: #90b4ff !important; }
+    .text-pink { color: #ff8ab4 !important; }
+}
+
+/* ═══════════════════════════════════════════════════════
    COMUNIDAD AXOLOT — Galería
 ═══════════════════════════════════════════════════════ */
 #comunidad {
@@ -1523,3 +1636,9 @@ body {
     min-height: 160px;
     border-radius: 1rem;
 }
+
+/* ── Badges adicionales para Cursos ──────────────────────── */
+.bg-soft-green   { background: #d1fae5; }
+.bg-soft-orange  { background: #ffedd5; }
+.text-success    { color: #059669 !important; }
+.text-warning    { color: #b45309 !important; }

@@ -15,6 +15,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Google Analytics: reemplaza G-XXXXXXXXXX con tu ID real -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
     
     <!-- GSAP Animation Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -50,20 +58,139 @@
                 <img src="assets/logo_white.png" alt="MetaEducación Logo" height="40" class="me-2">
                 <span class="fw-bolder fs-4 italic">MetaEducación</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-label="Abrir menú" title="Abrir menú">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="index.html#inicio">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="index.html#oferta">Programas</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="index.html#admisiones">Inscripción</a>
+                <ul class="navbar-nav mx-auto gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="index.html">Inicio</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="index.html#convenios">Convenios</a></li>
+                    <!-- Programas ▾ -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-semibold dropdown-toggle active" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Programas</a>
+                        <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
+                            <li><h6 class="dropdown-header text-uppercase ls-wide">Carreras</h6></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2 active" href="software.html">
+                                <i class="bi bi-code-slash nav-drop-icon text-pink me-2"></i>
+                                <span class="fw-semibold">Ing. en Software</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="telematica.html">
+                                <i class="bi bi-cpu nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Ing. en Telemática</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="preparatoria.html">
+                                <i class="bi bi-mortarboard nav-drop-icon nav-drop-icon-orange me-2"></i>
+                                <span class="fw-semibold">Preparatoria 2 Años</span>
+                            </a></li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li><h6 class="dropdown-header text-uppercase ls-wide">En esta página</h6></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#costos-beca">
+                                <i class="bi bi-cash-stack nav-drop-icon text-muted me-2"></i>Costos y Beca
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#modalidades-inicio">
+                                <i class="bi bi-calendar-check nav-drop-icon text-muted me-2"></i>Modalidades e Inicio
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#info-section">
+                                <i class="bi bi-briefcase nav-drop-icon text-muted me-2"></i>Perfil y Campo Laboral
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#direccion-academica-software">
+                                <i class="bi bi-mortarboard nav-drop-icon text-muted me-2"></i>Direccion Academica
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#curriculum-section">
+                                <i class="bi bi-journal-text nav-drop-icon text-muted me-2"></i>Plan de Estudios
+                            </a></li>
+                        </ul>
+                    </li>
+                    <!-- Comunidad ▾ -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Comunidad</a>
+                        <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#comunidad">
+                                <i class="bi bi-images nav-drop-icon text-pink me-2"></i>
+                                <span class="fw-semibold">Galería Axolot</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#comunidades">
+                                <i class="bi bi-people-fill nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Comunidades Axolot</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#cursos">
+                                <i class="bi bi-laptop nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Cursos</span>
+                            </a></li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#portafolio">
+                                <i class="bi bi-grid-1x2 nav-drop-icon text-muted me-2"></i>Portafolio
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#egresados">
+                                <i class="bi bi-trophy nav-drop-icon text-muted me-2"></i>Casos de Éxito
+                            </a></li>
+                        </ul>
+                    </li>
+                    <!-- Admisiones ▾ -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Admisiones</a>
+                        <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#calculadora">
+                                <i class="bi bi-calculator nav-drop-icon text-pink me-2"></i>
+                                <span class="fw-semibold">Calculadora de Beca</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#lead-software">
+                                <i class="bi bi-send-check nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Solicitar Información</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#admisiones">
+                                <i class="bi bi-clipboard-check nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Proceso de Inscripción</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#convenios">
+                                <i class="bi bi-handshake nav-drop-icon text-muted me-2"></i>Convenios
+                            </a></li>
+                        </ul>
+                    </li>
+                    <!-- Institución ▾ -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Institución</a>
+                        <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#direccion-academica-software">
+                                <i class="bi bi-building nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Direccion Academica</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#evidencias-software">
+                                <i class="bi bi-people nav-drop-icon text-pink me-2"></i>
+                                <span class="fw-semibold">Vida Escolar</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#nosotros">
+                                <i class="bi bi-building nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Nosotros</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#eventos">
+                                <i class="bi bi-calendar-event nav-drop-icon text-pink me-2"></i>Eventos
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#faq">
+                                <i class="bi bi-question-circle nav-drop-icon text-muted me-2"></i>FAQ
+                            </a></li>
+                        </ul>
+                    </li>
+                    <!-- Contacto -->
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="#lead-software">Contacto</a>
+                    </li>
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link fw-bold d-flex align-items-center gap-2 nav-campus" href="login.html">
+                            <i class="bi bi-laptop-fill"></i> Campus Virtual
+                        </a>
+                    </li>
                 </ul>
                 <div class="d-flex gap-2">
-                    <a href="https://wa.me/524191070127?text=Quiero%20info%20sobre%20Ingeniería%20en%20Software"
-                        target="_blank" class="btn btn-pink text-white fw-bold px-3 py-1 small">¡Inscríbete!</a>
+                    <a href="#lead-software" class="btn btn-pink text-white fw-bold px-3 py-1 small">¡Inscríbete!</a>
+                    <a href="login.html" class="btn btn-warning text-dark fw-bold px-3 py-1 small d-none d-lg-flex align-items-center">
+                        <i class="bi bi-phone-fill me-1"></i>Campus</a>
                 </div>
             </div>
         </div>
@@ -81,14 +208,17 @@
             <i class="bi bi-code-slash fs-1 d-block mb-3" style="color: #ff6b00;"></i>
             <h1 class="display-3 fw-bolder italic mb-3">Ingeniería en <span
                     style="color: #ff6b00; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">Software</span></h1>
-            <p class="lead fw-light mb-4 text-white">Desarrolla las apps y sistemas que moverán el mundo del mañana.</p>
+            <p class="lead fw-light mb-3 text-white">Aprende a crear apps, páginas web y sistemas en la nube con las herramientas que ya usan las empresas hoy.</p>
+            <p class="mb-4 text-white-50">Empieza desde cero o desde donde estés. Aquí aprendes programación, bases de datos y cloud con proyectos reales desde el primer semestre.</p>
             <div class="d-flex justify-content-center gap-3 mb-4">
                 <span class="badge bg-white px-4 py-2 fs-6 fw-bold text-pink">3 años</span>
                 <span class="badge bg-white px-4 py-2 fs-6 fw-bold text-pink">Cuatrimestral</span>
             </div>
-            <a href="https://wa.me/524191070127?text=Quiero%20info%20sobre%20Ingeniería%20en%20Software" target="_blank"
-                class="btn btn-light btn-lg fw-bold mt-3 mb-5 px-5 border-0 shadow-sm" style="color: #1a3db6;">Agenda
-                una Cita</a>
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-3 mb-5">
+                <a href="#lead-software" class="btn btn-light btn-lg fw-bold px-5 border-0 shadow-sm"
+                    style="color: #1a3db6;">Solicitar información</a>
+                <a href="#costos-beca" class="btn btn-outline-light btn-lg fw-bold px-4">Ver costos y beca</a>
+            </div>
         </div>
     </header>
 
@@ -104,6 +234,251 @@
         </div>
     </div>
 
+
+    <!-- Costos y Beca -->
+    <section id="costos-beca" class="py-5" style="background-color: #f8f9fa;">
+        <div class="container py-4">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-7">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 pricing-interactive"
+                        data-program="Ingenier?a en Software"
+                        data-wa-url="https://wa.me/524191070127?text=Quiero%20inscribirme%20a%20Ingenier%C3%ADa%20en%20Software%20con%20la%20beca%20preferencial">
+                        <div class="card-body p-4 p-lg-5">
+                            <span class="badge bg-soft-pink text-pink mb-3 px-3 py-2">Costos y beca</span>
+                            <h2 class="display-6 fw-bolder text-blue mb-3">Descubre tu beca preferencial</h2>
+                            <p class="text-muted mb-4">Dejanos tus datos y te mostramos una propuesta mas emocionante: si apartas durante <span class="promo-month-label text-lowercase">este mes</span>, la inscripcion del primer cuatrimestre baja a $0. A partir del segundo cuatrimestre, la inscripcion vuelve a $1,000. Al iniciar en septiembre solo pagarias tu primera mensualidad.</p>
+
+                            <form id="pricingGate-software" class="pricing-gate-form" novalidate>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" for="pricingGate-software-nombre">Nombre completo</label>
+                                        <input id="pricingGate-software-nombre" type="text" class="form-control form-control-lg rounded-3" required>
+                                        <div class="invalid-feedback">Escribe tu nombre.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" for="pricingGate-software-telefono">Telefono</label>
+                                        <input id="pricingGate-software-telefono" type="tel" class="form-control form-control-lg rounded-3" required>
+                                        <div class="invalid-feedback">Escribe tu telefono.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" for="pricingGate-software-email">Correo</label>
+                                        <input id="pricingGate-software-email" type="email" class="form-control form-control-lg rounded-3" required>
+                                        <div class="invalid-feedback">Escribe un correo valido.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" for="pricingGate-software-modalidad">Modalidad de interes</label>
+                                        <select id="pricingGate-software-modalidad" class="form-select form-select-lg rounded-3" required>
+                                            <option value="">Selecciona modalidad</option>
+<option value="Presencial intensiva">Presencial intensiva</option>
+<option value="Presencial sabatina">Presencial sabatina</option>
+<option value="Virtual">Virtual</option>
+                                        </select>
+                                        <div class="invalid-feedback">Selecciona una modalidad.</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-3 align-items-center mt-4">
+                                    <button type="submit" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero ver mi beca preferencial</button>
+                                    <span id="pricingGateStatus-software" class="small text-muted">Al enviar tus datos desbloqueas la promo de <span class="promo-month-label text-lowercase">este mes</span>: inscripcion del primer cuatrimestre en $0. A partir del segundo cuatrimestre vuelve a $1,000.</span>
+                                </div>
+                            </form>
+
+                            <div id="pricingResult-software" class="d-none mt-5">
+                                <div class="rounded-4 border border-success-subtle bg-light p-4 mb-4">
+                                    <div class="small text-uppercase fw-bold text-success mb-2">Beca preferencial estimada</div>
+                                    <h3 class="fw-bolder text-blue mb-2">Tu precio preferencial de inicio ya esta listo</h3>
+                                    <p class="text-muted mb-1">Modalidad elegida: <span class="fw-bold text-blue" id="pricingSelected-software"></span></p>
+                                    <p class="text-muted mb-0">Si apartas durante <span class="promo-month-label text-lowercase">este mes</span>, aseguras inscripcion del primer cuatrimestre en $0. A partir del segundo cuatrimestre, la inscripcion es de $1,000. Tu arranque sigue siendo en <span class="start-month-label text-lowercase">septiembre</span> con solo la mensualidad de inicio.</p>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="border rounded-4 h-100 p-4 bg-white">
+                                            <div class="small text-uppercase fw-bold text-muted mb-2">Inscripcion del primer cuatrimestre</div>
+                                            <div class="small text-muted text-decoration-line-through">Precio regular $2,000</div>
+                                            <div class="display-6 fw-bolder text-blue mb-1">$0</div>
+                                            <div class="small text-success fw-bold">Solo durante <span class="promo-month-label text-lowercase">este mes</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="border rounded-4 h-100 p-4 bg-white">
+                                            <div class="small text-uppercase fw-bold text-muted mb-2">Primer pago en <span class="start-month-label text-lowercase">septiembre</span></div>
+                                            <div class="small text-muted text-decoration-line-through">Precio regular $2,800</div>
+                                            <div class="display-6 fw-bolder text-blue mb-1">$1,400</div>
+                                            <div class="small text-success fw-bold">Esto pagas al iniciar en <span class="start-month-label text-lowercase">septiembre</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-3">
+                                    <a href="#lead-software" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero inscribirme</a>
+                                    <a href="https://wa.me/524191070127?text=Quiero%20inscribirme%20a%20Ingenier%C3%ADa%20en%20Software%20con%20la%20beca%20preferencial" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary fw-bold rounded-pill px-4">Quiero apartar mi lugar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 text-white" style="background: linear-gradient(135deg, #d81b60 0%, #1a3db6 100%);">
+                        <div class="card-body p-4 p-lg-5 d-flex flex-column justify-content-center">
+                            <h3 class="fw-bolder mb-3">Este mes puede ser tu mejor momento para entrar</h3>
+                            <p class="text-white-50 mb-4">Cuando dejas tus datos, desbloqueas una oferta clara: promo vigente solo durante <span class="promo-month-label text-lowercase">este mes</span>, con inscripcion del primer cuatrimestre en $0. Despues, en los siguientes cuatrimestres, la inscripcion es de $1,000.</p>
+                            <div class="border border-light border-opacity-25 rounded-4 p-3 mb-4">
+                                <div class="small text-white-50 mb-1">Paso recomendado</div>
+                                <div class="fw-bold fs-5">Completa tus datos y revisa si todavia alcanzas la promo de <span class="promo-month-label text-lowercase">este mes</span></div>
+                            </div>
+                            <a href="#lead-software" class="btn btn-light fw-bold rounded-pill px-4 mb-3">Quiero iniciar mi inscripcion</a>
+                            <a href="https://wa.me/524191070127?text=Quiero%20inscribirme%20a%20Ingenier%C3%ADa%20en%20Software%20con%20la%20beca%20preferencial" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light fw-bold rounded-pill px-4">Hablar por WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modalidades y Siguiente Inicio -->
+    <section id="modalidades-inicio" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-8">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <h2 class="display-6 fw-bolder text-blue mb-3">Modalidades</h2>
+                            <p class="text-muted mb-4">La misma lógica operativa para que cada aspirante identifique rápidamente cómo puede estudiar.</p>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="border rounded-4 h-100 p-4 bg-light">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <i class="bi bi-building text-pink"></i>
+                                            <h5 class="fw-bold mb-0 text-blue">Presencial intensiva</h5>
+                                        </div>
+                                        <p class="text-muted small mb-2"><b>Días:</b> Lunes a viernes</p>
+                                        <p class="text-muted small mb-2"><b>Horario:</b> 4 horas diarias</p>
+                                        <p class="text-muted small mb-2"><b>Carga semanal:</b> 20 horas</p>
+                                        <p class="text-muted small mb-2"><b>Ideal para:</b> estudiantes que buscan inmersión técnica y práctica constante.</p>
+                                        <p class="text-muted small mb-0"><b>Enfoque:</b> desarrollo, laboratorios y trabajo continuo por proyectos.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded-4 h-100 p-4 bg-light">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <i class="bi bi-laptop text-pink"></i>
+                                            <h5 class="fw-bold mb-0 text-blue">Sabatina / virtual</h5>
+                                        </div>
+                                        <p class="text-muted small mb-2"><b>Horario:</b> Sábados de 8:00 a 16:00</p>
+                                        <p class="text-muted small mb-2"><b>Carga semanal:</b> 8 horas</p>
+                                        <p class="text-muted small mb-2"><b>Ideal para:</b> personas que trabajan o requieren flexibilidad.</p>
+                                        <p class="text-muted small mb-2"><b>Formato:</b> sesiones sabatinas y seguimiento académico.</p>
+                                        <p class="text-muted small mb-0"><b>Enfoque:</b> continuidad profesional sin detener tus actividades.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color:#fdf1f7;">
+                        <div class="card-body p-4 p-lg-5 d-flex flex-column justify-content-center">
+                            <span class="badge bg-warning text-dark mb-3 px-3 py-2">Siguiente inicio</span>
+                            <h3 class="fw-bolder text-blue mb-3">Septiembre 2026</h3>
+                            <p class="text-muted mb-3">Inscripciones abiertas para el próximo grupo de Ingeniería en Software.</p>
+                            <ul class="list-unstyled text-muted small mb-4">
+                                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Cupo limitado por grupo</li>
+                                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Orientación personalizada</li>
+                                <li><i class="bi bi-check2-circle text-success me-2"></i>Respuesta rápida por formulario o WhatsApp</li>
+                            </ul>
+                            <a href="#lead-software" class="btn btn-pink text-white fw-bold rounded-pill px-4">Apartar mi lugar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparador Rápido -->
+    <section id="comparador-software" class="py-5" style="background-color:#f8f9fa;">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">¿Por qué <span class="text-pink">MetaEducación</span>?</h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Una comparación rápida para entender qué valor recibes en Ingeniería en Software.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-blue">Enfoque práctico</h5>
+                            <p class="text-muted small mb-0">No solo teoría: desarrollo, laboratorios, proyectos y herramientas alineadas con el mundo laboral.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-blue">Ruta de empleabilidad</h5>
+                            <p class="text-muted small mb-0">La promesa no es solo estudiar software, sino salir preparado para roles técnicos reales y certificaciones útiles.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-blue">Horarios claros</h5>
+                            <p class="text-muted small mb-0">Opciones definidas para estudiar entre semana o sábados sin improvisación operativa.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-blue">Acompañamiento</h5>
+                            <p class="text-muted small mb-0">Atención comercial, seguimiento académico y orientación para que no avances solo durante el proceso.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#lead-software" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero información de Software</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Decisión Rápida -->
+    <section id="fit-software" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <h3 class="fw-bolder text-blue mb-3">Esta carrera es para ti si...</h3>
+                            <ul class="list-unstyled text-muted mb-0">
+                                <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Te gusta construir soluciones digitales y entender cómo funcionan.</li>
+                                <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Disfrutas la lógica, el análisis y resolver problemas paso a paso.</li>
+                                <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Quieres trabajar en desarrollo, productos digitales, datos o cloud.</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Buscas una carrera con salida profesional clara en tecnología.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color:#fff8f8;">
+                        <div class="card-body p-4 p-lg-5">
+                            <h3 class="fw-bolder text-blue mb-3">Esta carrera puede no ser para ti si...</h3>
+                            <ul class="list-unstyled text-muted mb-0">
+                                <li class="mb-3"><i class="bi bi-x-circle-fill text-danger me-2"></i>No te interesa trabajar con computadoras, software o procesos técnicos.</li>
+                                <li class="mb-3"><i class="bi bi-x-circle-fill text-danger me-2"></i>Buscas una carrera con poca práctica o sin resolución de problemas.</li>
+                                <li class="mb-3"><i class="bi bi-x-circle-fill text-danger me-2"></i>No te ves aprendiendo herramientas nuevas de manera constante.</li>
+                                <li><i class="bi bi-x-circle-fill text-danger me-2"></i>Prefieres un entorno de trabajo sin proyectos, análisis ni tecnología.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#lead-software" class="btn btn-outline-pink fw-bold rounded-pill px-4">Quiero saber si Software es para mí</a>
+            </div>
+        </div>
+    </section>
+
     <!-- Info Section -->
     <section id="info-section" class="py-5 bg-white">
         <div class="container py-5">
@@ -112,9 +487,7 @@
                     <h2 class="display-5 fw-bolder text-blue mb-4">Objetivo de la <span
                             style="color: #ff6b00;">Carrera</span></h2>
                     <div class="underline mb-4"></div>
-                    <p class="lead text-muted mb-4">Formar ingenieros visionarios que dominen los lenguajes, frameworks
-                        y entornos cloud más solicitados globalmente. Queremos pioneros que creen sistemas escalables,
-                        seguros y rentables usando Inteligencia Artificial y Cloud Computing.</p>
+                    <p class="lead text-muted mb-4">Formar profesionistas capaces de desarrollar software, plataformas y soluciones cloud con competencias aplicables desde etapas tempranas de su carrera.</p>
 
                     <h4 class="fw-bold mt-5 mb-3"><i class="bi bi-person-check-fill text-warning me-2"></i> Perfil de
                         Egreso</h4>
@@ -131,19 +504,6 @@
                         <li>Scrum Master, Product Owner o Technical Lead en TI</li>
                     </ul>
 
-                    <h4 class="fw-bold mt-5 mb-3"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>
-                        Modalidades</h4>
-                    <ul class="list-group list-group-flush mb-4 shadow-sm rounded-4">
-                        <li class="list-group-item py-3"><i class="bi bi-check2-circle text-success me-2"></i>
-                            <b>Presencial Intensiva:</b> Lunes a Viernes. Prácticas en todos los laboratorios para
-                            enfoque total.
-                        </li>
-                        <li class="list-group-item py-3"><i class="bi bi-check2-circle text-success me-2"></i>
-                            <b>Presencial Sabatina / Virtual:</b> Ideal si trabajas, puedes estudiar desde el sábado
-                            de forma presencial intensiva o todo el contenido vía virtual.
-                        </li>
-                    </ul>
-
                     <h4 class="fw-bold mt-5 mb-3"><i class="bi bi-award-fill text-warning me-2"></i> Certificaciones
                         Incluidas</h4>
                     <div class="d-flex flex-wrap gap-2">
@@ -154,10 +514,213 @@
                         <span class="badge bg-light text-dark border p-2"><i
                                 class="bi bi-patch-check-fill text-primary"></i> Scrum Developer</span>
                     </div>
+                    <div class="mt-4">
+                        <a href="#lead-software" class="btn btn-pink text-white fw-bold rounded-pill px-4">Solicitar plan y costos</a>
+                    </div>
                 </div>
                 <div class="col-lg-5 text-center">
                     <img src="assets/axolotl-laptop.png" alt="Axolotl Software" class="img-fluid"
                         style="background:none;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="direccion-academica-software" class="py-5" style="background-color:#f8f9fa;">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">Direccion y <span class="text-pink">estructura academica</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Lo esencial para entender como se acompana, se evalua y se sostiene el avance del alumno en Software.</p>
+            </div>
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1400&q=80&fit=crop" alt="Placeholder institucional de software con alumnos" class="img-fluid w-100" style="height:320px; object-fit:cover;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-blue mb-2">Coordinacion academica de Software</h5>
+                            <p class="text-muted small mb-0">Espacio ideal para colocar despues una foto real de coordinacion, alumnos, proyectos o sesiones de acompanamiento en Software.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Modelo educativo</h5><p class="text-muted small mb-0">Clases con practica, trabajo por proyectos y acompanamiento para que el alumno no avance solo.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Equipo academico</h5><p class="text-muted small mb-0">Coordinacion, tutor de carrera y control escolar se mantienen atentos al proceso academico del alumno.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Seguimiento</h5><p class="text-muted small mb-0">La asistencia se revisa en cada clase, hay seguimiento semanal y el avance se reporta por cuatrimestre.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Resultados visibles</h5><p class="text-muted small mb-0">En materias de TICs se evalua con proyectos funcionales, como el simulador de videojuegos y otros entregables reales.</p></div></div></div>
+            </div>
+            <div class="row g-4 mt-1">
+                <div class="col-lg-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue mb-3">Lo que una familia necesita saber</h5><ul class="text-muted small mb-0"><li>Hay tutoria de carrera, coordinacion y control escolar.</li><li>Si hay faltas o rezago, se activa seguimiento preventivo y contacto con familia.</li><li>El desempeno hoy se comunica por reporte interno y mas adelante por plataforma institucional.</li><li>El alumno no se evalua solo con examen: tambien se ve lo que puede construir.</li></ul></div></div></div>
+                <div class="col-lg-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue mb-3">Lo que se vive en Software</h5><ul class="text-muted small mb-0"><li>Trabajo en laptop y equipo desde etapas tempranas.</li><li>Revision de avances con docente durante el proceso.</li><li>Presentaciones, demos y entregables que se pueden mostrar.</li><li>Horarios claros para organizar estudio, trabajo y seguimiento.</li></ul></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reels Testimoniales -->
+    <section id="reels-software" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">Historias en <span class="text-pink">video</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Alumnos, maestros y familias cuentan cómo es estudiar Ingeniería en Software aquí.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <video class="w-100" controls muted playsinline preload="none" poster="assets/campus-generic-software-1.jpg" style="aspect-ratio: 9 / 16; object-fit: cover;">
+                            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        </video>
+                        <div class="card-body p-4">
+                            <span class="badge bg-soft-pink text-pink mb-2">Alumno</span>
+                            <h5 class="fw-bold text-blue mb-2">"Yo pensaba que esto no era para mí, y ahora ya tengo mis primeras apps funcionando"</h5>
+                            <p class="text-muted small mb-0">El primer semestre lo cambia todo. Pasar de cero a crear algo real te da una confianza distinta.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <video class="w-100" controls muted playsinline preload="none" poster="assets/campus-generic-software-2.jpg" style="aspect-ratio: 9 / 16; object-fit: cover;">
+                            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                        </video>
+                        <div class="card-body p-4">
+                            <span class="badge bg-soft-blue text-blue mb-2">Profesor</span>
+                            <h5 class="fw-bold text-blue mb-2">"Aquí no solo explicamos teoría, nos sentamos junto al alumno a sacar adelante los proyectos"</h5>
+                            <p class="text-muted small mb-0">Un maestro que se sienta contigo a resolver el problema, no que solo lo explique en el pizarrón.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <video class="w-100" controls muted playsinline preload="none" poster="assets/campus-generic-software-1.jpg" style="aspect-ratio: 9 / 16; object-fit: cover;">
+                            <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+                        </video>
+                        <div class="card-body p-4">
+                            <span class="badge bg-warning text-dark mb-2">Padre de familia</span>
+                            <h5 class="fw-bold text-blue mb-2">"Nos dio paz ver que sí estaban al pendiente y que nuestro hijo no iba a caminar solo"</h5>
+                            <p class="text-muted small mb-0">Las familias que preguntan merecen respuestas claras. Aquí siempre hay alguien disponible.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#lead-software" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero recibir información de Software</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="dudas-software" class="py-5" style="background-color:#f8f9fa;">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">Lo que pasa si... <span class="text-pink">algo se complica</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Queremos que sepas qué hacemos cuando algo no sale como esperabas.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue">Si falta mucho</h5><p class="text-muted mb-0">Se revisa el impacto de sus faltas, se da seguimiento preventivo y, si es necesario, se contacta a la familia para atender la situación a tiempo.</p></div></div></div>
+                <div class="col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue">Si baja calificaciones</h5><p class="text-muted mb-0">Tutor, coordinación y control escolar revisan el caso para reforzar hábitos, aclarar dudas y evitar que el rezago crezca.</p></div></div></div>
+                <div class="col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue">Si necesita apoyo</h5><p class="text-muted mb-0">Se busca orientar al alumno con seguimiento académico, retroalimentación y ajustes en su proceso para que recupere seguridad y ritmo.</p></div></div></div>
+                <div class="col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue">Si quiere cambiar modalidad</h5><p class="text-muted mb-0">La escuela revisa disponibilidad, avance y viabilidad académica para orientar la mejor opción sin perder claridad en el proceso.</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="evidencias-software" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">Asi se puede ver la <span class="text-pink">vida diaria</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Imagenes demo para que luego las cambies por fotos reales de clase, proyectos, acompanamiento y comunidad.</p>
+            </div>
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80&fit=crop" alt="Alumnos trabajando en equipo" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Trabajo en equipo</h5><p class="text-muted small mb-0">Ideal para reemplazar por alumnos desarrollando en mesa, con laptops, pizarron o sprint de proyecto.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&q=80&fit=crop" alt="Alumno presentando proyecto" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Demos y entregables</h5><p class="text-muted small mb-0">Aqui conviene poner capturas de apps, paneles, codigo, pitch o demo final de alumnos.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=900&q=80&fit=crop" alt="Docente acompanando a alumnos" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Mentoria cercana</h5><p class="text-muted small mb-0">Sustituyelo despues por revision de avances, asesoria tecnica o acompanamiento docente real.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&q=80&fit=crop" alt="Espacio de trabajo con computadoras" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Ambiente de clase</h5><p class="text-muted small mb-0">Muestra aqui el espacio donde estudian: equipo, pantallas, pizarron y dinamica diaria.</p></div></div></div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Proyecto visible</h6><p class="text-muted small mb-0">Pantallazos de apps, dashboards o codigo funcionando al cierre de materia.</p></div></div></div>
+                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Momento de clase</h6><p class="text-muted small mb-0">Fotos de sesiones reales, trabajo colaborativo, retroalimentacion y uso de equipo.</p></div></div></div>
+                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Historia corta</h6><p class="text-muted small mb-0">Antes y despues del alumno: que le daba miedo, que construyo y que puede resolver hoy.</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulario Corto -->
+    <section id="lead-software" class="py-5" style="background-color: #f8f9fa;">
+        <div class="container py-4">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-5">
+                    <div class="h-100 p-4 p-lg-5 rounded-4 text-white shadow-sm" style="background: linear-gradient(145deg, #1a3db6 0%, #d81b60 100%);">
+                        <span class="badge bg-light text-blue mb-3 px-3 py-2">Solicitud de información</span>
+                        <h2 class="display-6 fw-bolder mb-3">Da el siguiente paso en Software</h2>
+                        <p class="text-white-50 mb-4">Llena este formulario corto y el equipo de MetaEducación te comparte costos, beca, modalidad recomendada y requisitos de ingreso.</p>
+                        <ul class="list-unstyled text-white-50 small mb-4">
+                            <li class="mb-2"><i class="bi bi-check2-circle text-warning me-2"></i>Respuesta en menos de 2 horas hábiles</li>
+                            <li class="mb-2"><i class="bi bi-check2-circle text-warning me-2"></i>Programa precargado para acelerar la atención</li>
+                            <li><i class="bi bi-check2-circle text-warning me-2"></i>WhatsApp disponible como respaldo inmediato</li>
+                        </ul>
+                        <a href="https://wa.me/524191070127?text=Quiero%20información%20de%20Ingeniería%20en%20Software" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-pill fw-bold px-4">Prefiero WhatsApp</a>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body p-4 p-lg-5">
+                            <form id="softwareLeadForm" novalidate>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="swLeadNombre" class="form-label fw-semibold">Nombre completo</label>
+                                        <input type="text" class="form-control form-control-lg rounded-3" id="swLeadNombre" required>
+                                        <div class="invalid-feedback">Escribe tu nombre.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="swLeadTelefono" class="form-label fw-semibold">Teléfono</label>
+                                        <input type="tel" class="form-control form-control-lg rounded-3" id="swLeadTelefono" required>
+                                        <div class="invalid-feedback">Escribe un teléfono de contacto.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="swLeadEmail" class="form-label fw-semibold">Correo electrónico</label>
+                                        <input type="email" class="form-control form-control-lg rounded-3" id="swLeadEmail">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="swLeadPrograma" class="form-label fw-semibold">Programa</label>
+                                        <input type="text" class="form-control form-control-lg rounded-3" id="swLeadPrograma" value="Ingeniería en Software" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="swLeadModalidad" class="form-label fw-semibold">Modalidad de interés</label>
+                                        <select class="form-select form-select-lg rounded-3" id="swLeadModalidad" required>
+                                            <option value="">Selecciona una opción</option>
+                                            <option>Presencial intensiva</option>
+                                            <option>Presencial sabatina / virtual</option>
+                                            <option>No estoy seguro</option>
+                                        </select>
+                                        <div class="invalid-feedback">Selecciona una modalidad.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="swLeadHorario" class="form-label fw-semibold">Disponibilidad</label>
+                                        <select class="form-select form-select-lg rounded-3" id="swLeadHorario" required>
+                                            <option value="">Selecciona una opción</option>
+                                            <option>Entre semana</option>
+                                            <option>Sábados</option>
+                                            <option>Flexible</option>
+                                        </select>
+                                        <div class="invalid-feedback">Selecciona tu disponibilidad.</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="swLeadMensaje" class="form-label fw-semibold">Mensaje opciónal</label>
+                                        <textarea class="form-control rounded-3" id="swLeadMensaje" rows="4" maxlength="500" placeholder="Cuéntanos si buscas beca, modalidad flexible o más detalles."></textarea>
+                                        <div class="form-text">Máximo 500 caracteres.</div>
+                                    </div>
+                                    <div class="col-12 d-flex flex-column flex-sm-row gap-3 align-items-start align-items-sm-center pt-2">
+                                        <button type="submit" id="swLeadSubmit" class="btn btn-pink text-white fw-bold px-4 py-3 rounded-pill">
+                                            Quiero que me contacten
+                                        </button>
+                                        <span id="swLeadStatus" class="text-muted small">Te contactamos en menos de 2 horas hábiles.</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -532,6 +1095,9 @@
                     <span class="badge bg-light text-dark border p-2">IE - Idioma Extranjero</span>
                     <span class="badge bg-light text-dark border p-2">IV - Investigación</span>
                 </div>
+                <div class="mt-4">
+                    <a href="#lead-software" class="btn btn-pink text-white fw-bold rounded-pill px-4">Recibir plan y horarios</a>
+                </div>
             </div>
         </div>
     </section>
@@ -550,23 +1116,239 @@
         <i class="bi bi-whatsapp"></i>
     </a>
 
+    <script src="assets/api.js"></script>
     <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function () {
+            const API_BASE_PUBLIC = window.API_BASE || 'http://localhost:8000';
+            const form = document.getElementById('softwareLeadForm');
+            const submit = document.getElementById('swLeadSubmit');
+            const status = document.getElementById('swLeadStatus');
+
+            if (!form) return;
+
+            function buildWaUrl(data) {
+                const msg = [
+                    'Hola, quiero información sobre Ingeniería en Software.',
+                    `Nombre: ${data.nombre}`,
+                    `Teléfono: ${data.telefono}`,
+                    data.email ? `Correo: ${data.email}` : null,
+                    `Modalidad: ${data.modalidad}`,
+                    `Disponibilidad: ${data.horario}`,
+                    data.mensaje ? `Mensaje: ${data.mensaje}` : null,
+                ].filter(Boolean).join('\n');
+                return `https://wa.me/524191070127?text=${encodeURIComponent(msg)}`;
+            }
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                form.classList.add('was-validated');
+
+                if (!form.checkValidity()) {
+                    status.textContent = 'Completa los campos obligatorios para continuar.';
+                    status.className = 'text-danger small';
+                    return;
+                }
+
+                const data = {
+                    nombre: document.getElementById('swLeadNombre').value.trim(),
+                    telefono: document.getElementById('swLeadTelefono').value.trim(),
+                    email: document.getElementById('swLeadEmail').value.trim() || null,
+                    programa: 'Ingeniería en Software',
+                    modalidad: document.getElementById('swLeadModalidad').value,
+                    horario: document.getElementById('swLeadHorario').value,
+                    mensaje: document.getElementById('swLeadMensaje').value.trim() || null,
+                };
+
+                const waUrl = buildWaUrl(data);
+
+                submit.disabled = true;
+                submit.textContent = 'Enviando...';
+                status.textContent = 'Enviando tu solicitud...';
+                status.className = 'text-muted small';
+
+                try {
+                    const res = await fetch(`${API_BASE_PUBLIC}/public/contacts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nombre: data.nombre,
+                            telefono: data.telefono,
+                            email: data.email,
+                            programa: data.programa,
+                            mensaje: [data.modalidad, data.horario, data.mensaje].filter(Boolean).join(' | '),
+                        }),
+                    });
+
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    status.textContent = 'Solicitud enviada. Te contactamos en menos de 2 horas hábiles.';
+                    status.className = 'text-success small';
+                } catch (err) {
+                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                    status.textContent = 'No se pudo enviar al servidor. Abrimos WhatsApp para continuar sin perder tus datos.';
+                    status.className = 'text-warning small';
+                } finally {
+                    submit.disabled = false;
+                    submit.textContent = 'Quiero que me contacten';
+                }
+            });
+        })();
+    </script>
 
     <!-- GSAP Animations -->
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // ── Navbar ────────────────────────────────────────────────────
+        document.querySelectorAll('.pricing-interactive').forEach((card) => {
+            const API_BASE_PUBLIC = window.API_BASE || 'http://localhost:8000';
+            const form = card.querySelector('.pricing-gate-form');
+            const status = card.querySelector('[id^="pricingGateStatus-"]');
+            const result = card.querySelector('[id^="pricingResult-"]');
+            const selected = card.querySelector('[id^="pricingSelected-"]');
+            const startMonthLabels = card.querySelectorAll('.start-month-label');
+            const promoMonthLabels = card.querySelectorAll('.promo-month-label');
+            const waUrl = card.dataset.waUrl;
+            const program = card.dataset.program;
+
+            const startMonth = new Intl.DateTimeFormat('es-MX', { month: 'long' }).format(new Date(2026, 8, 1));
+            const promoMonth = new Intl.DateTimeFormat('es-MX', { month: 'long' }).format(new Date());
+            startMonthLabels.forEach((el) => { el.textContent = startMonth; });
+            promoMonthLabels.forEach((el) => { el.textContent = promoMonth; });
+
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                form.classList.add('was-validated');
+
+                if (!form.checkValidity()) {
+                    if (status) {
+                        status.textContent = 'Completa todos los campos para ver tu beca preferencial.';
+                        status.className = 'small text-danger';
+                    }
+                    return;
+                }
+
+                const data = {
+                    nombre: form.querySelector('[id$="-nombre"]').value.trim(),
+                    telefono: form.querySelector('[id$="-telefono"]').value.trim(),
+                    email: form.querySelector('[id$="-email"]').value.trim(),
+                    modalidad: form.querySelector('[id$="-modalidad"]').value,
+                };
+
+                const submit = form.querySelector('button[type="submit"]');
+                if (submit) {
+                    submit.disabled = true;
+                    submit.textContent = 'Enviando...';
+                }
+                if (status) {
+                    status.textContent = 'Estamos preparando tu beca preferencial y revisando si todavia alcanzas la promo de este mes...';
+                    status.className = 'small text-muted';
+                }
+
+                try {
+                    const res = await fetch(`${API_BASE_PUBLIC}/public/contacts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nombre: data.nombre,
+                            telefono: data.telefono,
+                            email: data.email,
+                            programa: program,
+                            mensaje: ['Beca preferencial desde bloque de precios', `Modalidad: ${data.modalidad}`].join(' | '),
+                        }),
+                    });
+
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                    if (selected) selected.textContent = data.modalidad;
+                    if (result) result.classList.remove('d-none');
+                    if (status) {
+                        status.textContent = `Listo. Ya puedes ver tu precio de inicio en ${startMonth}. Si apartas en ${promoMonth}, la inscripcion del primer cuatrimestre queda en $0 y despues vuelve a $1,000.`;
+                        status.className = 'small text-success';
+                    }
+                } catch (err) {
+                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                    if (status) {
+                        status.textContent = 'No pudimos enviar tus datos. Abrimos WhatsApp para no perder tu avance.';
+                        status.className = 'small text-warning';
+                    }
+                } finally {
+                    if (submit) {
+                        submit.disabled = false;
+                        submit.textContent = 'Quiero ver mi beca preferencial';
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.dropdown').forEach((dropdown) => {
+            const menu = dropdown.querySelector('.nav-dropdown');
+            if (!menu) return;
+
+            dropdown.addEventListener('show.bs.dropdown', () => {
+                gsap.fromTo(menu,
+                    { opacity: 0, y: 12, scale: 0.98 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.28, ease: 'power2.out' }
+                );
+            });
+
+            dropdown.addEventListener('shown.bs.dropdown', () => {
+                const items = menu.querySelectorAll('.nav-drop-item');
+                if (!items.length) return;
+
+                gsap.from(items, {
+                    opacity: 0,
+                    x: -10,
+                    stagger: 0.04,
+                    duration: 0.22,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        document.querySelectorAll('nav a[href^="#"], .nav-dropdown a[href^="#"]').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                const target = href ? document.querySelector(href) : null;
+                if (!target) return;
+
+                e.preventDefault();
+
+                const dropdown = link.closest('.dropdown');
+                const toggle = dropdown ? dropdown.querySelector('[data-bs-toggle="dropdown"]') : null;
+                if (toggle) {
+                    const instance = bootstrap.Dropdown.getOrCreateInstance(toggle);
+                    instance.hide();
+                }
+
+                const nav = document.querySelector('nav');
+                const navHeight = nav ? nav.offsetHeight : 0;
+                const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 8;
+
+                window.scrollTo({
+                    top,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('nav', {
             y: -80, opacity: 0, duration: 0.7, ease: 'power3.out'
         });
 
-        // ── Social sidebar ────────────────────────────────────────────
+        // â”€â”€ Social sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('.social-sidebar', {
             x: -60, opacity: 0, duration: 0.9, delay: 0.8, ease: 'power3.out'
         });
 
-        // ── Hero: cascada al cargar ───────────────────────────────────
+        // â”€â”€ Hero: cascada al cargar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
         heroTl
             .from('#hero .bi-code-slash', {
@@ -581,13 +1363,23 @@
                 scale: 0.7, opacity: 0, duration: 0.6, ease: 'back.out(1.5)'
             }, '-=0.2');
 
-        // ── RVOE Banner ───────────────────────────────────────────────
+        // â”€â”€ RVOE Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('.bg-light.border-bottom.border-top .badge', {
             scrollTrigger: { trigger: '.bg-light.border-bottom.border-top', start: 'top 88%' },
             x: -50, opacity: 0, duration: 0.7, ease: 'power3.out'
         });
 
-        // ── Info Section ──────────────────────────────────────────────
+        ScrollTrigger.batch('#costos-beca .card, #modalidades-inicio .card, #comparador-software .card, #fit-software .card, #direccion-academica-software .card, #evidencias-software .card, #reels-software .card, #dudas-software .card, #lead-software .card, #lead-software .rounded-4', {
+            start: 'top 88%',
+            onEnter: (elements) => {
+                gsap.from(elements, {
+                    y: 40, opacity: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out'
+                });
+            },
+            once: true
+        });
+
+        // â”€â”€ Info Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('#info-section h2', {
             scrollTrigger: { trigger: '#info-section h2', start: 'top 82%' },
             x: -60, opacity: 0, duration: 0.8, ease: 'power3.out'
@@ -634,7 +1426,7 @@
             scale: 0.5, opacity: 0, rotation: -10, duration: 1.1, ease: 'elastic.out(1, 0.5)'
         });
 
-        // ── Curriculum Section ────────────────────────────────────────
+        // â”€â”€ Curriculum Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('#curriculum-section .text-center h2', {
             scrollTrigger: { trigger: '#curriculum-section .text-center', start: 'top 82%' },
             y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
@@ -660,13 +1452,13 @@
             y: 30, opacity: 0, duration: 0.7, ease: 'power2.out'
         });
 
-        // ── Footer ────────────────────────────────────────────────────
+        // â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('footer', {
             scrollTrigger: { trigger: 'footer', start: 'top 95%' },
             y: 40, opacity: 0, duration: 0.7, ease: 'power2.out'
         });
 
-        // ── WhatsApp float ────────────────────────────────────────────
+        // â”€â”€ WhatsApp float â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('.whatsapp-float', {
             scale: 0, opacity: 0, duration: 0.6, delay: 1.5, ease: 'back.out(2)'
         });

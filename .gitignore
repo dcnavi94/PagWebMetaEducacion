@@ -30,6 +30,16 @@ backend/.env
 .env.local
 .env.*.local
 backend/venv/
+.venv/
+.venv_py310/
+backend/.coverage
+backend/py_out.txt
+backend/test_out.txt
+backend/uploads/
+.claude/
+pytest-cache-files-*/
+backend/.pytest_tmp/
+backend/.pytest_work/
 
 # Docker
 .docker/

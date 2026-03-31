@@ -15,6 +15,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Google Analytics: reemplaza G-XXXXXXXXXX con tu ID real -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
     
     <!-- GSAP Animation Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -33,14 +41,14 @@
 
     <!-- Social Sidebar -->
     <div class="social-sidebar d-none d-lg-flex">
-        <a href="https://www.facebook.com/profile.php?id=61577786609467" class="facebook-side" target="_blank"><i
+        <a href="https://www.facebook.com/profile.php?id=61577786609467" class="facebook-side" target="_blank" rel="noopener noreferrer" aria-label="Facebook de MetaEducacion" title="Facebook de MetaEducacion"><i
                 class="bi bi-facebook fs-4"></i></a>
-        <a href="https://www.instagram.com/metaeducacionsanjose/" class="instagram-side" target="_blank"><i
+        <a href="https://www.instagram.com/metaeducacionsanjose/" class="instagram-side" target="_blank" rel="noopener noreferrer" aria-label="Instagram de MetaEducacion" title="Instagram de MetaEducacion"><i
                 class="bi bi-instagram fs-4"></i></a>
-        <a href="https://www.tiktok.com/@legionaxolot?lang=es" class="tiktok-side" target="_blank"><i
+        <a href="https://www.tiktok.com/@legionaxolot?lang=es" class="tiktok-side" target="_blank" rel="noopener noreferrer" aria-label="TikTok de Legion Axolot" title="TikTok de Legion Axolot"><i
                 class="bi bi-tiktok fs-4"></i></a>
         <a href="https://wa.me/524191070127?text=Hola%2C%20me%20interesa%20información%20sobre%20Preparatorias."
-            class="whatsapp-side" target="_blank"><i class="bi bi-whatsapp fs-4"></i></a>
+            class="whatsapp-side" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp de MetaEducacion" title="WhatsApp de MetaEducacion"><i class="bi bi-whatsapp fs-4"></i></a>
     </div>
 
     <!-- Header / Navbar -->
@@ -50,20 +58,148 @@
                 <img src="assets/logo_white.png" alt="MetaEducación Logo" height="40" class="me-2">
                 <span class="fw-bolder fs-4 italic">MetaEducación</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-label="Abrir menú" title="Abrir menú">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="index.html#inicio">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="index.html#oferta">Programas</a></li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="index.html#admisiones">Inscripción</a>
+                <ul class="navbar-nav mx-auto gap-1">
+
+                    <!-- Inicio -->
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="index.html">Inicio</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link fw-semibold" href="index.html#convenios">Convenios</a></li>
+
+                    <!-- Programas ▾ -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-semibold dropdown-toggle active" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Programas</a>
+                        <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
+                            <li><h6 class="dropdown-header text-uppercase ls-wide">Carreras</h6></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="software.html">
+                                <i class="bi bi-code-slash nav-drop-icon text-pink me-2"></i>
+                                <span class="fw-semibold">Ing. en Software</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="telematica.html">
+                                <i class="bi bi-cpu nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Ing. en Telemática</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2 active" href="preparatoria.html">
+                                <i class="bi bi-mortarboard nav-drop-icon nav-drop-icon-orange me-2"></i>
+                                <span class="fw-semibold">Preparatoria 2 Años</span>
+                            </a></li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li><h6 class="dropdown-header text-uppercase ls-wide">En esta página</h6></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#costos-beca">
+                                <i class="bi bi-cash-stack nav-drop-icon text-muted me-2"></i>Costos y Beca
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#modalidades-inicio">
+                                <i class="bi bi-calendar-check nav-drop-icon text-muted me-2"></i>Modalidades e Inicio
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#info-section">
+                                <i class="bi bi-briefcase nav-drop-icon text-muted me-2"></i>Perfil y Campo Laboral
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#direccion-academica-preparatoria">
+                                <i class="bi bi-mortarboard nav-drop-icon text-muted me-2"></i>Direccion Academica
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#curriculum-section">
+                                <i class="bi bi-journal-text nav-drop-icon text-muted me-2"></i>Plan de Estudios
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Comunidad ▾ -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Comunidad</a>
+                        <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#comunidad">
+                                <i class="bi bi-images nav-drop-icon text-pink me-2"></i>
+                                <span class="fw-semibold">Galería Axolot</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#comunidades">
+                                <i class="bi bi-people-fill nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Comunidades Axolot</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#cursos">
+                                <i class="bi bi-laptop nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Cursos</span>
+                            </a></li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#portafolio">
+                                <i class="bi bi-grid-1x2 nav-drop-icon text-muted me-2"></i>Portafolio
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#egresados">
+                                <i class="bi bi-trophy nav-drop-icon text-muted me-2"></i>Casos de Éxito
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Admisiones ▾ -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Admisiones</a>
+                        <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#calculadora">
+                                <i class="bi bi-calculator nav-drop-icon text-pink me-2"></i>
+                                <span class="fw-semibold">Calculadora de Beca</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#lead-preparatoria">
+                                <i class="bi bi-send-check nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Solicitar Información</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#admisiones">
+                                <i class="bi bi-clipboard-check nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Proceso de Inscripción</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#convenios">
+                                <i class="bi bi-handshake nav-drop-icon text-muted me-2"></i>Convenios
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Institución ▾ -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Institución</a>
+                        <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#direccion-academica-preparatoria">
+                                <i class="bi bi-building nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Direccion Academica</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="#evidencias-preparatoria">
+                                <i class="bi bi-people nav-drop-icon text-pink me-2"></i>
+                                <span class="fw-semibold">Vida Escolar</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#nosotros">
+                                <i class="bi bi-building nav-drop-icon text-blue me-2"></i>
+                                <span class="fw-semibold">Nosotros</span>
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#eventos">
+                                <i class="bi bi-calendar-event nav-drop-icon text-pink me-2"></i>Eventos
+                            </a></li>
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#faq">
+                                <i class="bi bi-question-circle nav-drop-icon text-muted me-2"></i>FAQ
+                            </a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Contacto -->
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="#lead-preparatoria">Contacto</a>
+                    </li>
+
+                    <!-- Campus Virtual solo en móvil -->
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link fw-bold d-flex align-items-center gap-2 nav-campus" href="login.html">
+                            <i class="bi bi-laptop-fill"></i> Campus Virtual
+                        </a>
+                    </li>
                 </ul>
                 <div class="d-flex gap-2">
-                    <a href="https://wa.me/524191070127?text=Quiero%20info%20sobre%20Preparatoria" target="_blank"
-                        class="btn btn-pink text-white fw-bold px-3 py-1 small">¡Inscríbete!</a>
+                    <a href="#lead-preparatoria" class="btn btn-pink text-white fw-bold px-3 py-1 small">¡Inscríbete!</a>
+                    <a href="login.html" class="btn btn-warning text-dark fw-bold px-3 py-1 small d-none d-lg-flex align-items-center">
+                        <i class="bi bi-phone-fill me-1"></i>Campus</a>
                 </div>
             </div>
         </div>
@@ -81,16 +217,17 @@
             <i class="bi bi-mortarboard fs-1 d-block mb-3" style="color: #ff6b00;"></i>
             <h1 class="display-3 fw-bolder italic mb-3">Preparatoria en <span
                     style="color: #ff6b00; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">2 Años</span></h1>
-            <p class="lead fw-light mb-4 text-white">Acelera tu proceso hacia la universidad con una formación
-                tecnológica de alta
-                calidad.</p>
+            <p class="lead fw-light mb-3 text-white">Termina tu preparatoria en 2 años con horario definido, acompañamiento escolar y una ruta clara hacia universidad o empleo inicial.</p>
+            <p class="mb-4 text-white-50">Fortalece bases académicas, habilidades digitales y disciplina de estudio con seguimiento cercano para no perder el ritmo.</p>
             <div class="d-flex justify-content-center gap-3 mb-4">
                 <span class="badge bg-white px-4 py-2 fs-6 text-pink">2 años (Acelerado)</span>
                 <span class="badge bg-white px-4 py-2 fs-6 text-pink">Alta Demanda</span>
             </div>
-            <a href="https://wa.me/524191070127?text=Quiero%20info%20sobre%20Preparatoria" target="_blank"
-                class="btn btn-light btn-lg fw-bold mt-3 mb-5 px-5 border-0 shadow-sm" style="color: #1a3db6;">Hablar
-                con Asesor</a>
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-3 mb-5">
+                <a href="#lead-preparatoria" class="btn btn-light btn-lg fw-bold px-5 border-0 shadow-sm"
+                    style="color: #1a3db6;">Solicitar información</a>
+                <a href="#costos-beca" class="btn btn-outline-light btn-lg fw-bold px-4">Ver costos y beca</a>
+            </div>
         </div>
     </header>
 
@@ -106,6 +243,223 @@
         </div>
     </div>
 
+
+    <!-- Costos y Beca -->
+    <section id="costos-beca" class="py-5" style="background-color: #f8f9fa;">
+        <div class="container py-4">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-7">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 pricing-interactive"
+                        data-program="Preparatoria en 2 a?os"
+                        data-wa-url="https://wa.me/524191070127?text=Quiero%20inscribirme%20a%20Preparatoria%20con%20la%20beca%20preferencial">
+                        <div class="card-body p-4 p-lg-5">
+                            <span class="badge bg-soft-pink text-pink mb-3 px-3 py-2">Costos y beca</span>
+                            <h2 class="display-6 fw-bolder text-blue mb-3">Descubre tu beca preferencial</h2>
+                            <p class="text-muted mb-4">Dejanos tus datos y te mostramos una propuesta mas emocionante: si apartas durante <span class="promo-month-label text-lowercase">este mes</span>, la inscripcion del primer cuatrimestre baja a $0. A partir del segundo cuatrimestre, la inscripcion vuelve a $1,000. Al iniciar en septiembre solo pagarias tu primera mensualidad.</p>
+
+                            <form id="pricingGate-preparatoria" class="pricing-gate-form" novalidate>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" for="pricingGate-preparatoria-nombre">Nombre completo</label>
+                                        <input id="pricingGate-preparatoria-nombre" type="text" class="form-control form-control-lg rounded-3" required>
+                                        <div class="invalid-feedback">Escribe tu nombre.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" for="pricingGate-preparatoria-telefono">Telefono</label>
+                                        <input id="pricingGate-preparatoria-telefono" type="tel" class="form-control form-control-lg rounded-3" required>
+                                        <div class="invalid-feedback">Escribe tu telefono.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" for="pricingGate-preparatoria-email">Correo</label>
+                                        <input id="pricingGate-preparatoria-email" type="email" class="form-control form-control-lg rounded-3" required>
+                                        <div class="invalid-feedback">Escribe un correo valido.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold" for="pricingGate-preparatoria-modalidad">Modalidad de interes</label>
+                                        <select id="pricingGate-preparatoria-modalidad" class="form-select form-select-lg rounded-3" required>
+                                            <option value="">Selecciona modalidad</option>
+<option value="Presencial intensiva">Presencial intensiva</option>
+<option value="Presencial sabatina">Presencial sabatina</option>
+<option value="Virtual">Virtual</option>
+                                        </select>
+                                        <div class="invalid-feedback">Selecciona una modalidad.</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-3 align-items-center mt-4">
+                                    <button type="submit" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero ver mi beca preferencial</button>
+                                    <span id="pricingGateStatus-preparatoria" class="small text-muted">Al enviar tus datos desbloqueas la promo de <span class="promo-month-label text-lowercase">este mes</span>: inscripcion del primer cuatrimestre en $0. A partir del segundo cuatrimestre vuelve a $1,000.</span>
+                                </div>
+                            </form>
+
+                            <div id="pricingResult-preparatoria" class="d-none mt-5">
+                                <div class="rounded-4 border border-success-subtle bg-light p-4 mb-4">
+                                    <div class="small text-uppercase fw-bold text-success mb-2">Beca preferencial estimada</div>
+                                    <h3 class="fw-bolder text-blue mb-2">Tu precio preferencial de inicio ya esta listo</h3>
+                                    <p class="text-muted mb-1">Modalidad elegida: <span class="fw-bold text-blue" id="pricingSelected-preparatoria"></span></p>
+                                    <p class="text-muted mb-0">Si apartas durante <span class="promo-month-label text-lowercase">este mes</span>, aseguras inscripcion del primer cuatrimestre en $0. A partir del segundo cuatrimestre, la inscripcion es de $1,000. Tu arranque sigue siendo en <span class="start-month-label text-lowercase">septiembre</span> con solo la mensualidad de inicio.</p>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="border rounded-4 h-100 p-4 bg-white">
+                                            <div class="small text-uppercase fw-bold text-muted mb-2">Inscripcion del primer cuatrimestre</div>
+                                            <div class="small text-muted text-decoration-line-through">Precio regular $2,000</div>
+                                            <div class="display-6 fw-bolder text-blue mb-1">$0</div>
+                                            <div class="small text-success fw-bold">Solo durante <span class="promo-month-label text-lowercase">este mes</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="border rounded-4 h-100 p-4 bg-white">
+                                            <div class="small text-uppercase fw-bold text-muted mb-2">Primer pago en <span class="start-month-label text-lowercase">septiembre</span></div>
+                                            <div class="small text-muted text-decoration-line-through">Precio regular $2,500</div>
+                                            <div class="display-6 fw-bolder text-blue mb-1">$1,250</div>
+                                            <div class="small text-success fw-bold">Esto pagas al iniciar en <span class="start-month-label text-lowercase">septiembre</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-3">
+                                    <a href="#lead-preparatoria" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero inscribirme</a>
+                                    <a href="https://wa.me/524191070127?text=Quiero%20inscribirme%20a%20Preparatoria%20con%20la%20beca%20preferencial" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary fw-bold rounded-pill px-4">Quiero apartar mi lugar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 text-white" style="background: linear-gradient(135deg, #d81b60 0%, #1a3db6 100%);">
+                        <div class="card-body p-4 p-lg-5 d-flex flex-column justify-content-center">
+                            <h3 class="fw-bolder mb-3">Este mes puede ser tu mejor momento para entrar</h3>
+                            <p class="text-white-50 mb-4">Cuando dejas tus datos, desbloqueas una oferta clara: promo vigente solo durante <span class="promo-month-label text-lowercase">este mes</span>, con inscripcion del primer cuatrimestre en $0. Despues, en los siguientes cuatrimestres, la inscripcion es de $1,000.</p>
+                            <div class="border border-light border-opacity-25 rounded-4 p-3 mb-4">
+                                <div class="small text-white-50 mb-1">Paso recomendado</div>
+                                <div class="fw-bold fs-5">Completa tus datos y revisa si todavia alcanzas la promo de <span class="promo-month-label text-lowercase">este mes</span></div>
+                            </div>
+                            <a href="#lead-preparatoria" class="btn btn-light fw-bold rounded-pill px-4 mb-3">Quiero iniciar mi inscripcion</a>
+                            <a href="https://wa.me/524191070127?text=Quiero%20inscribirme%20a%20Preparatoria%20con%20la%20beca%20preferencial" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light fw-bold rounded-pill px-4">Hablar por WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modalidades y Siguiente Inicio -->
+    <section id="modalidades-inicio" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-8">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <h2 class="display-6 fw-bolder text-blue mb-3">Modalidades</h2>
+                            <p class="text-muted mb-4">La misma lógica operativa para que el alumno y su familia entiendan rápidamente cómo puede cursar la preparatoria.</p>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="border rounded-4 h-100 p-4 bg-light">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <i class="bi bi-building text-pink"></i>
+                                            <h5 class="fw-bold mb-0 text-blue">Presencial intensiva</h5>
+                                        </div>
+                                        <p class="text-muted small mb-2"><b>Días:</b> Lunes a viernes</p>
+                                        <p class="text-muted small mb-2"><b>Horario:</b> 4 horas diarias</p>
+                                        <p class="text-muted small mb-2"><b>Carga semanal:</b> 20 horas</p>
+                                        <p class="text-muted small mb-2"><b>Ideal para:</b> estudiantes de tiempo completo que quieren terminar rápido.</p>
+                                        <p class="text-muted small mb-0"><b>Opciones:</b> orientación en informática o automotriz.</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border rounded-4 h-100 p-4 bg-light">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <i class="bi bi-calendar-week text-pink"></i>
+                                            <h5 class="fw-bold mb-0 text-blue">Sabatina / virtual</h5>
+                                        </div>
+                                        <p class="text-muted small mb-2"><b>Horario:</b> Sábados de 8:00 a 16:00</p>
+                                        <p class="text-muted small mb-2"><b>Carga semanal:</b> 8 horas</p>
+                                        <p class="text-muted small mb-2"><b>Ideal para:</b> estudiantes que trabajan o necesitan flexibilidad.</p>
+                                        <p class="text-muted small mb-2"><b>Formato:</b> continuidad académica con enfoque práctico.</p>
+                                        <p class="text-muted small mb-0"><b>Objetivo:</b> obtener el certificado oficial con acompañamiento.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color:#fdf1f7;">
+                        <div class="card-body p-4 p-lg-5 d-flex flex-column justify-content-center">
+                            <span class="badge bg-warning text-dark mb-3 px-3 py-2">Siguiente inicio</span>
+                            <h3 class="fw-bolder text-blue mb-3">Septiembre 2026</h3>
+                            <p class="text-muted mb-3">Inscripciones abiertas para el próximo grupo de Preparatoria en 2 años.</p>
+                            <ul class="list-unstyled text-muted small mb-4">
+                                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Cupo limitado por grupo</li>
+                                <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Orientación personalizada para alumnos y familias</li>
+                                <li><i class="bi bi-check2-circle text-success me-2"></i>Respuesta rápida por formulario o WhatsApp</li>
+                            </ul>
+                            <a href="#lead-preparatoria" class="btn btn-pink text-white fw-bold rounded-pill px-4">Apartar mi lugar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparador Rápido -->
+    <section id="comparador-preparatoria" class="py-5" style="background-color:#f8f9fa;">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">¿Por qué <span class="text-pink">MetaEducación</span>?</h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Una comparación rápida para entender qué valor recibes en la Preparatoria en 2 años.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Ruta acelerada</h5><p class="text-muted small mb-0">La promesa es clara: terminar en menos tiempo sin perder estructura académica.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Enfoque tecnológico</h5><p class="text-muted small mb-0">Informática, inglés y talleres prácticos generan diferenciación frente a opciónes más tradicionales.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Horarios definidos</h5><p class="text-muted small mb-0">Opciones claras para entre semana o sábados, útiles para familias que planean tiempos y traslados.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Acompañamiento</h5><p class="text-muted small mb-0">Atención escolar y orientación para que alumno y familia sigan el proceso con más certeza.</p></div></div></div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#lead-preparatoria" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero información de Preparatoria</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Decisión Rápida -->
+    <section id="fit-preparatoria" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <h3 class="fw-bolder text-blue mb-3">Esta preparatoria es para ti si...</h3>
+                            <ul class="list-unstyled text-muted mb-0">
+                                <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Quieres terminar la prepa en menos tiempo con un plan claro.</li>
+                                <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Buscas continuar a universidad o fortalecer tu perfil laboral básico.</li>
+                                <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Te interesa una formación con tecnología, inglés y talleres prácticos.</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Tú y tu familia valoran estructura, seguimiento y avance medible.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4" style="background-color:#fff8f8;">
+                        <div class="card-body p-4 p-lg-5">
+                            <h3 class="fw-bolder text-blue mb-3">Esta preparatoria puede no ser para ti si...</h3>
+                            <ul class="list-unstyled text-muted mb-0">
+                                <li class="mb-3"><i class="bi bi-x-circle-fill text-danger me-2"></i>No buscas un formato acelerado o te incomoda una ruta más exigente en tiempos.</li>
+                                <li class="mb-3"><i class="bi bi-x-circle-fill text-danger me-2"></i>Prefieres una modalidad sin acompañamiento o sin seguimiento académico.</li>
+                                <li class="mb-3"><i class="bi bi-x-circle-fill text-danger me-2"></i>No te interesa una formación con herramientas tecnológicas e inglés.</li>
+                                <li><i class="bi bi-x-circle-fill text-danger me-2"></i>Buscas una opción sin estructura ni compromiso constante.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#lead-preparatoria" class="btn btn-outline-pink fw-bold rounded-pill px-4">Quiero saber si Preparatoria es para mí</a>
+            </div>
+        </div>
+    </section>
+
     <!-- Info Section -->
     <section id="info-section" class="py-5 bg-white">
         <div class="container py-5">
@@ -114,9 +468,7 @@
                     <h2 class="display-5 fw-bolder text-blue mb-4">Objetivo del <span
                             style="color: #ff6b00;">Programa</span></h2>
                     <div class="underline mb-4"></div>
-                    <p class="lead text-muted mb-4">Brindar una formación propedéutica y tecnológica de excelencia en 2
-                        años, que permita al estudiante integrarse competitivamente a cualquier institución de educación
-                        superior o al entorno laboral.</p>
+                    <p class="lead text-muted mb-4">Brindar una formación propedéutica y tecnológica que permita al estudiante terminar la preparatoria en 2 años y avanzar con mejores bases hacia universidad o empleo inicial.</p>
 
                     <h4 class="fw-bold mt-5 mb-3"><i class="bi bi-person-check-fill text-warning me-2"></i> Perfil de
                         Egreso</h4>
@@ -135,12 +487,12 @@
                         Plus MetaEducación</h4>
                     <ul class="list-group list-group-flush mb-4 shadow-sm rounded-4">
                         <li class="list-group-item py-3"><i class="bi bi-check2-circle text-success me-2"></i>
-                            <b>Presencial Intensiva (Lunes a Viernes):</b> Orientación Informática o Automotriz, ideal
+                            <b>Presencial Intensiva (Lunes a Viernes):</b> 4 horas diarias con orientación Informática o Automotriz, ideal
                             para
                             estudiantes de tiempo completo y acelerando a 2 años.
                         </li>
                         <li class="list-group-item py-3"><i class="bi bi-check2-circle text-success me-2"></i>
-                            <b>Presencial Sabatina / Virtual:</b> Adaptado especialmente a estudiantes que necesitan
+                            <b>Presencial Sabatina / Virtual:</b> Sábados de 8:00 a 16:00, adaptado especialmente a estudiantes que necesitan
                             horarios
                             flexibles o laboran entre semana y requieren obtener su certificado oficial.
                         </li>
@@ -151,10 +503,213 @@
                             <b>Taller de Robótica:</b> Aprende mecánica y electrónica aplicada con proyectos reales.
                         </li>
                     </ul>
+                    <div class="mt-4">
+                        <a href="#lead-preparatoria" class="btn btn-pink text-white fw-bold rounded-pill px-4">Solicitar plan y costos</a>
+                    </div>
                 </div>
                 <div class="col-lg-5 text-center">
                     <img src="assets/axolotPrepa.png" alt="Axolotl Preparatoria" class="img-fluid w-75"
                         style="background:none;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="direccion-academica-preparatoria" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">Direccion y <span class="text-pink">estructura academica</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Lo esencial para entender como se acompana, se evalua y se sostiene el avance del alumno en Preparatoria.</p>
+            </div>
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1400&q=80&fit=crop" alt="Placeholder institucional de preparatoria con alumnos" class="img-fluid w-100" style="height:320px; object-fit:cover;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold text-blue mb-2">Direccion y coordinacion de Preparatoria</h5>
+                            <p class="text-muted small mb-0">Espacio ideal para colocar despues una foto real de coordinacion general, direccion y acompanamiento escolar en aula.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Modelo educativo</h5><p class="text-muted small mb-0">Formacion propedeutica y tecnologica con estructura, habitos de estudio y acompanamiento constante.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Equipo academico</h5><p class="text-muted small mb-0">Coordinacion, direccion, tutor de carrera y control escolar acompanian el proceso del alumno.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Seguimiento</h5><p class="text-muted small mb-0">La asistencia se revisa en cada clase, hay seguimiento semanal y el avance se reporta por cuatrimestre.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Resultados visibles</h5><p class="text-muted small mb-0">En ciertas materias de TICs se trabaja con proyectos, por ejemplo el robot SCARA y otros entregables.</p></div></div></div>
+            </div>
+            <div class="row g-4 mt-1">
+                <div class="col-lg-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue mb-3">Lo que una familia necesita saber</h5><ul class="text-muted small mb-0"><li>Hay tutor de carrera, coordinacion, direccion y control escolar.</li><li>Si hay faltas o rezago, se activa seguimiento preventivo y contacto con familia.</li><li>El avance hoy se comunica por reporte interno y mas adelante por plataforma institucional.</li><li>El progreso se ve en participacion, proyectos, evaluaciones y continuidad.</li></ul></div></div></div>
+                <div class="col-lg-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue mb-3">Lo que se vive en Preparatoria</h5><ul class="text-muted small mb-0"><li>Clases con horarios claros y seguimiento cercano.</li><li>Talleres, exposiciones y proyectos que ayudan a recuperar confianza.</li><li>Revision de avances y acompanamiento durante el proceso.</li><li>Mas estructura para familias que buscan orden y continuidad.</li></ul></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reels Testimoniales -->
+    <section id="reels-preparatoria" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">Historias en <span class="text-pink">video</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Alumnos y familias cuentan su experiencia con la Preparatoria en 2 años.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <video class="w-100" controls muted playsinline preload="none" poster="assets/campus-generic-prepa-1.jpg" style="aspect-ratio: 9 / 16; object-fit: cover;">
+                            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        </video>
+                        <div class="card-body p-4">
+                            <span class="badge bg-soft-pink text-pink mb-2">Alumno</span>
+                            <h5 class="fw-bold text-blue mb-2">"Yo necesitaba una segunda oportunidad, y aquí sentí que sí podía avanzar"</h5>
+                            <p class="text-muted small mb-0">A veces solo se necesita que alguien te diga que sí puedes, y aquí te lo demuestran.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <video class="w-100" controls muted playsinline preload="none" poster="assets/campus-generic-prepa-2.jpg" style="aspect-ratio: 9 / 16; object-fit: cover;">
+                            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+                        </video>
+                        <div class="card-body p-4">
+                            <span class="badge bg-warning text-dark mb-2">Padre de familia</span>
+                            <h5 class="fw-bold text-blue mb-2">"Lo que más nos dio paz fue sentir comunicación y seguimiento de verdad"</h5>
+                            <p class="text-muted small mb-0">Las familias que confían en nosotros sienten que hay alguien cuidando a su hijo.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                        <video class="w-100" controls muted playsinline preload="none" poster="assets/campus-generic-prepa-1.jpg" style="aspect-ratio: 9 / 16; object-fit: cover;">
+                            <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+                        </video>
+                        <div class="card-body p-4">
+                            <span class="badge bg-soft-blue text-blue mb-2">Profesor</span>
+                            <h5 class="fw-bold text-blue mb-2">"No buscamos solo que termine; queremos que recupere la confianza y las bases sólidas"</h5>
+                            <p class="text-muted small mb-0">Un maestro que acompaña de verdad marca toda la diferencia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="#lead-preparatoria" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero recibir información de Preparatoria</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="dudas-preparatoria" class="py-5" style="background-color:#f8f9fa;">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">Lo que pasa si... <span class="text-pink">algo se complica</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Queremos que tu familia sepa exactamente qué hacemos cuando algo no sale bien.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue">Si falta mucho</h5><p class="text-muted mb-0">Se revisa el impacto en su continuidad, se da seguimiento preventivo y, si es necesario, se cita a la familia para atender la situación.</p></div></div></div>
+                <div class="col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue">Si baja calificaciones</h5><p class="text-muted mb-0">Tutor, coordinación y control escolar revisan el caso para reforzar hábitos, materias y estabilidad académica.</p></div></div></div>
+                <div class="col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue">Si necesita apoyo</h5><p class="text-muted mb-0">La escuela busca acompanarlo con seguimiento y orientacion para que pueda recuperar confianza, ritmo y permanencia.</p></div></div></div>
+                <div class="col-md-6"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><h5 class="fw-bold text-blue">Si quiere cambiar modalidad</h5><p class="text-muted mb-0">Se revisa disponibilidad, avance y condiciones académicas para orientar la mejor opción sin perder orden en el proceso.</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="evidencias-preparatoria" class="py-5 bg-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="display-6 fw-bolder text-blue">Asi se puede ver la <span class="text-pink">vida diaria</span></h2>
+                <div class="underline mx-auto mb-3"></div>
+                <p class="text-muted">Imagenes demo para que luego las cambies por aulas, alumnos, talleres, acompanamiento y avances reales.</p>
+            </div>
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80&fit=crop" alt="Alumnos conviviendo en clase" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Comunidad visible</h5><p class="text-muted small mb-0">Ideal para cambiar despues por alumnos reales en aula, recreo, evento o actividad escolar.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=80&fit=crop" alt="Alumno estudiando y participando" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Avance academico</h5><p class="text-muted small mb-0">Aqui conviene mostrar exposiciones, libreta, practicas, talleres o evidencias del progreso del alumno.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=900&q=80&fit=crop" alt="Docente acompanando a estudiantes" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Acompanamiento real</h5><p class="text-muted small mb-0">Sustituyelo luego por tutoria, revision de avances, reuniones o apoyo durante el proceso escolar.</p></div></div></div>
+                <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=900&q=80&fit=crop" alt="Exposicion escolar de alumnos" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Talleres y exposiciones</h5><p class="text-muted small mb-0">Tambien sirve para mostrar ferias, presentaciones, robotica o momentos que den confianza a la familia.</p></div></div></div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Cambio visible</h6><p class="text-muted small mb-0">Antes y despues del alumno: disciplina, seguridad, asistencia o continuidad academica.</p></div></div></div>
+                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Momento de aula</h6><p class="text-muted small mb-0">Fotos de actividades, exposiciones, talleres y acompanamiento docente con sentido humano.</p></div></div></div>
+                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Historia corta</h6><p class="text-muted small mb-0">Micro testimonio de alumno o familia sobre lo que cambio en su proceso y confianza.</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulario Corto -->
+    <section id="lead-preparatoria" class="py-5" style="background-color: #f8f9fa;">
+        <div class="container py-4">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-5">
+                    <div class="h-100 p-4 p-lg-5 rounded-4 text-white shadow-sm" style="background: linear-gradient(145deg, #1a3db6 0%, #d81b60 100%);">
+                        <span class="badge bg-light text-blue mb-3 px-3 py-2">Solicitud de información</span>
+                        <h2 class="display-6 fw-bolder mb-3">Da el siguiente paso en Preparatoria</h2>
+                        <p class="text-white-50 mb-4">Llena este formulario corto y el equipo de MetaEducación te comparte costos, beca, modalidad recomendada y requisitos de ingreso.</p>
+                        <ul class="list-unstyled text-white-50 small mb-4">
+                            <li class="mb-2"><i class="bi bi-check2-circle text-warning me-2"></i>Respuesta en menos de 2 horas hábiles</li>
+                            <li class="mb-2"><i class="bi bi-check2-circle text-warning me-2"></i>Atención para alumno y familia</li>
+                            <li><i class="bi bi-check2-circle text-warning me-2"></i>WhatsApp disponible como respaldo inmediato</li>
+                        </ul>
+                        <a href="https://wa.me/524191070127?text=Quiero%20información%20de%20Preparatoria" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light rounded-pill fw-bold px-4">Prefiero WhatsApp</a>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm rounded-4 h-100">
+                        <div class="card-body p-4 p-lg-5">
+                            <form id="prepaLeadForm" novalidate>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="prepaLeadNombre" class="form-label fw-semibold">Nombre completo</label>
+                                        <input type="text" class="form-control form-control-lg rounded-3" id="prepaLeadNombre" required>
+                                        <div class="invalid-feedback">Escribe tu nombre.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="prepaLeadTelefono" class="form-label fw-semibold">Teléfono</label>
+                                        <input type="tel" class="form-control form-control-lg rounded-3" id="prepaLeadTelefono" required>
+                                        <div class="invalid-feedback">Escribe un teléfono de contacto.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="prepaLeadEmail" class="form-label fw-semibold">Correo electrónico</label>
+                                        <input type="email" class="form-control form-control-lg rounded-3" id="prepaLeadEmail">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="prepaLeadPrograma" class="form-label fw-semibold">Programa</label>
+                                        <input type="text" class="form-control form-control-lg rounded-3" id="prepaLeadPrograma" value="Preparatoria en 2 años" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="prepaLeadModalidad" class="form-label fw-semibold">Modalidad de interés</label>
+                                        <select class="form-select form-select-lg rounded-3" id="prepaLeadModalidad" required>
+                                            <option value="">Selecciona una opción</option>
+                                            <option>Presencial intensiva</option>
+                                            <option>Presencial sabatina / virtual</option>
+                                            <option>No estoy seguro</option>
+                                        </select>
+                                        <div class="invalid-feedback">Selecciona una modalidad.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="prepaLeadHorario" class="form-label fw-semibold">Disponibilidad</label>
+                                        <select class="form-select form-select-lg rounded-3" id="prepaLeadHorario" required>
+                                            <option value="">Selecciona una opción</option>
+                                            <option>Entre semana</option>
+                                            <option>Sábados</option>
+                                            <option>Flexible</option>
+                                        </select>
+                                        <div class="invalid-feedback">Selecciona tu disponibilidad.</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="prepaLeadMensaje" class="form-label fw-semibold">Mensaje opciónal</label>
+                                        <textarea class="form-control rounded-3" id="prepaLeadMensaje" rows="4" maxlength="500" placeholder="Cuéntanos si buscas beca, revalidación, modalidad o más detalles."></textarea>
+                                        <div class="form-text">Máximo 500 caracteres.</div>
+                                    </div>
+                                    <div class="col-12 d-flex flex-column flex-sm-row gap-3 align-items-start align-items-sm-center pt-2">
+                                        <button type="submit" id="prepaLeadSubmit" class="btn btn-pink text-white fw-bold px-4 py-3 rounded-pill">
+                                            Quiero que me contacten
+                                        </button>
+                                        <span id="prepaLeadStatus" class="text-muted small">Te contactamos en menos de 2 horas hábiles.</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -462,6 +1017,10 @@
         </div>
     </section>
 
+    <div class="container text-center pb-5">
+        <a href="#lead-preparatoria" class="btn btn-pink text-white fw-bold rounded-pill px-4">Recibir plan y horarios</a>
+    </div>
+
     <!-- Footer -->
     <footer class="py-5 text-white" style="background-color: #111;">
         <div class="container text-center">
@@ -472,27 +1031,243 @@
 
     <!-- WhatsApp Float -->
     <a href="https://wa.me/524191070127?text=Hola%2C%20me%20interesa%20información%20sobre%20MetaEducación."
-        class="whatsapp-float" target="_blank">
+        class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp de MetaEducacion" title="Abrir WhatsApp de MetaEducacion">
         <i class="bi bi-whatsapp"></i>
     </a>
 
+    <script src="assets/api.js"></script>
     <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function () {
+            const API_BASE_PUBLIC = window.API_BASE || 'http://localhost:8000';
+            const form = document.getElementById('prepaLeadForm');
+            const submit = document.getElementById('prepaLeadSubmit');
+            const status = document.getElementById('prepaLeadStatus');
+
+            if (!form) return;
+
+            function buildWaUrl(data) {
+                const msg = [
+                    'Hola, quiero información sobre Preparatoria.',
+                    `Nombre: ${data.nombre}`,
+                    `Teléfono: ${data.telefono}`,
+                    data.email ? `Correo: ${data.email}` : null,
+                    `Modalidad: ${data.modalidad}`,
+                    `Disponibilidad: ${data.horario}`,
+                    data.mensaje ? `Mensaje: ${data.mensaje}` : null,
+                ].filter(Boolean).join('\n');
+                return `https://wa.me/524191070127?text=${encodeURIComponent(msg)}`;
+            }
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                form.classList.add('was-validated');
+
+                if (!form.checkValidity()) {
+                    status.textContent = 'Completa los campos obligatorios para continuar.';
+                    status.className = 'text-danger small';
+                    return;
+                }
+
+                const data = {
+                    nombre: document.getElementById('prepaLeadNombre').value.trim(),
+                    telefono: document.getElementById('prepaLeadTelefono').value.trim(),
+                    email: document.getElementById('prepaLeadEmail').value.trim() || null,
+                    programa: 'Preparatoria en 2 años',
+                    modalidad: document.getElementById('prepaLeadModalidad').value,
+                    horario: document.getElementById('prepaLeadHorario').value,
+                    mensaje: document.getElementById('prepaLeadMensaje').value.trim() || null,
+                };
+
+                const waUrl = buildWaUrl(data);
+
+                submit.disabled = true;
+                submit.textContent = 'Enviando...';
+                status.textContent = 'Enviando tu solicitud...';
+                status.className = 'text-muted small';
+
+                try {
+                    const res = await fetch(`${API_BASE_PUBLIC}/public/contacts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nombre: data.nombre,
+                            telefono: data.telefono,
+                            email: data.email,
+                            programa: data.programa,
+                            mensaje: [data.modalidad, data.horario, data.mensaje].filter(Boolean).join(' | '),
+                        }),
+                    });
+
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    status.textContent = 'Solicitud enviada. Te contactamos en menos de 2 horas hábiles.';
+                    status.className = 'text-success small';
+                } catch (err) {
+                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                    status.textContent = 'No se pudo enviar al servidor. Abrimos WhatsApp para continuar sin perder tus datos.';
+                    status.className = 'text-warning small';
+                } finally {
+                    submit.disabled = false;
+                    submit.textContent = 'Quiero que me contacten';
+                }
+            });
+        })();
+    </script>
 
     <!-- GSAP Animations -->
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // ── Navbar ────────────────────────────────────────────────────
+        document.querySelectorAll('.pricing-interactive').forEach((card) => {
+            const API_BASE_PUBLIC = window.API_BASE || 'http://localhost:8000';
+            const form = card.querySelector('.pricing-gate-form');
+            const status = card.querySelector('[id^="pricingGateStatus-"]');
+            const result = card.querySelector('[id^="pricingResult-"]');
+            const selected = card.querySelector('[id^="pricingSelected-"]');
+            const startMonthLabels = card.querySelectorAll('.start-month-label');
+            const promoMonthLabels = card.querySelectorAll('.promo-month-label');
+            const waUrl = card.dataset.waUrl;
+            const program = card.dataset.program;
+
+            const startMonth = new Intl.DateTimeFormat('es-MX', { month: 'long' }).format(new Date(2026, 8, 1));
+            const promoMonth = new Intl.DateTimeFormat('es-MX', { month: 'long' }).format(new Date());
+            startMonthLabels.forEach((el) => { el.textContent = startMonth; });
+            promoMonthLabels.forEach((el) => { el.textContent = promoMonth; });
+
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                form.classList.add('was-validated');
+
+                if (!form.checkValidity()) {
+                    if (status) {
+                        status.textContent = 'Completa todos los campos para ver tu beca preferencial.';
+                        status.className = 'small text-danger';
+                    }
+                    return;
+                }
+
+                const data = {
+                    nombre: form.querySelector('[id$="-nombre"]').value.trim(),
+                    telefono: form.querySelector('[id$="-telefono"]').value.trim(),
+                    email: form.querySelector('[id$="-email"]').value.trim(),
+                    modalidad: form.querySelector('[id$="-modalidad"]').value,
+                };
+
+                const submit = form.querySelector('button[type="submit"]');
+                if (submit) {
+                    submit.disabled = true;
+                    submit.textContent = 'Enviando...';
+                }
+                if (status) {
+                    status.textContent = 'Estamos preparando tu beca preferencial y revisando si todavia alcanzas la promo de este mes...';
+                    status.className = 'small text-muted';
+                }
+
+                try {
+                    const res = await fetch(`${API_BASE_PUBLIC}/public/contacts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nombre: data.nombre,
+                            telefono: data.telefono,
+                            email: data.email,
+                            programa: program,
+                            mensaje: ['Beca preferencial desde bloque de precios', `Modalidad: ${data.modalidad}`].join(' | '),
+                        }),
+                    });
+
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                    if (selected) selected.textContent = data.modalidad;
+                    if (result) result.classList.remove('d-none');
+                    if (status) {
+                        status.textContent = `Listo. Ya puedes ver tu precio de inicio en ${startMonth}. Si apartas en ${promoMonth}, la inscripcion del primer cuatrimestre queda en $0 y despues vuelve a $1,000.`;
+                        status.className = 'small text-success';
+                    }
+                } catch (err) {
+                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                    if (status) {
+                        status.textContent = 'No pudimos enviar tus datos. Abrimos WhatsApp para no perder tu avance.';
+                        status.className = 'small text-warning';
+                    }
+                } finally {
+                    if (submit) {
+                        submit.disabled = false;
+                        submit.textContent = 'Quiero ver mi beca preferencial';
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.dropdown').forEach((dropdown) => {
+            const menu = dropdown.querySelector('.nav-dropdown');
+            if (!menu) return;
+
+            dropdown.addEventListener('show.bs.dropdown', () => {
+                gsap.fromTo(menu,
+                    { opacity: 0, y: 12, scale: 0.98 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.28, ease: 'power2.out' }
+                );
+            });
+
+            dropdown.addEventListener('shown.bs.dropdown', () => {
+                const items = menu.querySelectorAll('.nav-drop-item');
+                if (!items.length) return;
+
+                gsap.from(items, {
+                    opacity: 0,
+                    x: -10,
+                    stagger: 0.04,
+                    duration: 0.22,
+                    ease: 'power2.out'
+                });
+            });
+        });
+
+        document.querySelectorAll('nav a[href^="#"], .nav-dropdown a[href^="#"]').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                const target = href ? document.querySelector(href) : null;
+                if (!target) return;
+
+                e.preventDefault();
+
+                const dropdown = link.closest('.dropdown');
+                const toggle = dropdown ? dropdown.querySelector('[data-bs-toggle="dropdown"]') : null;
+                if (toggle) {
+                    const instance = bootstrap.Dropdown.getOrCreateInstance(toggle);
+                    instance.hide();
+                }
+
+                const nav = document.querySelector('nav');
+                const navHeight = nav ? nav.offsetHeight : 0;
+                const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 8;
+
+                window.scrollTo({
+                    top,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('nav', {
             y: -80, opacity: 0, duration: 0.7, ease: 'power3.out'
         });
 
-        // ── Social sidebar ────────────────────────────────────────────
+        // â”€â”€ Social sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('.social-sidebar', {
             x: -60, opacity: 0, duration: 0.9, delay: 0.8, ease: 'power3.out'
         });
 
-        // ── Hero: cascada al cargar ───────────────────────────────────
+        // â”€â”€ Hero: cascada al cargar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
         heroTl
             .from('#hero .bi-mortarboard', {
@@ -507,13 +1282,23 @@
                 scale: 0.7, opacity: 0, duration: 0.6, ease: 'back.out(1.5)'
             }, '-=0.2');
 
-        // ── RVOE Banner ───────────────────────────────────────────────
+        // â”€â”€ RVOE Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('.bg-light.border-bottom.border-top .badge', {
             scrollTrigger: { trigger: '.bg-light.border-bottom.border-top', start: 'top 88%' },
             x: -50, opacity: 0, duration: 0.7, ease: 'power3.out'
         });
 
-        // ── Info Section ──────────────────────────────────────────────
+        ScrollTrigger.batch('#costos-beca .card, #modalidades-inicio .card, #comparador-preparatoria .card, #fit-preparatoria .card, #direccion-academica-preparatoria .card, #evidencias-preparatoria .card, #reels-preparatoria .card, #dudas-preparatoria .card, #lead-preparatoria .card, #lead-preparatoria .rounded-4', {
+            start: 'top 88%',
+            onEnter: (elements) => {
+                gsap.from(elements, {
+                    y: 40, opacity: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out'
+                });
+            },
+            once: true
+        });
+
+        // â”€â”€ Info Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('#info-section h2', {
             scrollTrigger: { trigger: '#info-section h2', start: 'top 82%' },
             x: -60, opacity: 0, duration: 0.8, ease: 'power3.out'
@@ -560,7 +1345,7 @@
             scale: 0.5, opacity: 0, rotation: -10, duration: 1.1, ease: 'elastic.out(1, 0.5)'
         });
 
-        // ── Curriculum Section ────────────────────────────────────────
+        // â”€â”€ Curriculum Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('#curriculum-section .text-center h2', {
             scrollTrigger: { trigger: '#curriculum-section .text-center', start: 'top 82%' },
             y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
@@ -586,13 +1371,13 @@
             y: 30, opacity: 0, duration: 0.7, ease: 'power2.out'
         });
 
-        // ── Footer ────────────────────────────────────────────────────
+        // â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('footer', {
             scrollTrigger: { trigger: 'footer', start: 'top 95%' },
             y: 40, opacity: 0, duration: 0.7, ease: 'power2.out'
         });
 
-        // ── WhatsApp float ────────────────────────────────────────────
+        // â”€â”€ WhatsApp float â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         gsap.from('.whatsapp-float', {
             scale: 0, opacity: 0, duration: 0.6, delay: 1.5, ease: 'back.out(2)'
         });

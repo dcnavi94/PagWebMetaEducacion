@@ -721,3 +721,98 @@ class MoveStudentGroupRequest(BaseModel):
 
 
 StudyPlanWithSubjects.model_rebuild()
+
+
+# ── Página Web ──────────────────────────────────────────────────────────────
+
+class ProjectCreate(BaseModel):
+    title: str
+    short_description: Optional[str] = None
+    category: str = "portfolio"   # "portfolio" | "evento"
+    image_url: Optional[str] = None
+    date: Optional[datetime] = None
+    location: Optional[str] = None
+    is_active: bool = True
+
+class ProjectUpdate(BaseModel):
+    title: Optional[str] = None
+    short_description: Optional[str] = None
+    category: Optional[str] = None
+    image_url: Optional[str] = None
+    date: Optional[datetime] = None
+    location: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class ProjectOut(BaseModel):
+    id: int
+    title: str
+    short_description: Optional[str] = None
+    category: str
+    image_url: Optional[str] = None
+    date: Optional[datetime] = None
+    location: Optional[str] = None
+    is_active: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class ContactCreate(BaseModel):
+    nombre: str
+    telefono: str
+    email: Optional[str] = None
+    programa: Optional[str] = None
+    mensaje: Optional[str] = None
+
+class ContactStatusUpdate(BaseModel):
+    status: str   # "nuevo" | "contactado" | "inscrito"
+
+class ContactOut(BaseModel):
+    id: int
+    nombre: str
+    telefono: str
+    email: Optional[str] = None
+    programa: Optional[str] = None
+    mensaje: Optional[str] = None
+    status: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class CommunityCreate(BaseModel):
+    name: str
+    description: str
+    icon: str = "bi-people-fill"
+    color: str = "blue"
+    frequency: Optional[str] = None
+    image_url: Optional[str] = None
+    member_count: Optional[int] = None
+    sort_order: int = 0
+    is_active: bool = True
+
+class CommunityUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    icon: Optional[str] = None
+    color: Optional[str] = None
+    frequency: Optional[str] = None
+    image_url: Optional[str] = None
+    member_count: Optional[int] = None
+    sort_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+class CommunityOut(BaseModel):
+    id: int
+    name: str
+    description: str
+    icon: str
+    color: str
+    frequency: Optional[str] = None
+    image_url: Optional[str] = None
+    member_count: Optional[int] = None
+    sort_order: int
+    is_active: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
