@@ -3967,6 +3967,114 @@ def admin_delete_contact(contact_id: int, current_user: models.User = Depends(ad
     db.commit()
 
 
+# ── Historias de Éxito: endpoints públicos ──────────────────────────────────
+
+@app.get("/public/success-stories", response_model=List[schemas.SuccessStoryOut], tags=["Web Pública"])
+def public_get_success_stories(db: Session = Depends(get_db)):
+    return db.query(models.SuccessStory).filter(models.SuccessStory.is_active == True).order_by(models.SuccessStory.sort_order, models.SuccessStory.id).all()
+
+@app.get("/admin/success-stories", response_model=List[schemas.SuccessStoryOut], tags=["Admin Web"])
+def admin_get_success_stories(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    return db.query(models.SuccessStory).order_by(models.SuccessStory.sort_order, models.SuccessStory.id).all()
+
+@app.post("/admin/success-stories", response_model=schemas.SuccessStoryOut, status_code=201, tags=["Admin Web"])
+def admin_create_success_story(data: schemas.SuccessStoryCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    item = models.SuccessStory(**data.model_dump())
+    db.add(item); db.commit(); db.refresh(item); return item
+
+@app.put("/admin/success-stories/{item_id}", response_model=schemas.SuccessStoryOut, tags=["Admin Web"])
+def admin_update_success_story(item_id: int, data: schemas.SuccessStoryUpdate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    item = db.query(models.SuccessStory).filter(models.SuccessStory.id == item_id).first()
+    if not item: raise HTTPException(status_code=404, detail="No encontrado")
+    for k, v in data.model_dump(exclude_unset=True).items(): setattr(item, k, v)
+    db.commit(); db.refresh(item); return item
+
+@app.delete("/admin/success-stories/{item_id}", status_code=204, tags=["Admin Web"])
+def admin_delete_success_story(item_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    item = db.query(models.SuccessStory).filter(models.SuccessStory.id == item_id).first()
+    if not item: raise HTTPException(status_code=404, detail="No encontrado")
+    db.delete(item); db.commit()
+
+
+# ── Reels Testimoniales: endpoints públicos ──────────────────────────────────
+
+@app.get("/public/testimonial-reels", response_model=List[schemas.TestimonialReelOut], tags=["Web Pública"])
+def public_get_testimonial_reels(db: Session = Depends(get_db)):
+    return db.query(models.TestimonialReel).filter(models.TestimonialReel.is_active == True).order_by(models.TestimonialReel.sort_order, models.TestimonialReel.id).all()
+
+@app.get("/admin/testimonial-reels", response_model=List[schemas.TestimonialReelOut], tags=["Admin Web"])
+def admin_get_testimonial_reels(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    return db.query(models.TestimonialReel).order_by(models.TestimonialReel.sort_order, models.TestimonialReel.id).all()
+
+@app.post("/admin/testimonial-reels", response_model=schemas.TestimonialReelOut, status_code=201, tags=["Admin Web"])
+def admin_create_testimonial_reel(data: schemas.TestimonialReelCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    item = models.TestimonialReel(**data.model_dump())
+    db.add(item); db.commit(); db.refresh(item); return item
+
+@app.put("/admin/testimonial-reels/{item_id}", response_model=schemas.TestimonialReelOut, tags=["Admin Web"])
+def admin_update_testimonial_reel(item_id: int, data: schemas.TestimonialReelUpdate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    item = db.query(models.TestimonialReel).filter(models.TestimonialReel.id == item_id).first()
+    if not item: raise HTTPException(status_code=404, detail="No encontrado")
+    for k, v in data.model_dump(exclude_unset=True).items(): setattr(item, k, v)
+    db.commit(); db.refresh(item); return item
+
+@app.delete("/admin/testimonial-reels/{item_id}", status_code=204, tags=["Admin Web"])
+def admin_delete_testimonial_reel(item_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    item = db.query(models.TestimonialReel).filter(models.TestimonialReel.id == item_id).first()
+    if not item: raise HTTPException(status_code=404, detail="No encontrado")
+    db.delete(item); db.commit()
+
+
+# ── Cursos Extracurriculares: endpoints públicos ────────────────────────────
+
+@app.get("/public/extracurricular-courses", response_model=List[schemas.ExtracurricularCourseOut], tags=["Web Pública"])
+def public_get_extracurricular_courses(db: Session = Depends(get_db)):
+    """Devuelve cursos extracurriculares activos ordenados por sort_order."""
+    return (
+        db.query(models.ExtracurricularCourse)
+        .filter(models.ExtracurricularCourse.is_active == True)
+        .order_by(models.ExtracurricularCourse.sort_order, models.ExtracurricularCourse.id)
+        .all()
+    )
+
+
+# ── Cursos Extracurriculares: endpoints de administración ───────────────────
+
+@app.get("/admin/extracurricular-courses", response_model=List[schemas.ExtracurricularCourseOut], tags=["Admin Web"])
+def admin_get_extracurricular_courses(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    return db.query(models.ExtracurricularCourse).order_by(models.ExtracurricularCourse.sort_order, models.ExtracurricularCourse.id).all()
+
+
+@app.post("/admin/extracurricular-courses", response_model=schemas.ExtracurricularCourseOut, status_code=201, tags=["Admin Web"])
+def admin_create_extracurricular_course(data: schemas.ExtracurricularCourseCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    course = models.ExtracurricularCourse(**data.model_dump())
+    db.add(course)
+    db.commit()
+    db.refresh(course)
+    return course
+
+
+@app.put("/admin/extracurricular-courses/{course_id}", response_model=schemas.ExtracurricularCourseOut, tags=["Admin Web"])
+def admin_update_extracurricular_course(course_id: int, data: schemas.ExtracurricularCourseUpdate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    course = db.query(models.ExtracurricularCourse).filter(models.ExtracurricularCourse.id == course_id).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(course, field, value)
+    db.commit()
+    db.refresh(course)
+    return course
+
+
+@app.delete("/admin/extracurricular-courses/{course_id}", status_code=204, tags=["Admin Web"])
+def admin_delete_extracurricular_course(course_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    course = db.query(models.ExtracurricularCourse).filter(models.ExtracurricularCourse.id == course_id).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+    db.delete(course)
+    db.commit()
+
+
 # ── Comunidades: endpoints públicos ─────────────────────────────────────────
 
 @app.get("/public/communities", response_model=List[schemas.CommunityOut], tags=["Web Pública"])

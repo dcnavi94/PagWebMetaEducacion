@@ -780,6 +780,109 @@ class ContactOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class SuccessStoryCreate(BaseModel):
+    name: str
+    role: str
+    company: Optional[str] = None
+    quote: str
+    photo_url: Optional[str] = None
+    sort_order: int = 0
+    is_active: bool = True
+
+class SuccessStoryUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
+    company: Optional[str] = None
+    quote: Optional[str] = None
+    photo_url: Optional[str] = None
+    sort_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+class SuccessStoryOut(BaseModel):
+    id: int
+    name: str
+    role: str
+    company: Optional[str] = None
+    quote: str
+    photo_url: Optional[str] = None
+    sort_order: int
+    is_active: bool
+    created_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class TestimonialReelCreate(BaseModel):
+    badge_text: str
+    badge_color: str = "pink"
+    quote: str
+    description: Optional[str] = None
+    video_url: str
+    poster_url: Optional[str] = None
+    sort_order: int = 0
+    is_active: bool = True
+
+class TestimonialReelUpdate(BaseModel):
+    badge_text: Optional[str] = None
+    badge_color: Optional[str] = None
+    quote: Optional[str] = None
+    description: Optional[str] = None
+    video_url: Optional[str] = None
+    poster_url: Optional[str] = None
+    sort_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+class TestimonialReelOut(BaseModel):
+    id: int
+    badge_text: str
+    badge_color: str
+    quote: str
+    description: Optional[str] = None
+    video_url: str
+    poster_url: Optional[str] = None
+    sort_order: int
+    is_active: bool
+    created_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class ExtracurricularCourseCreate(BaseModel):
+    title: str
+    description: str
+    level: Optional[str] = None
+    color: str = "blue"
+    icon: str = "bi-book"
+    image_url: Optional[str] = None
+    whatsapp_text: Optional[str] = None
+    sort_order: int = 0
+    is_active: bool = True
+
+class ExtracurricularCourseUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    level: Optional[str] = None
+    color: Optional[str] = None
+    icon: Optional[str] = None
+    image_url: Optional[str] = None
+    whatsapp_text: Optional[str] = None
+    sort_order: Optional[int] = None
+    is_active: Optional[bool] = None
+
+class ExtracurricularCourseOut(BaseModel):
+    id: int
+    title: str
+    description: str
+    level: Optional[str] = None
+    color: str
+    icon: str
+    image_url: Optional[str] = None
+    whatsapp_text: Optional[str] = None
+    sort_order: int
+    is_active: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
 class CommunityCreate(BaseModel):
     name: str
     description: str

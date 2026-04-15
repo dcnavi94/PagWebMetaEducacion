@@ -452,6 +452,54 @@ class Contact(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
 
+class SuccessStory(Base):
+    """Historias de éxito de egresados mostradas en la landing."""
+    __tablename__ = "success_stories"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    name       = Column(String, nullable=False)
+    role       = Column(String, nullable=False)          # "Desarrollador de Software"
+    company    = Column(String, nullable=True)           # "Identidad Films"
+    quote      = Column(String, nullable=False)          # frase testimonial
+    photo_url  = Column(String, nullable=True)           # foto de perfil
+    sort_order = Column(Integer, default=0, nullable=False)
+    is_active  = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class TestimonialReel(Base):
+    """Reels/videos testimoniales de alumnos, padres y docentes."""
+    __tablename__ = "testimonial_reels"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    badge_text  = Column(String, nullable=False)         # "Alumno", "Padre de familia", "Profesor"
+    badge_color = Column(String, nullable=False, default="pink")  # pink, warning, blue
+    quote       = Column(String, nullable=False)         # titular en la tarjeta
+    description = Column(String, nullable=True)          # texto de apoyo
+    video_url   = Column(String, nullable=False)         # ruta o URL del video
+    poster_url  = Column(String, nullable=True)          # imagen previa (thumbnail)
+    sort_order  = Column(Integer, default=0, nullable=False)
+    is_active   = Column(Boolean, default=True, nullable=False)
+    created_at  = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+class ExtracurricularCourse(Base):
+    """Cursos extracurriculares administrables mostrados en la landing."""
+    __tablename__ = "extracurricular_courses"
+
+    id            = Column(Integer, primary_key=True, index=True)
+    title         = Column(String, nullable=False)
+    description   = Column(String, nullable=False)
+    level         = Column(String, nullable=True)        # "Básico", "Intermedio", "Idiomas", etc.
+    color         = Column(String, nullable=False, default="blue")  # blue, green, purple, orange, pink
+    icon          = Column(String, nullable=False, default="bi-book")
+    image_url     = Column(String, nullable=True)
+    whatsapp_text = Column(String, nullable=True)        # texto para el enlace de WhatsApp
+    sort_order    = Column(Integer, default=0, nullable=False)
+    is_active     = Column(Boolean, default=True, nullable=False)
+    created_at    = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
 class CommunityColor(str, enum.Enum):
     BLUE   = "blue"
     PINK   = "pink"

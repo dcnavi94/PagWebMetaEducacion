@@ -519,13 +519,16 @@
                         });
                         if (meRes.ok) {
                             const me = await meRes.json();
-                            if      (me.role === 'admin')   window.location.href = 'admin.html';
-                            else if (me.role === 'teacher') window.location.href = 'teacher.html';
-                            else                            window.location.href = 'campus-virtual.html';
+                            if      (me.role === 'admin')    window.location.href = 'admin.html';
+                            else if (me.role === 'teacher')  window.location.href = 'teacher.html';
+                            else if (me.role === 'services') window.location.href = 'admin.html';
+                            else                             window.location.href = 'campus-virtual.html';
                             return;
                         }
-                    } catch (_) {}
-                    window.location.href = 'campus-virtual.html';
+                        showError('No se pudo obtener el perfil. Intenta de nuevo.');
+                    } catch (_) {
+                        showError('Error de conexión al verificar el perfil.');
+                    }
                 } else {
                     const err = await res.json();
                     const msg = typeof err.detail === 'string'

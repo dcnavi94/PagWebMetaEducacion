@@ -1420,6 +1420,21 @@
                             <i class="bi bi-people-fill me-1"></i>Comunidades Axolot
                         </button>
                     </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-pw-tab="cursos">
+                            <i class="bi bi-mortarboard me-1"></i>Cursos Extracurriculares
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-pw-tab="testimonios">
+                            <i class="bi bi-person-hearts me-1"></i>Historias de Éxito
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-pw-tab="reels">
+                            <i class="bi bi-camera-video me-1"></i>Reels Testimoniales
+                        </button>
+                    </li>
                 </ul>
 
                 <!-- ── PORTAFOLIO tab ── -->
@@ -1547,6 +1562,93 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- ── CURSOS EXTRACURRICULARES tab ── -->
+                <div id="pw-tab-cursos" style="display:none">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Cursos Extracurriculares</h5>
+                        <button class="btn btn-primary rounded-pill btn-sm" onclick="pwOpenCourseModal(null)">
+                            <i class="bi bi-plus-lg me-1"></i>Nuevo Curso
+                        </button>
+                    </div>
+                    <div class="dashboard-card p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Imagen</th>
+                                        <th>T&iacute;tulo</th>
+                                        <th>Nivel</th>
+                                        <th>Color</th>
+                                        <th>Orden</th>
+                                        <th>Activo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pw-cursos-tbody">
+                                    <tr><td colspan="7" class="text-center text-muted py-4">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- ── HISTORIAS DE ÉXITO tab ── -->
+                <div id="pw-tab-testimonios" style="display:none">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Historias de Éxito</h5>
+                        <button class="btn btn-primary rounded-pill btn-sm" onclick="pwOpenStoryModal(null)">
+                            <i class="bi bi-plus-lg me-1"></i>Nueva Historia
+                        </button>
+                    </div>
+                    <div class="dashboard-card p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Foto</th>
+                                        <th>Nombre</th>
+                                        <th>Rol / Puesto</th>
+                                        <th>Empresa</th>
+                                        <th>Activo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pw-stories-tbody">
+                                    <tr><td colspan="6" class="text-center text-muted py-4">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── REELS TESTIMONIALES tab ── -->
+                <div id="pw-tab-reels" style="display:none">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Reels Testimoniales</h5>
+                        <button class="btn btn-primary rounded-pill btn-sm" onclick="pwOpenReelModal(null)">
+                            <i class="bi bi-plus-lg me-1"></i>Nuevo Reel
+                        </button>
+                    </div>
+                    <div class="dashboard-card p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Miniatura</th>
+                                        <th>Badge</th>
+                                        <th>Cita</th>
+                                        <th>Video</th>
+                                        <th>Activo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pw-reels-tbody">
+                                    <tr><td colspan="6" class="text-center text-muted py-4">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </section>
 
         </div>
@@ -1627,6 +1729,202 @@
         </div>
     </div>
 
+    <!-- CURSO MODAL -->
+    <div class="modal fade" id="pwCourseModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="pwCourseModalTitle">Nuevo Curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <form id="pwCourseForm">
+                        <input type="hidden" id="pwCourseId">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">T&iacute;tulo <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pwCourseTitle" required maxlength="100" placeholder="Ej. Programación en Python">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Nivel / Categor&iacute;a</label>
+                                <input type="text" class="form-control" id="pwCourseLevel" maxlength="40" placeholder="Ej. Básico, Idiomas, Diseño...">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Descripci&oacute;n <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="pwCourseDesc" rows="2" required maxlength="400"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Color de acento</label>
+                                <select class="form-select" id="pwCourseColor">
+                                    <option value="blue">Azul</option>
+                                    <option value="green">Verde</option>
+                                    <option value="purple">Morado</option>
+                                    <option value="orange">Naranja</option>
+                                    <option value="pink">Rosa</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Icono Bootstrap</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i id="pwCourseIconPreview" class="bi bi-book"></i></span>
+                                    <input type="text" class="form-control" id="pwCourseIcon" placeholder="bi-book"
+                                           oninput="document.getElementById('pwCourseIconPreview').className='bi '+this.value">
+                                </div>
+                                <small class="text-muted">Busca en <a href="https://icons.getbootstrap.com" target="_blank" rel="noopener noreferrer">icons.getbootstrap.com</a></small>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">URL de imagen</label>
+                                <input type="text" class="form-control" id="pwCourseImage" placeholder="assets/mi-imagen.png o https://...">
+                                <small class="text-muted">Deja en blanco para mostrar solo el ícono con color de fondo.</small>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Texto para WhatsApp</label>
+                                <input type="text" class="form-control" id="pwCourseWa" maxlength="200" placeholder="Quiero inscribirme al curso de...">
+                                <small class="text-muted">Se adjunta al enlace de inscripción en wa.me/524191070127</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Orden de aparici&oacute;n</label>
+                                <input type="number" class="form-control" id="pwCourseOrder" value="0" min="0">
+                            </div>
+                            <div class="col-md-8 d-flex align-items-end pb-1">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="pwCourseActive" checked>
+                                    <label class="form-check-label" for="pwCourseActive">Visible en la p&aacute;gina p&uacute;blica</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary rounded-pill" onclick="pwSaveCourse()">
+                        <i class="bi bi-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORIA DE ÉXITO MODAL -->
+    <div class="modal fade" id="pwStoryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="pwStoryModalTitle">Nueva Historia de Éxito</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <form id="pwStoryForm">
+                        <input type="hidden" id="pwStoryId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nombre <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pwStoryName" required maxlength="80">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Puesto / Rol <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pwStoryRole" required maxlength="100" placeholder="Ej. Desarrollador de Software">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Empresa</label>
+                                <input type="text" class="form-control" id="pwStoryCompany" maxlength="100" placeholder="Opcional">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Foto de perfil</label>
+                                <input type="text" class="form-control" id="pwStoryPhoto" placeholder="assets/foto.png o https://...">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Testimonio <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="pwStoryQuote" rows="3" required maxlength="500" placeholder="Frase testimonial del egresado..."></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Orden</label>
+                                <input type="number" class="form-control" id="pwStoryOrder" value="0" min="0">
+                            </div>
+                            <div class="col-md-8 d-flex align-items-end pb-1">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="pwStoryActive" checked>
+                                    <label class="form-check-label" for="pwStoryActive">Visible en la página pública</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary rounded-pill" onclick="pwSaveStory()">
+                        <i class="bi bi-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REEL TESTIMONIAL MODAL -->
+    <div class="modal fade" id="pwReelModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="pwReelModalTitle">Nuevo Reel Testimonial</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <form id="pwReelForm">
+                        <input type="hidden" id="pwReelId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Badge / Etiqueta <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pwReelBadge" required maxlength="40" placeholder="Alumno, Padre de familia, Profesor...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Color del badge</label>
+                                <select class="form-select" id="pwReelColor">
+                                    <option value="pink">Rosa (Alumno)</option>
+                                    <option value="warning">Amarillo (Padre)</option>
+                                    <option value="blue">Azul (Profesor)</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Cita principal <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pwReelQuote" required maxlength="200" placeholder="Frase destacada que aparece en la tarjeta...">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Descripción de apoyo</label>
+                                <textarea class="form-control" id="pwReelDesc" rows="2" maxlength="300"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">URL / ruta del video <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pwReelVideo" required placeholder="assets/mi-video.mp4 o https://...">
+                                <small class="text-muted">Formatos soportados: MP4, WebM.</small>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Miniatura / Poster</label>
+                                <input type="text" class="form-control" id="pwReelPoster" placeholder="assets/imagen.png o https://...">
+                                <small class="text-muted">Imagen que se muestra antes de reproducir el video.</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Orden</label>
+                                <input type="number" class="form-control" id="pwReelOrder" value="0" min="0">
+                            </div>
+                            <div class="col-md-8 d-flex align-items-end pb-1">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="pwReelActive" checked>
+                                    <label class="form-check-label" for="pwReelActive">Visible en la página pública</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary rounded-pill" onclick="pwSaveReel()">
+                        <i class="bi bi-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- PROJECT/EVENT MODAL -->
     <div class="modal fade" id="pwProjectModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -1649,8 +1947,9 @@
                                 <textarea class="form-control" id="pwProjectDesc" rows="2" maxlength="300"></textarea>
                             </div>
                             <div class="col-12">
-                                <label class="form-label fw-semibold">URL de Imagen</label>
-                                <input type="url" class="form-control" id="pwProjectImage" placeholder="https://...">
+                                <label class="form-label fw-semibold">Imagen</label>
+                                <input type="text" class="form-control" id="pwProjectImage" placeholder="assets/mi-imagen.png o https://...">
+                                <small class="text-muted">Ruta relativa (assets/...) o URL completa.</small>
                             </div>
                             <div class="col-md-6 pw-event-only" style="display:none">
                                 <label class="form-label fw-semibold">Fecha del Evento</label>
@@ -6566,12 +6865,15 @@
                     document.querySelectorAll('#pagwebTabs [data-pw-tab]').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     const tab = btn.getAttribute('data-pw-tab');
-                    document.querySelectorAll('#pw-tab-portafolio,#pw-tab-eventos,#pw-tab-leads,#pw-tab-comunidades').forEach(el => el.style.display = 'none');
+                    document.querySelectorAll('#pw-tab-portafolio,#pw-tab-eventos,#pw-tab-leads,#pw-tab-comunidades,#pw-tab-cursos,#pw-tab-testimonios,#pw-tab-reels').forEach(el => el.style.display = 'none');
                     document.getElementById('pw-tab-' + tab).style.display = '';
                     if (tab === 'portafolio') pwLoadProjects('portfolio');
                     else if (tab === 'eventos') pwLoadProjects('evento');
                     else if (tab === 'leads') pwLoadLeads();
                     else if (tab === 'comunidades') pwLoadCommunities();
+                    else if (tab === 'cursos') pwLoadCourses();
+                    else if (tab === 'testimonios') pwLoadStories();
+                    else if (tab === 'reels') pwLoadReels();
                 });
             });
         });
@@ -6845,6 +7147,258 @@
             } catch(e) {
                 alert('Error al eliminar: ' + e.message);
             }
+        }
+
+        // ── CURSOS EXTRACURRICULARES ─────────────────────────────────────────
+        const COURSE_COLOR_BG = {
+            blue: '#1a3db6', green: '#059669', purple: '#7c3aed',
+            orange: '#b45309', pink: '#be185d',
+        };
+        const COURSE_COLOR_BADGE = {
+            blue: 'bg-primary-subtle text-primary', green: 'bg-success-subtle text-success',
+            purple: 'bg-purple-subtle text-purple', orange: 'bg-warning-subtle text-warning',
+            pink: 'bg-pink-subtle text-pink',
+        };
+
+        async function pwLoadCourses() {
+            const tbody = document.getElementById('pw-cursos-tbody');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm me-2"></div>Cargando...</td></tr>';
+            try {
+                const res = await fetch('http://localhost:8000/admin/extracurricular-courses', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Error ' + res.status);
+                const items = await res.json();
+                if (!items.length) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Sin cursos registrados</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = items.map(c => `
+                    <tr>
+                        <td>${c.image_url
+                            ? `<img src="${c.image_url}" height="40" style="object-fit:cover;border-radius:6px;" alt="${c.title}">`
+                            : `<span class="d-inline-flex align-items-center justify-content-center rounded" style="width:40px;height:40px;background:${COURSE_COLOR_BG[c.color]||'#1a3db6'}"><i class="bi ${c.icon} text-white"></i></span>`
+                        }</td>
+                        <td class="fw-semibold">${c.title}</td>
+                        <td><span class="badge rounded-pill ${COURSE_COLOR_BADGE[c.color]||'bg-primary-subtle text-primary'}">${c.level||'—'}</span></td>
+                        <td><span class="badge rounded-pill bg-light text-muted border">${c.color}</span></td>
+                        <td class="small text-muted">${c.sort_order}</td>
+                        <td>${c.is_active ? '<span class="badge bg-success-subtle text-success">Sí</span>' : '<span class="badge bg-secondary-subtle text-secondary">No</span>'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="pwOpenCourseModal(${JSON.stringify(c).replace(/"/g,'&quot;')})"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="pwDeleteCourse(${c.id})"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+            } catch(e) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger py-3">Error al cargar cursos</td></tr>';
+            }
+        }
+
+        function pwOpenCourseModal(c) {
+            const modal = new bootstrap.Modal(document.getElementById('pwCourseModal'));
+            document.getElementById('pwCourseModalTitle').textContent = c ? 'Editar Curso' : 'Nuevo Curso';
+            document.getElementById('pwCourseId').value    = c ? c.id : '';
+            document.getElementById('pwCourseTitle').value = c ? c.title : '';
+            document.getElementById('pwCourseDesc').value  = c ? c.description : '';
+            document.getElementById('pwCourseLevel').value = c ? (c.level||'') : '';
+            document.getElementById('pwCourseColor').value = c ? c.color : 'blue';
+            const icon = c ? c.icon : 'bi-book';
+            document.getElementById('pwCourseIcon').value  = icon;
+            document.getElementById('pwCourseIconPreview').className = 'bi ' + icon;
+            document.getElementById('pwCourseImage').value = c ? (c.image_url||'') : '';
+            document.getElementById('pwCourseWa').value    = c ? (c.whatsapp_text||'') : '';
+            document.getElementById('pwCourseOrder').value = c ? c.sort_order : 0;
+            document.getElementById('pwCourseActive').checked = c ? c.is_active : true;
+            modal.show();
+        }
+
+        async function pwSaveCourse() {
+            const id = document.getElementById('pwCourseId').value;
+            const body = {
+                title:         document.getElementById('pwCourseTitle').value.trim(),
+                description:   document.getElementById('pwCourseDesc').value.trim(),
+                level:         document.getElementById('pwCourseLevel').value.trim() || null,
+                color:         document.getElementById('pwCourseColor').value,
+                icon:          document.getElementById('pwCourseIcon').value.trim() || 'bi-book',
+                image_url:     document.getElementById('pwCourseImage').value.trim() || null,
+                whatsapp_text: document.getElementById('pwCourseWa').value.trim() || null,
+                sort_order:    parseInt(document.getElementById('pwCourseOrder').value) || 0,
+                is_active:     document.getElementById('pwCourseActive').checked,
+            };
+            if (!body.title || !body.description) { alert('Título y descripción son requeridos'); return; }
+            try {
+                const res = await fetch('http://localhost:8000' + (id ? `/admin/extracurricular-courses/${id}` : '/admin/extracurricular-courses'), {
+                    method: id ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(body),
+                });
+                if (!res.ok) throw new Error(await res.text());
+                bootstrap.Modal.getInstance(document.getElementById('pwCourseModal')).hide();
+                pwLoadCourses();
+            } catch(e) {
+                alert('Error al guardar: ' + e.message);
+            }
+        }
+
+        async function pwDeleteCourse(id) {
+            if (!confirm('¿Eliminar este curso?')) return;
+            try {
+                const res = await fetch('http://localhost:8000/admin/extracurricular-courses/' + id, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok && res.status !== 204) throw new Error('Error ' + res.status);
+                pwLoadCourses();
+            } catch(e) {
+                alert('Error al eliminar: ' + e.message);
+            }
+        }
+
+        // ── HISTORIAS DE ÉXITO ────────────────────────────────────────────
+        async function pwLoadStories() {
+            const tbody = document.getElementById('pw-stories-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm me-2"></div>Cargando...</td></tr>';
+            try {
+                const res = await fetch('http://localhost:8000/admin/success-stories', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!res.ok) throw new Error('Error ' + res.status);
+                const items = await res.json();
+                if (!items.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Sin historias registradas</td></tr>'; return; }
+                tbody.innerHTML = items.map(s => `
+                    <tr>
+                        <td>${s.photo_url ? `<img src="${s.photo_url}" width="44" height="44" style="object-fit:cover;border-radius:50%" alt="${s.name}">` : '<span class="text-muted">—</span>'}</td>
+                        <td class="fw-semibold">${s.name}</td>
+                        <td class="small text-muted">${s.role}</td>
+                        <td class="small text-muted">${s.company || '—'}</td>
+                        <td>${s.is_active ? '<span class="badge bg-success-subtle text-success">Sí</span>' : '<span class="badge bg-secondary-subtle text-secondary">No</span>'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="pwOpenStoryModal(${JSON.stringify(s).replace(/"/g,'&quot;')})"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="pwDeleteStory(${s.id})"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+            } catch(e) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-3">Error al cargar datos</td></tr>';
+            }
+        }
+
+        function pwOpenStoryModal(s) {
+            const modal = new bootstrap.Modal(document.getElementById('pwStoryModal'));
+            document.getElementById('pwStoryModalTitle').textContent = s ? 'Editar Historia' : 'Nueva Historia de Éxito';
+            document.getElementById('pwStoryId').value      = s ? s.id : '';
+            document.getElementById('pwStoryName').value    = s ? s.name : '';
+            document.getElementById('pwStoryRole').value    = s ? s.role : '';
+            document.getElementById('pwStoryCompany').value = s ? (s.company || '') : '';
+            document.getElementById('pwStoryPhoto').value   = s ? (s.photo_url || '') : '';
+            document.getElementById('pwStoryQuote').value   = s ? s.quote : '';
+            document.getElementById('pwStoryOrder').value   = s ? s.sort_order : 0;
+            document.getElementById('pwStoryActive').checked = s ? s.is_active : true;
+            modal.show();
+        }
+
+        async function pwSaveStory() {
+            const id = document.getElementById('pwStoryId').value;
+            const body = {
+                name:      document.getElementById('pwStoryName').value.trim(),
+                role:      document.getElementById('pwStoryRole').value.trim(),
+                company:   document.getElementById('pwStoryCompany').value.trim() || null,
+                photo_url: document.getElementById('pwStoryPhoto').value.trim() || null,
+                quote:     document.getElementById('pwStoryQuote').value.trim(),
+                sort_order: parseInt(document.getElementById('pwStoryOrder').value) || 0,
+                is_active: document.getElementById('pwStoryActive').checked,
+            };
+            if (!body.name || !body.role || !body.quote) { alert('Nombre, rol y testimonio son requeridos'); return; }
+            try {
+                const res = await fetch('http://localhost:8000' + (id ? `/admin/success-stories/${id}` : '/admin/success-stories'), {
+                    method: id ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(body),
+                });
+                if (!res.ok) throw new Error(await res.text());
+                bootstrap.Modal.getInstance(document.getElementById('pwStoryModal')).hide();
+                pwLoadStories();
+            } catch(e) { alert('Error al guardar: ' + e.message); }
+        }
+
+        async function pwDeleteStory(id) {
+            if (!confirm('¿Eliminar esta historia?')) return;
+            try {
+                await fetch('http://localhost:8000/admin/success-stories/' + id, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                pwLoadStories();
+            } catch(e) { alert('Error al eliminar'); }
+        }
+
+        // ── REELS TESTIMONIALES ────────────────────────────────────────────
+        async function pwLoadReels() {
+            const tbody = document.getElementById('pw-reels-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3"><div class="spinner-border spinner-border-sm me-2"></div>Cargando...</td></tr>';
+            try {
+                const res = await fetch('http://localhost:8000/admin/testimonial-reels', { headers: { 'Authorization': `Bearer ${token}` } });
+                if (!res.ok) throw new Error('Error ' + res.status);
+                const items = await res.json();
+                if (!items.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Sin reels registrados</td></tr>'; return; }
+                const colorBadge = { pink:'bg-pink-subtle text-pink', warning:'bg-warning-subtle text-warning', blue:'bg-primary-subtle text-primary' };
+                tbody.innerHTML = items.map(r => `
+                    <tr>
+                        <td>${r.poster_url ? `<img src="${r.poster_url}" width="36" height="64" style="object-fit:cover;border-radius:6px;" alt="">` : '<i class="bi bi-camera-video text-muted fs-4"></i>'}</td>
+                        <td><span class="badge rounded-pill ${colorBadge[r.badge_color]||'bg-secondary-subtle text-secondary'}">${r.badge_text}</span></td>
+                        <td class="small text-muted" style="max-width:220px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">"${r.quote}"</td>
+                        <td class="small"><a href="${r.video_url}" target="_blank" class="text-truncate d-inline-block" style="max-width:140px" title="${r.video_url}">${r.video_url}</a></td>
+                        <td>${r.is_active ? '<span class="badge bg-success-subtle text-success">Sí</span>' : '<span class="badge bg-secondary-subtle text-secondary">No</span>'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="pwOpenReelModal(${JSON.stringify(r).replace(/"/g,'&quot;')})"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="pwDeleteReel(${r.id})"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+            } catch(e) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-3">Error al cargar datos</td></tr>';
+            }
+        }
+
+        function pwOpenReelModal(r) {
+            const modal = new bootstrap.Modal(document.getElementById('pwReelModal'));
+            document.getElementById('pwReelModalTitle').textContent = r ? 'Editar Reel' : 'Nuevo Reel Testimonial';
+            document.getElementById('pwReelId').value     = r ? r.id : '';
+            document.getElementById('pwReelBadge').value  = r ? r.badge_text : '';
+            document.getElementById('pwReelColor').value  = r ? r.badge_color : 'pink';
+            document.getElementById('pwReelQuote').value  = r ? r.quote : '';
+            document.getElementById('pwReelDesc').value   = r ? (r.description || '') : '';
+            document.getElementById('pwReelVideo').value  = r ? r.video_url : '';
+            document.getElementById('pwReelPoster').value = r ? (r.poster_url || '') : '';
+            document.getElementById('pwReelOrder').value  = r ? r.sort_order : 0;
+            document.getElementById('pwReelActive').checked = r ? r.is_active : true;
+            modal.show();
+        }
+
+        async function pwSaveReel() {
+            const id = document.getElementById('pwReelId').value;
+            const body = {
+                badge_text:  document.getElementById('pwReelBadge').value.trim(),
+                badge_color: document.getElementById('pwReelColor').value,
+                quote:       document.getElementById('pwReelQuote').value.trim(),
+                description: document.getElementById('pwReelDesc').value.trim() || null,
+                video_url:   document.getElementById('pwReelVideo').value.trim(),
+                poster_url:  document.getElementById('pwReelPoster').value.trim() || null,
+                sort_order:  parseInt(document.getElementById('pwReelOrder').value) || 0,
+                is_active:   document.getElementById('pwReelActive').checked,
+            };
+            if (!body.badge_text || !body.quote || !body.video_url) { alert('Badge, cita y video son requeridos'); return; }
+            try {
+                const res = await fetch('http://localhost:8000' + (id ? `/admin/testimonial-reels/${id}` : '/admin/testimonial-reels'), {
+                    method: id ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(body),
+                });
+                if (!res.ok) throw new Error(await res.text());
+                bootstrap.Modal.getInstance(document.getElementById('pwReelModal')).hide();
+                pwLoadReels();
+            } catch(e) { alert('Error al guardar: ' + e.message); }
+        }
+
+        async function pwDeleteReel(id) {
+            if (!confirm('¿Eliminar este reel?')) return;
+            try {
+                await fetch('http://localhost:8000/admin/testimonial-reels/' + id, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                pwLoadReels();
+            } catch(e) { alert('Error al eliminar'); }
         }
 
         function logout() {
