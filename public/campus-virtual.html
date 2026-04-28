@@ -1,590 +1,2894 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Virtual | Portal del Alumno</title>
-    <link rel="icon" type="image/png" href="assets/logo_white.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1141b8;
-            --primary-dark: #0b2673;
-            --bg: #eef4ff;
-            --card: #ffffff;
-            --text: #172033;
-            --muted: #667085;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aula Virtual | Portal del Alumno</title>
+  <link rel="icon" type="image/png" href="assets/logo_white.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #1141b8;
+      --primary-dark: #0b2673;
+      --bg: #eef4ff;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: rgba(17,65,184,0.08);
+      --sidebar-w: 286px;
 
-        * { box-sizing: border-box; }
+      /* Sistema de diseño unificado (Fase 3) */
+      --r-s:  12px;   /* filas, íconos pequeños  */
+      --r-m:  16px;   /* tarjetas de contenido   */
+      --r-l:  20px;   /* paneles y secciones     */
+      --sh-s: 0 2px 10px rgba(17,65,184,.05);
+      --sh-m: 0 6px 22px rgba(17,65,184,.07);
+      --sh-l: 0 12px 32px rgba(20,36,78,.08);
+      --card-border: 1px solid var(--border);
+      --transition-card: transform .18s ease, box-shadow .18s ease;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top right, rgba(17,65,184,.12), transparent 25%), linear-gradient(180deg,#f8fbff 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+    .app { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: var(--sidebar-w);
+      background: linear-gradient(180deg, #0b236e 0%, #1141b8 100%);
+      color: #fff;
+      padding: 18px 14px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      z-index: 40;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 8px 10px 14px; border-bottom: 1px solid rgba(255,255,255,.15); }
+    .brand img { width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,.15); padding: 6px; }
+    .brand h6 { margin: 0; font-weight: 800; }
+    .brand small { color: rgba(255,255,255,.75); }
+    .student-chip { margin: 12px 8px; padding: 12px; border-radius: 16px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); }
+    .student-chip:hover { background: rgba(255,255,255,.2); cursor: pointer; }
+    .student-chip .avatar { width: 42px; height: 42px; border-radius: 12px; background: rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-weight:800; }
+    .menu-title { color: rgba(255,255,255,.6); font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; margin: 12px 10px 6px; font-weight: 700; }
+    .menu-btn {
+      width: 100%; border: 0; text-align: left; color: rgba(255,255,255,.88); background: transparent;
+      padding: 10px 12px; border-radius: 12px; display: flex; align-items: center; gap: 10px; font-weight: 600;
+    }
+    .menu-btn:hover, .menu-btn.active { background: rgba(255,255,255,.16); color: #fff; }
+    .menu-link { text-decoration: none; }
+    .content { flex: 1; min-width: 0; }
+    .topbar {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,.9); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 22px;
+    }
+    .layout { padding: 22px; }
+    .panel {
+      background: var(--card);
+      border: var(--card-border);
+      border-radius: var(--r-l);
+      box-shadow: var(--sh-l);
+    }
+    .hero {
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(17,65,184,.96), rgba(27,99,212,.92));
+      color: #fff;
+      border: none;
+      border-radius: var(--r-l);
+      box-shadow: var(--sh-l);
+    }
+    .stat {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--r-m);
+      padding: 14px;
+    }
+    .metric { font-size: 1.8rem; font-weight: 800; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .pill { border-radius: 999px; font-weight: 700; }
+    .table-clean th { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); border-bottom-color: var(--border); }
+    .table-clean td { border-bottom-color: rgba(17,65,184,.06); }
+    .grades-term-block {
+      margin-bottom: 24px;
+      padding-bottom: 8px;
+    }
+    .grades-term-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--primary-dark);
+    }
+    .card-soft {
+      background: var(--card);
+      border: var(--card-border);
+      border-radius: var(--r-m);
+      padding: 16px;
+      box-shadow: var(--sh-s);
+    }
+    .credential-card {
+      border-radius: var(--r-m);
+      padding: 16px;
+      background: linear-gradient(135deg,#0f348f,#1b63d4);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: var(--sh-m);
+    }
+    .credential-card .label { color: rgba(255,255,255,.7); font-size: .78rem; letter-spacing: .05em; text-transform: uppercase; }
+    .credential-avatar-wrap {
+      width: 96px;
+      height: 116px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .credential-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .credential-avatar-placeholder {
+      font-size: .74rem;
+      text-align: center;
+      color: rgba(255,255,255,.88);
+      padding: 8px;
+    }
+    .credential-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,.22);
+      font-size: .88rem;
+    }
+    .credential-row:last-child { border-bottom: 0; }
+    .credential-row .k { color: rgba(255,255,255,.72); }
+    .credential-photo-actions .btn { font-size: .76rem; }
+    .advisor-avatar { width: 100%; max-width: 200px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 24px rgba(20,36,78,.14); }
+    .advisor-icon-header { width: 52px; height: 52px; object-fit: contain; border-radius: 14px; flex-shrink: 0; }
+    .session-row {
+      background: var(--card);
+      border: var(--card-border);
+      border-radius: var(--r-s);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      box-shadow: var(--sh-s);
+    }
+    .session-row:last-child { margin-bottom: 0; }
+    .session-badge { display:inline-block; font-size:.72rem; font-weight:700; border-radius:999px; padding:2px 10px; border:1px solid; }
+    .progress-track { height: 9px; border-radius: 99px; background: rgba(17,65,184,.1); overflow: hidden; }
+    .progress-track > span { display:block; height:100%; background: linear-gradient(90deg,#1141b8,#2c89ff); }
+    .empty { color: var(--muted); text-align: center; padding: 20px; }
+    /* === Servicios del Campus === */
+    .service-hero {
+      border-radius: var(--r-l);
+      padding: 28px 24px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: var(--sh-m);
+    }
+    .service-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.18);
+    }
+    .service-hero > * { position: relative; z-index: 1; }
+    .service-hero-biblioteca { background: linear-gradient(135deg,#1141b8 0%,#2c89ff 100%); }
+    .service-hero-cafeteria  { background: linear-gradient(135deg,#d04f1b 0%,#f5a623 100%); }
+    .service-hero-laboratorio{ background: linear-gradient(135deg,#0e6655 0%,#1abc9c 100%); }
+    .service-feature-card {
+      background: var(--card);
+      border: var(--card-border);
+      border-radius: var(--r-m);
+      padding: 20px;
+      height: 100%;
+      box-shadow: var(--sh-s);
+      transition: var(--transition-card);
+    }
+    .service-feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--sh-m);
+    }
+    .service-icon-wrap {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--r-s);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+    .service-icon-blue  { background: rgba(17,65,184,.1);  color: #1141b8; }
+    .service-icon-orange{ background: rgba(245,166,35,.15); color: #d04f1b; }
+    .service-icon-green { background: rgba(26,188,156,.15); color: #0e6655; }
+    .schedule-table th  { font-size:.75rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); }
+    .schedule-table td  { font-size:.88rem; }
+    /* === Pasaporte Digital === */
+    .passport-hero {
+      border-radius: var(--r-l);
+      padding: 26px 24px;
+      background: linear-gradient(135deg,#0b236e 0%,#1141b8 55%,#2c89ff 100%);
+      color: #fff;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--sh-m);
+    }
+    .passport-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='160' cy='40' r='80' fill='rgba(255,255,255,0.04)'/%3E%3Ccircle cx='20' cy='160' r='60' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E") no-repeat right top;
+      background-size: 220px;
+    }
+    .passport-hero > * { position: relative; z-index: 1; }
+    .passport-seal {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.5);
+      background: rgba(255,255,255,.14);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; flex-shrink: 0;
+    }
+    .passport-id-card {
+      border-radius: var(--r-l);
+      background: linear-gradient(135deg,#0f348f 0%,#1b63d4 100%);
+      color: #fff;
+      padding: 20px 22px;
+      border: 1px solid rgba(255,255,255,.15);
+      box-shadow: var(--sh-l);
+    }
+    .passport-id-card .pp-label { color: rgba(255,255,255,.65); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+    .passport-id-card .pp-value { font-size: .95rem; font-weight: 700; }
+    .passport-photo-wrap {
+      width: 90px; min-width: 90px; height: 110px;
+      border-radius: 12px; overflow: hidden;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.28);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .passport-photo-wrap img { width:100%; height:100%; object-fit:cover; }
+    .passport-photo-placeholder { font-size: .72rem; color: rgba(255,255,255,.7); text-align: center; padding: 6px; }
+    .pp-track-card {
+      background: var(--card);
+      border: var(--card-border);
+      border-radius: var(--r-l);
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: var(--sh-s);
+    }
+    .pp-track-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .pp-track-icon-blue { background: rgba(17,65,184,.1); color: #1141b8; }
+    .pp-track-icon-teal { background: rgba(26,188,156,.12); color: #0e6655; }
+    .pp-track-icon-purple { background: rgba(110,86,207,.12); color: #6e56cf; }
+    .pp-steps {
+      display: flex; align-items: flex-start; gap: 0;
+      overflow-x: auto; padding: 10px 0 4px;
+      scrollbar-width: none;
+    }
+    .pp-steps::-webkit-scrollbar { display: none; }
+    .pp-step {
+      flex: 1; min-width: 70px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      position: relative;
+    }
+    .pp-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 15px; left: 50%; width: 100%; height: 3px;
+      background: rgba(17,65,184,.12);
+    }
+    .pp-step.done:not(:last-child)::after { background: #1141b8; }
+    .pp-step.active:not(:last-child)::after { background: linear-gradient(90deg,#1141b8,rgba(17,65,184,.15)); }
+    .pp-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid rgba(17,65,184,.18);
+      background: #f0f4ff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; color: rgba(17,65,184,.35);
+      position: relative; z-index: 1; flex-shrink: 0;
+    }
+    .pp-step.done .pp-dot { background: #1141b8; border-color: #1141b8; color: #fff; }
+    .pp-step.active .pp-dot { background: #fff; border-color: #1141b8; border-width: 3px; color: #1141b8; box-shadow: 0 0 0 4px rgba(17,65,184,.1); }
+    .pp-step-label { font-size: .7rem; text-align: center; color: var(--muted); font-weight: 600; line-height: 1.3; max-width: 78px; }
+    .pp-step.done .pp-step-label { color: #1141b8; }
+    .pp-step.active .pp-step-label { color: var(--primary-dark); font-weight: 800; }
+    .pp-hours-bar { height: 10px; border-radius: 99px; background: rgba(17,65,184,.1); overflow: hidden; }
+    .pp-hours-bar > span { display:block; height:100%; background: linear-gradient(90deg,#1141b8,#2c89ff); border-radius: 99px; transition: width .5s ease; }
+    .pp-status-badge { font-size: .78rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+    .pp-status-Pendiente { background: rgba(108,117,125,.12); color: #495057; }
+    .pp-status-Registrado { background: rgba(13,110,253,.12); color: #0d6efd; }
+    .pp-status-EnServicio { background: rgba(255,163,0,.12); color: #a16000; }
+    .pp-status-Completado { background: rgba(25,135,84,.12); color: #198754; }
+    .pp-status-Liberado { background: rgba(25,135,84,.2); color: #0d5c38; }
+    .pp-status-EleccionTema,
+    .pp-status-Protocolo,
+    .pp-status-Investigacion,
+    .pp-status-Redaccion,
+    .pp-status-Revision { 
+    .pp-status-Revision { background: rgba(13,110,253,.12); color: #0d6efd; }
+    .pp-status-Defensa { background: rgba(255,163,0,.12); color: #a16000; }
+    .pp-status-Titulado { background: rgba(25,135,84,.2); color: #0d5c38; }
+    .pp-divider { border: 0; border-top: 1px dashed rgba(17,65,184,.1); margin: 14px 0; }
+    .pp-info-row { display:flex; justify-content:space-between; align-items:center; padding: 6px 0; font-size:.87rem; }
+    .pp-info-row .pk { color: var(--muted); }
+    .pp-prepa-badge {
+      border-radius: 16px; padding: 18px 20px;
+      background: rgba(17,65,184,.06);
+      border: 1px dashed rgba(17,65,184,.22);
+      color: var(--muted); font-size: .88rem; text-align: center;
+    }
 
-        body {
-            margin: 0;
-            font-family: 'Outfit', sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(circle at top right, rgba(17, 65, 184, 0.12), transparent 25%),
-                linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
-            min-height: 100vh;
-        }
+    /* === Sidebar Fase 1 === */
+    .side-chevron {
+      font-size: .7rem;
+      opacity: .6;
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+    .menu-collapse-btn[aria-expanded="true"] .side-chevron {
+      transform: rotate(180deg);
+    }
+    #sideInstall .menu-btn, #sideInstall .menu-link {
+      font-size: .88rem;
+      opacity: .85;
+    }
+    #sideInstall .menu-btn:hover, #sideInstall .menu-link:hover {
+      opacity: 1;
+    }
 
-        .topbar {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            -webkit-backdrop-filter: blur(16px);
-            backdrop-filter: blur(16px);
-            background: rgba(255, 255, 255, 0.88);
-            border-bottom: 1px solid rgba(17, 65, 184, 0.08);
-        }
+    /* === Dashboard Fase 2 === */
+    .dash-quick-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: white;
+      font-weight: 600;
+      font-size: .9rem;
+      color: var(--text);
+      transition: background .15s, border-color .15s, transform .12s;
+      width: 100%;
+    }
+    .dash-quick-btn:hover {
+      background: rgba(17,65,184,.04);
+      border-color: rgba(17,65,184,.22);
+      transform: translateX(3px);
+      color: var(--text);
+    }
+    .dash-quick-btn i:first-child { font-size: 1.1rem; flex-shrink: 0; }
+    .dash-quick-btn span { flex: 1; }
+    #kpiChargesWrap.has-charges { background: rgba(220,38,38,.18) !important; }
+    #kpiChargesWrap.has-charges .metric { color: #fca5a5; }
 
-        .brand-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            border-radius: 999px;
-            background: rgba(17, 65, 184, 0.08);
-            color: var(--primary-dark);
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .hero-card, .panel-card {
-            background: var(--card);
-            border: 1px solid rgba(17, 65, 184, 0.08);
-            border-radius: 28px;
-            box-shadow: 0 18px 40px rgba(20, 36, 78, 0.08);
-        }
-
-        .hero-card {
-            padding: 28px;
-            background:
-                linear-gradient(135deg, rgba(17, 65, 184, 0.96), rgba(27, 99, 212, 0.92)),
-                #1141b8;
-            color: white;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.14);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 22px;
-            padding: 18px;
-        }
-
-        .panel-card {
-            padding: 24px;
-            height: 100%;
-        }
-
-        .section-title {
-            font-weight: 800;
-            letter-spacing: -0.03em;
-        }
-
-        .soft-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border-radius: 999px;
-            padding: 8px 14px;
-            background: rgba(17, 65, 184, 0.08);
-            color: var(--primary-dark);
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
-
-        .table-clean th {
-            color: var(--muted);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            border-bottom-color: rgba(17, 65, 184, 0.08);
-        }
-
-        .table-clean td {
-            vertical-align: middle;
-            border-bottom-color: rgba(17, 65, 184, 0.06);
-        }
-
-        .pill-button {
-            border-radius: 999px;
-            padding-inline: 18px;
-            font-weight: 700;
-        }
-
-        .metric {
-            font-size: 2rem;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .empty-state {
-            color: var(--muted);
-            text-align: center;
-            padding: 24px 12px;
-        }
-
-        .modal-shell {
-            border-radius: 24px;
-        }
-
-        @media (max-width: 768px) {
-            .hero-card, .panel-card {
-                border-radius: 22px;
-            }
-        }
-    </style>
+    .mobile-open { display: none; }
+    .overlay { display: none; }
+    .top-bell {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: #fff;
+      position: relative;
+    }
+    .top-bell .count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #dc3545;
+      color: #fff;
+      font-size: .68rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .dashboard-credential {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: linear-gradient(120deg,#ffffff 0%,#eef4ff 45%,#dbe8ff 100%);
+      padding: 18px;
+    }
+    .dashboard-credential .title {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #5a6f9f;
+      font-weight: 700;
+    }
+    .credential-photo-block {
+      width: 100px;
+      min-width: 100px;
+      height: 120px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(17,65,184,.2);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .credential-photo-block img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .credential-photo-placeholder {
+      color: #5a6f9f;
+      font-size: .72rem;
+      text-align: center;
+      padding: 8px;
+    }
+    .mobile-bottom-nav {
+      display: none;
+    }
+    @media (max-width: 992px) {
+      .mobile-open { display: none !important; }
+      .sidebar, .overlay { display: none !important; }
+      .layout, .topbar { padding-inline: 14px; }
+      .layout { padding-bottom: 84px; }
+      .mobile-bottom-nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2px;
+        padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+        background: rgba(255,255,255,.97);
+        border-top: 1px solid var(--border);
+        backdrop-filter: blur(12px);
+      }
+      .mobile-bottom-nav .mbtn {
+        border: 0;
+        background: transparent;
+        border-radius: 12px;
+        color: #5d6d8f;
+        font-size: .68rem;
+        font-weight: 700;
+        padding: 7px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        transition: color .15s, background .15s;
+      }
+      .mobile-bottom-nav .mbtn i { font-size: 1.2rem; }
+      .mobile-bottom-nav .mbtn.active {
+        color: var(--primary);
+        background: rgba(17,65,184,.09);
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="topbar">
-        <div class="container py-3 d-flex flex-wrap gap-3 justify-content-between align-items-center">
-            <a href="index.html" class="brand-pill">
-                <i class="bi bi-mortarboard-fill"></i>
-                Portal del Alumno
-            </a>
-            <div class="d-flex align-items-center gap-2">
-                <span id="studentWelcome" class="fw-semibold text-secondary">Cargando...</span>
-                <button class="btn btn-outline-primary pill-button" onclick="logout()">
-                    <i class="bi bi-box-arrow-right me-2"></i>Salir
-                </button>
-            </div>
+  <div class="overlay" id="overlay" onclick="toggleSidebar(false)"></div>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <img src="assets/logo_white.png" alt="MetaEducación" />
+        <div>
+          <h6>MetaEducación</h6>
+          <small>Aula Virtual Alumno</small>
         </div>
-    </div>
+      </div>
 
-    <main class="container py-4 py-lg-5">
-        <section class="hero-card mb-4">
-            <div class="row g-4 align-items-center">
-                <div class="col-lg-7">
-                    <span class="soft-badge bg-white text-primary">
-                        <i class="bi bi-person-badge"></i>
-                        Expediente del alumno
-                    </span>
-                    <h1 class="section-title mt-3 mb-2" id="studentName">Cargando alumno...</h1>
-                    <p class="mb-0 opacity-75" id="studentMeta">Cargando información académica...</p>
-                </div>
-                <div class="col-lg-5">
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <div class="stat-card">
-                                <div class="text-white-50 small">Cargos pendientes</div>
-                                <div class="metric" id="studentPendingCharges">0</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="stat-card">
-                                <div class="text-white-50 small">Trámites activos</div>
-                                <div class="metric" id="studentPendingServices">0</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="stat-card">
-                                <div class="text-white-50 small">Promedio final</div>
-                                <div class="metric" id="studentAverage">0.0</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="stat-card">
-                                <div class="text-white-50 small">Materias aprobadas</div>
-                                <div class="metric" id="studentApprovedSubjects">0</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div class="student-chip" role="button" tabindex="0" onclick="switchView('view-profile')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();switchView('view-profile');}">
+        <div class="d-flex align-items-center gap-2">
+          <div class="avatar" id="sideAvatar">AL</div>
+          <div class="min-w-0">
+            <div class="fw-bold text-truncate" id="sideName">Cargando...</div>
+            <small id="sideMeta" class="text-white-50">Expediente académico</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-title">Principal</div>
+      <button class="menu-btn active" data-view="view-dashboard"><i class="bi bi-grid-1x2-fill"></i>Inicio</button>
+      <button class="menu-btn" data-view="view-courses"><i class="bi bi-journal-bookmark-fill"></i>Cursos</button>
+      <button class="menu-btn" data-view="view-grades"><i class="bi bi-journal-check"></i>Calificaciones</button>
+      <button class="menu-btn" data-view="view-payments"><i class="bi bi-credit-card-2-front-fill"></i>Pagos</button>
+      <button class="menu-btn" data-view="view-agenda"><i class="bi bi-bell-fill"></i>Notificaciones</button>
+
+      <div class="menu-title">Académico</div>
+      <button class="menu-btn" data-view="view-pasaporte"><i class="bi bi-award-fill"></i>Pasaporte Digital</button>
+      <button class="menu-btn" data-view="view-advisor"><i class="bi bi-people-fill"></i>Asesor Académico</button>
+      <button class="menu-btn" data-view="view-services"><i class="bi bi-file-earmark-text-fill"></i>Servicios Escolares</button>
+      <button class="menu-btn" data-view="view-support"><i class="bi bi-life-preserver"></i>Soporte Técnico</button>
+
+      <button class="menu-btn menu-collapse-btn" type="button"
+              data-bs-toggle="collapse" data-bs-target="#sideInstall" aria-expanded="false">
+        <i class="bi bi-building"></i>Instalaciones
+        <i class="bi bi-chevron-down ms-auto side-chevron"></i>
+      </button>
+      <div class="collapse" id="sideInstall">
+        <a class="menu-btn menu-link" style="padding-left:2rem" href="biblioteca-virtual.html?v=2">
+          <i class="bi bi-collection-fill"></i>Biblioteca Virtual
+        </a>
+        <button class="menu-btn" style="padding-left:2rem" data-view="view-biblioteca">
+          <i class="bi bi-book-half"></i>Biblioteca
+        </button>
+        <button class="menu-btn" style="padding-left:2rem" data-view="view-cafeteria">
+          <i class="bi bi-cup-hot-fill"></i>Cafetería
+        </button>
+        <button class="menu-btn" style="padding-left:2rem" data-view="view-laboratorio">
+          <i class="bi bi-cpu-fill"></i>Lab. Electrónica
+        </button>
+      </div>
+
+      <div class="d-grid gap-2 mt-3 px-1">
+        <button class="btn btn-light text-primary pill" id="sideMoodleBtn" onclick="goToMoodle()">
+          <i class="bi bi-box-arrow-up-right me-2"></i>Ir a Moodle
+        </button>
+        <button class="btn btn-outline-light pill" onclick="logout()">
+          <i class="bi bi-box-arrow-right me-2"></i>Salir
+        </button>
+      </div>
+    </aside>
+
+    <div class="content">
+      <header class="topbar">
+        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-primary rounded-circle mobile-open" onclick="toggleSidebar(true)"><i class="bi bi-list"></i></button>
+            <div>
+              <div class="small text-secondary fw-semibold" id="topLabel">Campus del Alumno</div>
+              <div class="h5 mb-0 fw-bold" id="topTitle">Dashboard</div>
             </div>
+          </div>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <div class="dropdown">
+              <button class="top-bell" title="Notificaciones" aria-label="Notificaciones" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                <i class="bi bi-bell-fill"></i>
+                <span class="count" id="topNoticeCount">0</span>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end p-2 shadow-sm" style="min-width: 320px;">
+                <div class="d-flex justify-content-between align-items-center px-2 pb-2 border-bottom">
+                  <strong>Notificaciones</strong>
+                  <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="loadData()">Actualizar</button>
+                </div>
+                <div id="studentNotificationList" class="pt-2" style="max-height: 320px; overflow-y:auto;">
+                  <div class="small text-muted px-2 py-2">Cargando notificaciones...</div>
+                </div>
+              </div>
+            </div>
+            <span class="badge rounded-pill text-primary" style="background: rgba(17,65,184,.08);" id="topSummary">Cargando...</span>
+            <span class="text-secondary fw-semibold" id="studentWelcome">Cargando...</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section id="view-dashboard" class="section active">
+
+          <!-- HERO -->
+          <section class="hero mb-3">
+            <div class="row g-3 align-items-center">
+              <div class="col-lg-7">
+                <p class="text-white-50 small mb-1 fw-semibold" style="letter-spacing:.04em">BIENVENIDO DE VUELTA</p>
+                <h1 class="h2 fw-bold mb-1" id="studentName">Cargando...</h1>
+                <p class="mb-3 text-white-50 small" id="studentMeta">Preparando tu tablero...</p>
+                <div class="d-flex gap-2 flex-wrap">
+                  <button class="btn btn-light text-primary rounded-pill px-4 fw-semibold" id="moodleBtn" onclick="goToMoodle()">
+                    <i class="bi bi-box-arrow-up-right me-2"></i>Ir a Moodle
+                  </button>
+                  <button class="btn btn-outline-light rounded-pill px-4" onclick="switchView('view-courses')">
+                    <i class="bi bi-journal-bookmark-fill me-2"></i>Mis cursos
+                  </button>
+                </div>
+              </div>
+              <div class="col-lg-5">
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="stat text-center">
+                      <div class="metric" id="kpiAvg">0.0</div>
+                      <div class="small text-white-50">Promedio</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="stat text-center">
+                      <div class="metric" id="kpiApproved">0</div>
+                      <div class="small text-white-50">Aprobadas</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="stat text-center" id="kpiChargesWrap">
+                      <div class="metric" id="kpiCharges">0</div>
+                      <div class="small text-white-50">Cargos pend.</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="stat text-center">
+                      <div class="metric" id="kpiServices">0</div>
+                      <div class="small text-white-50">Trámites</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ALERTAS CONTEXTUALES -->
+          <div id="dashAlertBanners" class="mb-3"></div>
+
+          <!-- CURSOS — protagonistas -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h2 class="h5 fw-bold mb-0">Mis Cursos</h2>
+              <p class="text-secondary small mb-0">Semestre actual</p>
+            </div>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="switchView('view-courses')">
+              Ver todos <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+          <div class="row g-3 mb-4" id="dashCourses">
+            <div class="col-12"><div class="empty">Cargando materias...</div></div>
+          </div>
+
+          <!-- FILA INFERIOR: Notificaciones + Accesos rápidos -->
+          <div class="row g-3">
+            <div class="col-lg-8">
+              <div class="panel p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h2 class="h5 fw-bold mb-0">Notificaciones</h2>
+                  <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="switchView('view-agenda')">
+                    Ver todas <i class="bi bi-arrow-right ms-1"></i>
+                  </button>
+                </div>
+                <div id="dashActivities" class="vstack gap-2">
+                  <div class="empty">Cargando...</div>
+                </div>
+                <div id="dashNotices" class="vstack gap-2 mt-2"></div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="panel p-4 h-100">
+                <h2 class="h5 fw-bold mb-3">Accesos rápidos</h2>
+                <div class="vstack gap-2">
+                  <button class="btn dash-quick-btn" onclick="switchView('view-payments')">
+                    <i class="bi bi-credit-card-2-front-fill" style="color:#1141b8"></i>
+                    <span>Control de Pagos</span>
+                    <i class="bi bi-chevron-right ms-auto" style="color:#cbd5e1"></i>
+                  </button>
+                  <button class="btn dash-quick-btn" onclick="switchView('view-grades')">
+                    <i class="bi bi-journal-check" style="color:#dc2626"></i>
+                    <span>Calificaciones</span>
+                    <i class="bi bi-chevron-right ms-auto" style="color:#cbd5e1"></i>
+                  </button>
+                  <button class="btn dash-quick-btn" onclick="switchView('view-pasaporte')">
+                    <i class="bi bi-award-fill" style="color:#d97706"></i>
+                    <span>Pasaporte Digital</span>
+                    <i class="bi bi-chevron-right ms-auto" style="color:#cbd5e1"></i>
+                  </button>
+                  <button class="btn dash-quick-btn" onclick="switchView('view-advisor')">
+                    <i class="bi bi-people-fill" style="color:#059669"></i>
+                    <span>Asesor Académico</span>
+                    <i class="bi bi-chevron-right ms-auto" style="color:#cbd5e1"></i>
+                  </button>
+                  <button class="btn dash-quick-btn" onclick="switchView('view-services')">
+                    <i class="bi bi-file-earmark-text-fill" style="color:#0891b2"></i>
+                    <span>Servicios Escolares</span>
+                    <i class="bi bi-chevron-right ms-auto" style="color:#cbd5e1"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- IDs ocultos requeridos por JS (compatibilidad sin romper nada) -->
+          <div style="display:none" aria-hidden="true">
+            <span id="moodleStatus"></span><p id="moodleText"></p>
+            <div id="moodleCourses"></div>
+            <img id="dashCredPhotoImg" alt="" />
+            <div id="dashCredPhotoPlaceholder"></div>
+            <input type="file" id="dashCredPhotoInput" accept="image/png,image/jpeg,image/webp" />
+            <img id="dashCredQr" alt="" />
+            <span id="dashCredName"></span><span id="dashCredId"></span>
+            <span id="dashCredMatricula"></span><span id="dashCredCareer"></span>
+            <span id="dashCredSemGroup"></span><span id="dashCredMoodle"></span>
+          </div>
+
         </section>
 
-        <div class="row g-4">
-            <div class="col-xl-4">
-                <section class="panel-card">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h2 class="h4 section-title mb-1">Perfil</h2>
-                            <p class="text-secondary mb-0 small">Datos básicos de tu expediente</p>
-                        </div>
+        <section id="view-courses" class="section">
+          <section class="panel p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div><h2 class="h4 fw-bold mb-1">Aula Virtual</h2><p class="text-secondary small mb-0">Tus cursos disponibles en un solo lugar</p></div>
+              <span class="badge rounded-pill text-primary" style="background: rgba(17,65,184,.08);" id="coursesCount">0 materias</span>
+            </div>
+            <div class="row g-3" id="coursesGrid"><div class="col-12"><div class="empty">Cargando cursos...</div></div></div>
+            <hr class="my-4" />
+            <h3 class="h5 fw-bold mb-1">Contenido del curso</h3>
+            <p class="text-secondary small mb-3">Consulta el contenido disponible de tus cursos.</p>
+            <div class="row g-3" id="moodleModules"><div class="col-12"><div class="empty">Cargando módulos...</div></div></div>
+          </section>
+        </section>
+
+        <section id="view-grades" class="section">
+          <section class="panel p-4">
+            <h2 class="h4 fw-bold mb-1">Calificaciones</h2>
+            <p class="text-secondary small mb-3">Consulta ordenada y alineada al sistema actual, con resumen de trayectoria académica.</p>
+            <div id="gradesTable">
+              <div class="empty">Cargando calificaciones...</div>
+            </div>
+            <hr class="my-4" />
+            <h3 class="h5 fw-bold mb-1">Trayectoria Académica</h3>
+            <p class="text-secondary small mb-3">Seguimiento del progreso, desempeño, materias y alertas.</p>
+            <div class="row g-3 mb-3" id="trajectoryGrid"></div>
+            <div class="mb-3" id="trajectoryTimeline"></div>
+            <div id="trajectoryNotes"></div>
+          </section>
+        </section>
+
+        <section id="view-agenda" class="section"><section class="panel p-4"><h2 class="h4 fw-bold mb-1">Notificaciones</h2><p class="text-secondary small mb-3">Avisos del sistema, asesoría, soporte y recordatorios importantes.</p><div id="agendaList" class="vstack gap-2"></div></section></section>
+        <section id="view-profile" class="section">
+          <section class="panel p-4">
+            <h2 class="h4 fw-bold mb-1">Perfil del Alumno</h2>
+            <p class="text-secondary small mb-3">Consulta de identidad académica y acceso institucional.</p>
+            <div class="row g-3 mb-3" id="profileCards"></div>
+            <div class="row g-3">
+              <div class="col-xl-8">
+                <div class="credential-card">
+                  <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                      <div class="label mb-1">Credencial Virtual</div>
+                      <div class="fw-bold fs-5" id="profileCredName">-</div>
+                      <div class="small text-white-50">Identificador: <span id="profileCredId">-</span></div>
                     </div>
-                    <div class="vstack gap-3">
-                        <div>
-                            <div class="text-secondary small">Matrícula</div>
-                            <div class="fw-bold" id="profileUsername">-</div>
+                    <span class="badge bg-light text-primary">Vigente</span>
+                  </div>
+                  <div class="row g-3 align-items-center">
+                    <div class="col-md-8">
+                      <div class="d-flex flex-wrap gap-3 align-items-start mb-3">
+                        <div class="credential-photo-block">
+                          <img id="profileCredPhotoImg" alt="Foto credencial perfil" />
+                          <div id="profileCredPhotoPlaceholder" class="credential-photo-placeholder">Sin foto</div>
                         </div>
-                        <div>
-                            <div class="text-secondary small">Correo</div>
-                            <div class="fw-semibold" id="profileEmail">-</div>
+                        <div class="flex-grow-1">
+                          <div class="small text-white-50 mb-1">Foto de credencial</div>
+                          <div class="d-grid d-md-flex gap-2">
+                            <input type="file" id="profileCredPhotoInput" class="form-control form-control-sm" accept="image/png,image/jpeg,image/webp" />
+                            <button class="btn btn-sm btn-light text-primary pill" onclick="saveCredentialPhoto('profile')">Guardar foto</button>
+                            <button class="btn btn-sm btn-outline-light pill" onclick="removeCredentialPhoto('profile')">Quitar</button>
+                          </div>
                         </div>
-                        <div>
-                            <div class="text-secondary small">Carrera</div>
-                            <div class="fw-semibold" id="profileCareer">-</div>
-                        </div>
-                        <div>
-                            <div class="text-secondary small">Semestre</div>
-                            <div class="fw-semibold" id="profileSemester">-</div>
-                        </div>
-                        <div>
-                            <div class="text-secondary small">Grupo</div>
-                            <div class="fw-semibold" id="profileGroup">-</div>
-                        </div>
+                      </div>
+                      <div class="credential-row"><span class="k">Matrícula</span><strong id="profileCredMatricula">-</strong></div>
+                      <div class="credential-row"><span class="k">Correo</span><strong id="profileCredEmail">-</strong></div>
+                      <div class="credential-row"><span class="k">Carrera</span><strong id="profileCredCareer">-</strong></div>
+                      <div class="credential-row"><span class="k">Semestre · Grupo</span><strong id="profileCredSemGroup">-</strong></div>
+                      <div class="credential-row"><span class="k">Cursando</span><strong id="profileCredTrack">-</strong></div>
+                      <div class="credential-row"><span class="k">Moodle ID</span><strong id="profileCredMoodle">-</strong></div>
                     </div>
-                </section>
+                    <div class="col-md-4 text-center">
+                      <img id="profileCredQr" alt="QR credencial" style="width: 128px; height: 128px; border-radius: 12px; background: #fff; padding: 6px;" />
+                      <div class="small text-white-50 mt-2">Código QR identificador</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-4">
+                <div class="card-soft h-100">
+                  <h3 class="h6 fw-bold mb-2">Cuenta Moodle</h3>
+                  <div class="small text-secondary mb-3">Datos de acceso vinculados a tu perfil.</div>
+                  <div class="small text-secondary">Usuario Moodle</div>
+                  <div class="fw-semibold mb-2" id="profileMoodleUser">Pendiente</div>
+                  <div class="small text-secondary">Contraseña Moodle</div>
+                  <div class="fw-semibold mb-2" id="profileMoodlePass">Pendiente</div>
+                  <button class="btn btn-sm btn-outline-primary pill mt-2" onclick="goToMoodle()">Ir a Moodle</button>
+                </div>
+              </div>
+            </div>
+            <div class="card-soft mt-3">
+              <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                <div>
+                  <h3 class="h6 fw-bold mb-1">Notificaciones</h3>
+                  <div class="small text-secondary">Desde aquí puedes revisarlas, marcarlas como leídas o quitarlas.</div>
+                </div>
+                <button class="btn btn-sm btn-outline-primary pill" onclick="loadData()">Actualizar</button>
+              </div>
+              <div class="vstack gap-2" id="profileNotificationsList">
+                <div class="small text-secondary">Cargando notificaciones...</div>
+              </div>
+            </div>
+          </section>
+        </section>
+        <section id="view-services" class="section">
+          <section class="panel p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h2 class="h4 fw-bold mb-1">Servicios Escolares</h2>
+                <p class="text-secondary small mb-0">Solicita trámites académicos y consulta su seguimiento.</p>
+              </div>
+              <button class="btn btn-primary pill" onclick="openAcademicServiceModal()"><i class="bi bi-plus-lg me-1"></i>Nuevo trámite</button>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-clean align-middle mb-0">
+                <thead><tr><th>ID</th><th>Tipo</th><th>Asunto</th><th>Fecha</th><th>Estatus</th><th>Acciones</th></tr></thead>
+                <tbody id="servicesTable"><tr><td colspan="6" class="empty">Cargando trámites...</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+        <section id="view-payments" class="section">
+          <section class="panel p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <div>
+                <h2 class="h4 fw-bold mb-1">Control de Pagos</h2>
+                <p class="text-secondary small mb-0">Consulta tus cargos, fechas límite y estatus de pago.</p>
+              </div>
+            </div>
+            <div class="row g-3 mb-4" id="paymentsSummary">
+              <div class="col-md-4"><div class="card-soft"><div class="small text-secondary">Total de cargos</div><div class="fw-bold fs-4 mt-1" id="paymentsTotalCount">0</div></div></div>
+              <div class="col-md-4"><div class="card-soft"><div class="small text-secondary">Pendiente por pagar</div><div class="fw-bold fs-4 mt-1" id="paymentsPendingAmount">$0.00</div></div></div>
+              <div class="col-md-4"><div class="card-soft"><div class="small text-secondary">Cargos vencidos</div><div class="fw-bold fs-4 mt-1" id="paymentsOverdueCount">0</div></div></div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-clean align-middle mb-0">
+                <thead><tr><th>ID</th><th>Concepto</th><th>Periodo</th><th>Vencimiento</th><th>Monto</th><th>Estatus</th></tr></thead>
+                <tbody id="paymentsTable"><tr><td colspan="6" class="empty">Cargando cargos...</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+        <section id="view-support" class="section">
+          <section class="panel p-4">
+            <h2 class="h4 fw-bold mb-1">Soporte Técnico</h2>
+            <p class="text-secondary small mb-3">Atención técnica organizada por ayuda frecuente y levantamiento de tickets.</p>
+            <div class="card-soft mb-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+              <div>
+                <h3 class="h5 fw-bold mb-1">Nuevo Reporte</h3>
+                <p class="small text-secondary mb-0">Si no encaja en las opciones rápidas, levanta tu ticket aquí.</p>
+              </div>
+              <button class="btn btn-primary pill" onclick="openSupportTicketModal('Plataforma','','')">Levantar ticket</button>
+            </div>
+            <div class="card-soft mb-3">
+              <h3 class="h5 fw-bold mb-2">Opciones de Servicio Técnico</h3>
+              <div class="row g-3" id="supportOptions"></div>
+            </div>
+            <div class="row g-3">
+              <div class="col-lg-6">
+                <div class="card-soft h-100">
+                  <h4 class="h6 fw-bold mb-2">Problemas Frecuentes</h4>
+                  <div class="vstack gap-2" id="frequentIssues"></div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card-soft h-100">
+                  <h4 class="h6 fw-bold mb-2">Historial de Tickets</h4>
+                  <div class="vstack gap-2" id="ticketHistory"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+        <section id="view-advisor" class="section">
+          <section class="panel p-4">
+            <div class="d-flex align-items-center gap-3 mb-1">
+              <img src="assets/axolotl_scientist.png" alt="Ajolote Asesor" class="advisor-icon-header" />
+              <h2 class="h4 fw-bold mb-0">Asesor Académico</h2>
+            </div>
+            <p class="text-secondary small mb-4">Orientación, tutorías y seguimiento académico personalizado.</p>
+
+            <div class="row g-4">
+              <!-- Tarjeta del asesor -->
+              <div class="col-lg-4">
+                <div class="card-soft text-center h-100">
+                  <img src="assets/axolotl_scientist.png" alt="Asesor" class="advisor-avatar mb-3" id="advisorAvatar" />
+                  <div class="fw-bold fs-5 mb-1" id="advisorName">-</div>
+                  <div class="small text-secondary" id="advisorAssignment">-</div>
+                  <div class="small mt-2"><i class="bi bi-envelope-fill me-1 text-primary"></i><span id="advisorEmail">-</span></div>
+                  <div class="mt-3 pt-3" style="border-top:1px solid var(--border)">
+                    <div class="small fw-semibold mb-1">Enfoque actual</div>
+                    <div class="small text-secondary" id="advisorFocus">-</div>
+                  </div>
+                  <div class="small text-secondary mt-3" id="advisorStatusHint">Esperando asignación...</div>
+                </div>
+              </div>
+
+              <!-- Sesiones y mensajes -->
+              <div class="col-lg-8">
+                <div class="row g-3">
+                  <!-- Próximas sesiones -->
+                  <div class="col-12">
+                    <div class="card-soft">
+                      <div class="fw-semibold mb-3"><i class="bi bi-calendar-check-fill me-2 text-success"></i>Asesorías Programadas</div>
+                      <div id="studentSessionsList"><div class="small text-secondary">Cargando sesiones...</div></div>
+                    </div>
+                  </div>
+                  <!-- Plan y mensajes -->
+                  <div class="col-12">
+                    <div class="card-soft">
+                      <div class="fw-semibold mb-2"><i class="bi bi-chat-quote-fill me-2 text-primary"></i>Mensajes del Asesor</div>
+                      <div class="vstack gap-2" id="advisorMessagesList"><div class="small text-secondary">Sin mensajes todavía.</div></div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="card-soft">
+                      <div class="fw-semibold mb-2">Plan de acompañamiento</div>
+                      <div class="row g-2" id="advisorActions"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- ============================================================ -->
+        <!--  PASAPORTE DIGITAL                                            -->
+        <!-- ============================================================ -->
+        <section id="view-pasaporte" class="section">
+          <!-- Hero -->
+          <div class="passport-hero mb-4">
+            <div class="d-flex align-items-center gap-3">
+              <div class="passport-seal">🎓</div>
+              <div>
+                <span class="badge bg-light text-primary mb-1" style="font-size:.72rem;">Documento Institucional</span>
+                <h2 class="h3 fw-bold mb-0">Pasaporte Digital</h2>
+                <p class="mb-0" style="opacity:.8; font-size:.9rem;">Trayectoria académica y cumplimiento de requisitos de titulación</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta de identificación -->
+          <div class="passport-id-card mb-4">
+            <div class="d-flex align-items-center gap-4 flex-wrap">
+              <div class="passport-photo-wrap">
+                <img id="ppPhotoImg" alt="Foto pasaporte" style="display:none;" />
+                <div id="ppPhotoPlaceholder" class="passport-photo-placeholder"><i class="bi bi-person-fill" style="font-size:2rem; display:block;"></i>Sin foto</div>
+              </div>
+              <div class="flex-grow-1">
+                <div class="pp-label mb-1">Estudiante</div>
+                <div class="fw-bold fs-5 mb-1" id="ppName">-</div>
+                <div class="pp-label mb-1 mt-2">Matrícula</div>
+                <div class="pp-value mb-1" id="ppMatricula">-</div>
+                <div class="pp-label mb-1 mt-2">Carrera · Semestre</div>
+                <div class="pp-value" id="ppCareerSem">-</div>
+              </div>
+              <div class="text-end d-flex flex-column align-items-end gap-2">
+                <img id="ppQr" alt="QR pasaporte" style="width:100px;height:100px;border-radius:10px;background:#fff;padding:5px;border:1px solid rgba(255,255,255,.25);" />
+                <span class="badge bg-light text-primary" id="ppLevelBadge">Universidad</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aviso preparatoria -->
+          <div id="ppPrepaNotice" class="pp-prepa-badge mb-4 d-none">
+            <i class="bi bi-info-circle-fill me-2 text-primary"></i>
+            Los requisitos de <strong>Tesis</strong> y <strong>Servicio Social</strong> aplican exclusivamente para alumnos de nivel universitario.
+            Consulta con servicios escolares si tu programa tiene requerimientos específicos.
+          </div>
+
+          <!-- ── Tesis ──────────────────────────────────────────────── -->
+          <div class="pp-track-card" id="ppThesisWrap">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="pp-track-icon pp-track-icon-blue"><i class="bi bi-mortarboard-fill"></i></div>
+              <div class="flex-grow-1">
+                <div class="fw-bold fs-6 mb-0">Tesis de Titulación</div>
+                <div class="small text-secondary">Seguimiento del proceso de elaboración y defensa de tesis</div>
+              </div>
+              <div class="d-flex flex-column align-items-end gap-1">
+                <span class="pp-status-badge" id="ppThesisStatusBadge">Pendiente</span>
+                <a href="proceso-academico.html" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1 metric-link" style="font-size:0.6rem;">
+                   <i class="bi bi-bar-chart-line me-1"></i>Ver Estándar
+                </a>
+              </div>
             </div>
 
-            <div class="col-xl-8">
-                <section class="panel-card mb-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                        <div>
-                            <h2 class="h4 section-title mb-1">Servicios escolares</h2>
-                            <p class="text-secondary mb-0 small">Solicita constancias y consulta el avance de tus trámites</p>
-                        </div>
-                        <button class="btn btn-primary pill-button" data-bs-toggle="modal" data-bs-target="#requestServiceModal">
-                            <i class="bi bi-plus-lg me-2"></i>Solicitar servicio
-                        </button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-clean align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Tipo</th>
-                                    <th>Fecha</th>
-                                    <th>Estatus</th>
-                                    <th>Adjunto</th>
-                                </tr>
-                            </thead>
-                            <tbody id="studentServicesTable">
-                                <tr><td colspan="5" class="empty-state">Cargando trámites...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <section class="panel-card">
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            <h2 class="h4 section-title mb-3">Cargos</h2>
-                            <div class="table-responsive">
-                                <table class="table table-clean align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Concepto</th>
-                                            <th>Vence</th>
-                                            <th>Estatus</th>
-                                            <th>Monto</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="studentChargesTable">
-                                        <tr><td colspan="4" class="empty-state">Cargando cargos...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <h2 class="h4 section-title mb-3">Calificaciones finales</h2>
-                            <div class="table-responsive">
-                                <table class="table table-clean align-middle mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Materia</th>
-                                            <th>Estatus</th>
-                                            <th>Final</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="studentGradesTable">
-                                        <tr><td colspan="3" class="empty-state">Cargando calificaciones...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+            <div class="pp-steps mb-3" id="ppThesisSteps">
+              <!-- Generated by JS -->
             </div>
-        </div>
-    </main>
 
-    <div class="modal fade" id="requestServiceModal" tabindex="-1" aria-labelledby="requestServiceModalTitle" aria-hidden="true">
+            <hr class="pp-divider" />
+            <div class="row g-2 small" id="ppThesisInfo">
+              <div class="col-sm-6 col-lg-3">
+                <div class="pp-label">Título</div>
+                <div class="fw-semibold" id="ppThesisTitle">—</div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="pp-label">Director de Tesis</div>
+                <div class="fw-semibold" id="ppThesisDirector">—</div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="pp-label">Institución</div>
+                <div class="fw-semibold" id="ppThesisInstitution">—</div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="pp-label">Inicio</div>
+                <div class="fw-semibold" id="ppThesisStarted">—</div>
+              </div>
+            </div>
+            <div id="ppThesisNotes" class="small text-secondary mt-2"></div>
+          </div>
+
+          <!-- ── Servicio Social Universitario ─────────────────────── -->
+          <div class="pp-track-card" id="ppSSUniWrap">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="pp-track-icon pp-track-icon-teal"><i class="bi bi-building-fill-check"></i></div>
+              <div class="flex-grow-1">
+                <div class="fw-bold fs-6 mb-0">Servicio Social Universitario</div>
+                <div class="small text-secondary">Requisito de 480 horas ante institución receptora</div>
+              </div>
+              <span class="pp-status-badge" id="ppSSUniStatusBadge">Pendiente</span>
+            </div>
+
+            <div class="pp-steps mb-3" id="ppSSUniSteps">
+              <!-- Generated by JS -->
+            </div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between small text-secondary mb-1">
+                <span>Horas completadas</span>
+                <span><strong id="ppSSUniHrsComp">0</strong> / <span id="ppSSUniHrsReq">480</span> hrs</span>
+              </div>
+              <div class="pp-hours-bar"><span id="ppSSUniHrsBar" style="width:0%"></span></div>
+            </div>
+
+            <hr class="pp-divider" />
+            <div class="row g-2 small">
+              <div class="col-sm-6">
+                <div class="pp-label">Institución Receptora</div>
+                <div class="fw-semibold" id="ppSSUniInstitution">—</div>
+              </div>
+              <div class="col-sm-3">
+                <div class="pp-label">Inicio</div>
+                <div class="fw-semibold" id="ppSSUniStart">—</div>
+              </div>
+              <div class="col-sm-3">
+                <div class="pp-label">Término</div>
+                <div class="fw-semibold" id="ppSSUniEnd">—</div>
+              </div>
+            </div>
+            <div id="ppSSUniNotes" class="small text-secondary mt-2"></div>
+          </div>
+
+          <!-- ── Servicio Social Seguro Social ─────────────────────── -->
+          <div class="pp-track-card" id="ppSSSegWrap">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="pp-track-icon pp-track-icon-purple"><i class="bi bi-shield-fill-check"></i></div>
+              <div class="flex-grow-1">
+                <div class="fw-bold fs-6 mb-0">Servicio Social — Seguro Social</div>
+                <div class="small text-secondary">Registro y seguimiento ante el IMSS / Seguro Social</div>
+              </div>
+              <span class="pp-status-badge" id="ppSSSegStatusBadge">Pendiente</span>
+            </div>
+
+            <div class="pp-steps mb-3" id="ppSSSegSteps">
+              <!-- Generated by JS -->
+            </div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between small text-secondary mb-1">
+                <span>Horas completadas</span>
+                <span><strong id="ppSSSegHrsComp">0</strong> / <span id="ppSSSegHrsReq">480</span> hrs</span>
+              </div>
+              <div class="pp-hours-bar"><span id="ppSSSegHrsBar" style="width:0%"></span></div>
+            </div>
+
+            <hr class="pp-divider" />
+            <div class="row g-2 small">
+              <div class="col-sm-6">
+                <div class="pp-label">Institución / Dependencia</div>
+                <div class="fw-semibold" id="ppSSSegInstitution">—</div>
+              </div>
+              <div class="col-sm-3">
+                <div class="pp-label">Inicio</div>
+                <div class="fw-semibold" id="ppSSSegStart">—</div>
+              </div>
+              <div class="col-sm-3">
+                <div class="pp-label">Término</div>
+                <div class="fw-semibold" id="ppSSSegEnd">—</div>
+              </div>
+            </div>
+            <div id="ppSSSegNotes" class="small text-secondary mt-2"></div>
+          </div>
+
+          <p class="text-secondary small text-center mt-2"><i class="bi bi-info-circle me-1"></i>El avance es actualizado por Servicios Escolares. Acude a ventanilla para registrar cambios.</p>
+        </section>
+
+        <!-- ============================================================ -->
+        <!--  NUEVA SECCIÓN: BIBLIOTECA                                    -->
+        <!-- ============================================================ -->
+        <section id="view-biblioteca" class="section">
+          <div class="service-hero service-hero-biblioteca">
+            <span class="badge bg-light text-primary mb-2">Instalaciones · Biblioteca</span>
+            <h2 class="h3 fw-bold mb-1">📚 Biblioteca del Campus</h2>
+            <p class="mb-0" style="opacity:.85;">Consulta el acervo físico y digital, reserva un espacio de lectura y accede a recursos de investigación.</p>
+          </div>
+          <div class="row g-4 mb-4">
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-blue"><i class="bi bi-clock-fill"></i></div>
+                <h3 class="h6 fw-bold mb-1">Horario de Atención</h3>
+                <table class="table table-sm schedule-table mb-0">
+                  <thead><tr><th>Día</th><th>Entrada</th><th>Salida</th></tr></thead>
+                  <tbody>
+                    <tr><td>Lun – Vie</td><td>07:30</td><td>20:00</td></tr>
+                    <tr><td>Sábado</td><td>08:00</td><td>14:00</td></tr>
+                    <tr><td>Domingo</td><td colspan="2" class="text-muted">Cerrado</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-blue"><i class="bi bi-collection-fill"></i></div>
+                <h3 class="h6 fw-bold mb-1">Servicios Disponibles</h3>
+                <ul class="small text-secondary mb-0 ps-3">
+                  <li>Préstamo de libros internos y a domicilio</li>
+                  <li>Acceso a bases de datos digitales</li>
+                  <li>Cubículos de estudio individuales y grupales</li>
+                  <li>Hemeroteca y revistas científicas</li>
+                  <li>Impresión y escaneo de documentos</li>
+                  <li>Wi-Fi de alta velocidad</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-blue"><i class="bi bi-info-circle-fill"></i></div>
+                <h3 class="h6 fw-bold mb-1">Reglamento Básico</h3>
+                <ul class="small text-secondary mb-0 ps-3">
+                  <li>Presentar credencial vigente para préstamo</li>
+                  <li>Máximo 3 libros por alumno simultáneamente</li>
+                  <li>Devolución en 7 días hábiles</li>
+                  <li>Silencio en zona de lectura</li>
+                  <li>Prohibido alimentos y bebidas</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="panel p-4">
+            <h3 class="h5 fw-bold mb-3"><i class="bi bi-laptop me-2 text-primary"></i>Biblioteca Virtual</h3>
+            <p class="text-secondary small mb-3">Accede al catálogo en línea y a los recursos digitales suscritos por la institución.</p>
+            <div class="row g-3">
+              <div class="col-sm-6 col-lg-3">
+                <a href="biblioteca-virtual.html?v=2" class="d-block text-decoration-none">
+                  <div class="service-feature-card text-center">
+                    <div class="service-icon-wrap service-icon-blue mx-auto"><i class="bi bi-journals"></i></div>
+                    <div class="fw-bold small">Catálogo Digital</div>
+                    <div class="text-secondary" style="font-size:.78rem;">Busca y reserva libros</div>
+                  </div>
+                </a>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="service-feature-card text-center">
+                  <div class="service-icon-wrap service-icon-blue mx-auto"><i class="bi bi-file-earmark-pdf"></i></div>
+                  <div class="fw-bold small">Bases de Datos</div>
+                  <div class="text-secondary" style="font-size:.78rem;">EBSCO, Redalyc, JSTOR</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="service-feature-card text-center">
+                  <div class="service-icon-wrap service-icon-blue mx-auto"><i class="bi bi-mortarboard-fill"></i></div>
+                  <div class="fw-bold small">Tesis y Proyectos</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Repositorio institucional</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="service-feature-card text-center">
+                  <div class="service-icon-wrap service-icon-blue mx-auto"><i class="bi bi-headset"></i></div>
+                  <div class="fw-bold small">Asesoría Bibliográfica</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Agenda una cita</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!--  NUEVA SECCIÓN: CAFETERÍA                                     -->
+        <!-- ============================================================ -->
+        <section id="view-cafeteria" class="section">
+          <div class="service-hero service-hero-cafeteria">
+            <span class="badge bg-light text-warning mb-2">Instalaciones · Cafetería</span>
+            <h2 class="h3 fw-bold mb-1">☕ Cafetería del Campus</h2>
+            <p class="mb-0" style="opacity:.85;">Menú diario, horarios de servicio y opciones de alimentación para toda la comunidad estudiantil.</p>
+          </div>
+          <div class="row g-4 mb-4">
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-orange"><i class="bi bi-clock-fill"></i></div>
+                <h3 class="h6 fw-bold mb-1">Horario de Servicio</h3>
+                <table class="table table-sm schedule-table mb-0">
+                  <thead><tr><th>Día</th><th>Apertura</th><th>Cierre</th></tr></thead>
+                  <tbody>
+                    <tr><td>Lun – Vie</td><td>07:00</td><td>19:00</td></tr>
+                    <tr><td>Sábado</td><td>08:00</td><td>14:00</td></tr>
+                    <tr><td>Domingo</td><td colspan="2" class="text-muted">Cerrado</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-orange"><i class="bi bi-egg-fried"></i></div>
+                <h3 class="h6 fw-bold mb-1">Menú del Día</h3>
+                <div class="vstack gap-2">
+                  <div class="d-flex justify-content-between align-items-center p-2 rounded-3" style="background:rgba(245,166,35,.08);">
+                    <div>
+                      <div class="fw-semibold small">Desayuno</div>
+                      <div class="text-secondary" style="font-size:.78rem;">07:00 – 10:00 hrs</div>
+                    </div>
+                    <span class="badge" style="background:rgba(208,79,27,.15);color:#d04f1b;">Disponible</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center p-2 rounded-3" style="background:rgba(245,166,35,.08);">
+                    <div>
+                      <div class="fw-semibold small">Comida</div>
+                      <div class="text-secondary" style="font-size:.78rem;">13:00 – 16:00 hrs</div>
+                    </div>
+                    <span class="badge" style="background:rgba(208,79,27,.15);color:#d04f1b;">Disponible</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center p-2 rounded-3" style="background:rgba(245,166,35,.08);">
+                    <div>
+                      <div class="fw-semibold small">Merienda</div>
+                      <div class="text-secondary" style="font-size:.78rem;">16:30 – 19:00 hrs</div>
+                    </div>
+                    <span class="badge" style="background:rgba(208,79,27,.15);color:#d04f1b;">Disponible</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-orange"><i class="bi bi-heart-fill"></i></div>
+                <h3 class="h6 fw-bold mb-1">Opciones Especiales</h3>
+                <ul class="small text-secondary mb-0 ps-3">
+                  <li>Menú vegetariano y vegano</li>
+                  <li>Opciones sin gluten</li>
+                  <li>Bebidas calientes y frías</li>
+                  <li>Snacks saludables y botanas</li>
+                  <li>Jugos naturales y aguas frescas</li>
+                  <li>Paquetes económicos para estudiantes</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="panel p-4">
+            <h3 class="h5 fw-bold mb-1"><i class="bi bi-star-fill me-2" style="color:#f5a623;"></i>Platillos Destacados</h3>
+            <p class="text-secondary small mb-3">Algunos de los favoritos de la comunidad estudiantil.</p>
+            <div class="row g-3">
+              <div class="col-6 col-md-3">
+                <div class="service-feature-card text-center">
+                  <div style="font-size:2.2rem; margin-bottom:8px;">🌮</div>
+                  <div class="fw-bold small">Tacos de Guisado</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Desde $25</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="service-feature-card text-center">
+                  <div style="font-size:2.2rem; margin-bottom:8px;">🍱</div>
+                  <div class="fw-bold small">Menú del Día</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Sopa, guiso y postre</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="service-feature-card text-center">
+                  <div style="font-size:2.2rem; margin-bottom:8px;">☕</div>
+                  <div class="fw-bold small">Café y Té</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Variedad de bebidas</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="service-feature-card text-center">
+                  <div style="font-size:2.2rem; margin-bottom:8px;">🥗</div>
+                  <div class="fw-bold small">Ensaladas Frescas</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Opción saludable</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!--  NUEVA SECCIÓN: LABORATORIO DE ELECTRÓNICA                   -->
+        <!-- ============================================================ -->
+        <section id="view-laboratorio" class="section">
+          <div class="service-hero service-hero-laboratorio">
+            <span class="badge bg-light text-success mb-2">Instalaciones · Laboratorio</span>
+            <h2 class="h3 fw-bold mb-1">🔬 Laboratorio de Electrónica</h2>
+            <p class="mb-0" style="opacity:.85;">Espacio equipado para prácticas, proyectos y desarrollo de prototipos electrónicos con supervisión docente.</p>
+          </div>
+          <div class="row g-4 mb-4">
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-green"><i class="bi bi-clock-fill"></i></div>
+                <h3 class="h6 fw-bold mb-1">Horario de Laboratorio</h3>
+                <table class="table table-sm schedule-table mb-0">
+                  <thead><tr><th>Día</th><th>Entrada</th><th>Salida</th></tr></thead>
+                  <tbody>
+                    <tr><td>Lun – Vie</td><td>08:00</td><td>19:00</td></tr>
+                    <tr><td>Sábado</td><td>08:00</td><td>13:00</td></tr>
+                    <tr><td>Domingo</td><td colspan="2" class="text-muted">Cerrado</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-green"><i class="bi bi-tools"></i></div>
+                <h3 class="h6 fw-bold mb-1">Equipo Disponible</h3>
+                <ul class="small text-secondary mb-0 ps-3">
+                  <li>Multímetros digitales y analógicos</li>
+                  <li>Osciloscopios de 2 y 4 canales</li>
+                  <li>Fuentes de alimentación regulables</li>
+                  <li>Generadores de funciones</li>
+                  <li>Soldadores y estaciones de calor</li>
+                  <li>Placas Arduino, ESP32 y Raspberry Pi</li>
+                  <li>Protoboards y componentes electrónicos</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="service-feature-card">
+                <div class="service-icon-wrap service-icon-green"><i class="bi bi-shield-check-fill"></i></div>
+                <h3 class="h6 fw-bold mb-1">Normas de Seguridad</h3>
+                <ul class="small text-secondary mb-0 ps-3">
+                  <li>Uso obligatorio de lentes de seguridad</li>
+                  <li>Prohibido laborar sin supervisión docente</li>
+                  <li>Reportar cualquier equipo dañado</li>
+                  <li>No ingresar con alimentos ni bebidas</li>
+                  <li>Apagar equipos al terminar la práctica</li>
+                  <li>Bitácora de uso firmada por alumno y docente</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="panel p-4">
+            <h3 class="h5 fw-bold mb-1"><i class="bi bi-calendar2-week-fill me-2 text-success"></i>Reservar un Turno</h3>
+            <p class="text-secondary small mb-3">Solicita acceso al laboratorio fuera de horario de clase para proyectos adicionales.</p>
+            <div class="row g-3">
+              <div class="col-sm-6 col-lg-3">
+                <div class="service-feature-card text-center">
+                  <div class="service-icon-wrap service-icon-green mx-auto"><i class="bi bi-cpu"></i></div>
+                  <div class="fw-bold small">Microcontroladores</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Arduino, ESP32, PIC</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="service-feature-card text-center">
+                  <div class="service-icon-wrap service-icon-green mx-auto"><i class="bi bi-reception-4"></i></div>
+                  <div class="fw-bold small">Circuitos Analógicos</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Op-amps, filtros, amplificadores</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="service-feature-card text-center">
+                  <div class="service-icon-wrap service-icon-green mx-auto"><i class="bi bi-robot"></i></div>
+                  <div class="fw-bold small">Robótica Básica</div>
+                  <div class="text-secondary" style="font-size:.78rem;">Proyectos integrados</div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="service-feature-card text-center">
+                  <div class="service-icon-wrap service-icon-green mx-auto"><i class="bi bi-pcb"></i></div>
+                  <div class="fw-bold small">Diseño de PCB</div>
+                  <div class="text-secondary" style="font-size:.78rem;">KiCad y EasyEDA</div>
+                </div>
+              </div>
+            </div>
+            <div class="alert mt-4 mb-0" style="background:rgba(26,188,156,.1);border:1px solid rgba(26,188,156,.3);border-radius:14px;color:#0e6655;">
+              <i class="bi bi-info-circle-fill me-2"></i>
+              Para reservar un turno especial, acércate con tu docente titular o contacta a Control Escolar con mínimo <strong>24 horas de anticipación</strong>.
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <div class="modal fade" id="requestServiceModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 modal-shell">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="requestServiceModalTitle">Solicitar servicio escolar</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar ventana"></button>
-                </div>
-                <div class="modal-body pt-3">
-                    <form id="requestServiceForm" class="vstack gap-3">
-                        <div>
-                            <label class="form-label small text-secondary" for="studentServiceType">Tipo de servicio</label>
-                            <select class="form-select" id="studentServiceType" required>
-                                <option value="Constancia de Estudios">Constancia de Estudios</option>
-                                <option value="Kardex">Kardex</option>
-                                <option value="Credencial">Credencial</option>
-                                <option value="Baja Temporal">Baja Temporal</option>
-                                <option value="Titulación">Titulación</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label small text-secondary" for="studentServiceDate">Fecha de solicitud</label>
-                            <input type="date" class="form-control" id="studentServiceDate" required>
-                        </div>
-                        <div>
-                            <label class="form-label small text-secondary" for="studentServiceFile">Adjuntar documento o comprobante</label>
-                            <input type="file" class="form-control" id="studentServiceFile" accept=".pdf,.png,.jpg,.jpeg">
-                            <div class="form-text">Opcional. Puedes subir PDF, JPG o PNG.</div>
-                        </div>
-                        <button type="submit" class="btn btn-primary pill-button w-100">
-                            Registrar solicitud
-                        </button>
-                    </form>
-                </div>
+          <div class="modal-content border-0" style="border-radius:24px;">
+            <div class="modal-header border-0 pb-0">
+              <h5 class="modal-title fw-bold">Levantar ticket de soporte</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <div class="modal-body pt-3">
+              <form id="requestServiceForm" class="vstack gap-3">
+                <input type="hidden" id="supportSourceSystem" value="Plataforma" />
+                <div>
+                  <label class="form-label small text-secondary">Objeto del ticket</label>
+                  <input type="text" class="form-control" id="supportTicketSubject" required placeholder="Ej. No puedo abrir mi materia en Moodle" />
+                </div>
+                <div>
+                  <label class="form-label small text-secondary">Descripción</label>
+                  <textarea class="form-control" id="supportTicketDescription" rows="4" required placeholder="Describe el problema con el mayor detalle posible..."></textarea>
+                </div>
+                <div>
+                  <label class="form-label small text-secondary">Categoría</label>
+                  <select class="form-select" id="supportTicketCategory" required onchange="handleSupportCategoryChange()">
+                    <option value="">Selecciona una categoría</option>
+                    <option value="Acceso y contraseña">Acceso y contraseña</option>
+                    <option value="Moodle / Aula Virtual">Moodle / Aula Virtual</option>
+                    <option value="Contenido o actividades">Contenido o actividades</option>
+                    <option value="Calificaciones">Calificaciones</option>
+                    <option value="Error técnico de plataforma">Error técnico de plataforma</option>
+                    <option value="Otra">Otra</option>
+                  </select>
+                </div>
+                <div id="supportCategoryOtherWrap" style="display:none;">
+                  <label class="form-label small text-secondary">Especifica la categoría</label>
+                  <input type="text" class="form-control" id="supportTicketCategoryOther" placeholder="Escribe la categoría personalizada" />
+                </div>
+                <button type="submit" class="btn btn-primary pill w-100">Enviar ticket</button>
+              </form>
+            </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="toast-container position-fixed top-0 end-0 p-3">
+      <div class="modal fade" id="academicServiceModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0" style="border-radius:24px;">
+            <div class="modal-header border-0 pb-0">
+              <h5 class="modal-title fw-bold">Nuevo trámite escolar</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-3">
+              <form id="academicServiceForm" class="vstack gap-3">
+                <div>
+                  <label class="form-label small text-secondary">Tipo de trámite</label>
+                  <select class="form-select" id="academicServiceType" required>
+                    <option value="">Selecciona...</option>
+                    <option value="Constancia de Estudios">Constancia de Estudios</option>
+                    <option value="Kardex">Kardex</option>
+                    <option value="Baja Temporal">Baja Temporal</option>
+                    <option value="Reposición de credencial">Reposición de credencial</option>
+                    <option value="Otro trámite académico">Otro trámite académico</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label small text-secondary">Asunto</label>
+                  <input type="text" class="form-control" id="academicServiceSubject" required maxlength="180" placeholder="Ej. Solicitud de constancia para beca" />
+                </div>
+                <div>
+                  <label class="form-label small text-secondary">Descripción</label>
+                  <textarea class="form-control" id="academicServiceDescription" rows="4" required placeholder="Describe lo que necesitas y cualquier detalle importante"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary pill w-100">Enviar trámite</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toast-container position-fixed top-0 end-0 p-3">
         <div id="portalToast" class="toast align-items-center text-bg-dark border-0" role="alert">
-            <div class="d-flex">
-                <div class="toast-body" id="portalToastBody">Mensaje</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar notificacion"></button>
-            </div>
+          <div class="d-flex"><div class="toast-body" id="portalToastBody">Mensaje</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>
         </div>
+      </div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const token = localStorage.getItem('token');
-        let currentUser = null;
-        let currentCharges = [];
-        let currentGrades = [];
-        let currentServices = [];
-
-        function showToast(message, type = 'dark') {
-            const toast = document.getElementById('portalToast');
-            const body = document.getElementById('portalToastBody');
-            if (!toast || !body) return;
-            toast.className = `toast align-items-center text-bg-${type} border-0`;
-            body.textContent = message;
-            bootstrap.Toast.getOrCreateInstance(toast).show();
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/api.js"></script>
+  <script>
+    (async function forceFreshCampusVersion() {
+      try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('v') !== '5') {
+          url.searchParams.set('v', '5');
+          window.location.replace(url.toString());
+          return;
         }
 
-        function formatMoney(value) {
-            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(Number(value || 0));
+        const refreshKey = 'campus_v2_refresh_done';
+        if (sessionStorage.getItem(refreshKey) === '1') return;
+
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map((reg) => reg.unregister()));
         }
 
-        function formatDate(value) {
-            if (!value) return '-';
-            return new Date(value).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
+        if (window.caches && caches.keys) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map((key) => caches.delete(key)));
         }
 
-        function statusBadge(status) {
-            const map = {
-                'En Proceso': 'warning text-dark',
-                'Listo': 'info text-dark',
-                'Entregado': 'success',
-                'Pendiente': 'warning text-dark',
-                'Pagado': 'success',
-                'Vencido': 'danger',
-                'Aprobada': 'success',
-                'Reprobada': 'danger',
-                'Cursando': 'secondary'
-            };
-            return `<span class="badge bg-${map[status] || 'secondary'}">${status || 'Sin estatus'}</span>`;
-        }
+        sessionStorage.setItem(refreshKey, '1');
+        window.location.reload();
+      } catch (error) {
+        console.warn('No se pudo forzar refresco de cache', error);
+      }
+    })();
 
-        function getActiveEnrollment(user) {
-            const enrollments = user?.student_enrollments || [];
-            return enrollments.find(item => item.is_active) || enrollments[0] || null;
-        }
+    const token = localStorage.getItem('token');
+    let currentUser = null;
+    let currentCharges = [];
+    let currentGrades = [];
+    let currentServices = [];
+    let currentSupportTickets = [];
+    let currentMoodle = null;
+    let currentCourses = [];
+    let currentNotifications = [];
+    let currentAdvisor = null;
+    let currentAdvisorMessages = [];
+    let currentAdvisorSessions = [];
+    let currentPasaporte = null;
 
-        function renderProfile() {
-            const enrollment = getActiveEnrollment(currentUser);
-            document.getElementById('studentWelcome').textContent = currentUser?.full_name || currentUser?.username || 'Alumno';
-            document.getElementById('studentName').textContent = currentUser?.full_name || 'Alumno';
-            document.getElementById('studentMeta').textContent = `${enrollment?.career?.name || currentUser?.carrera || 'Sin carrera'} · ${enrollment?.semester || currentUser?.semestre || 'Sin semestre'} · ${enrollment?.group?.name || currentUser?.grupo || 'Sin grupo'}`;
-            document.getElementById('profileUsername').textContent = currentUser?.username || '-';
-            document.getElementById('profileEmail').textContent = currentUser?.email || '-';
-            document.getElementById('profileCareer').textContent = enrollment?.career?.name || currentUser?.carrera || '-';
-            document.getElementById('profileSemester').textContent = enrollment?.semester || currentUser?.semestre || '-';
-            document.getElementById('profileGroup').textContent = enrollment?.group?.name || currentUser?.grupo || '-';
-        }
+    function toast(msg, type = 'dark') {
+      const t = document.getElementById('portalToast');
+      document.getElementById('portalToastBody').textContent = msg;
+      t.className = `toast align-items-center text-bg-${type} border-0`;
+      bootstrap.Toast.getOrCreateInstance(t).show();
+    }
 
-        function renderServices() {
-            const table = document.getElementById('studentServicesTable');
-            document.getElementById('studentPendingServices').textContent = currentServices.filter(item => item.status !== 'Entregado').length;
-            if (!currentServices.length) {
-                table.innerHTML = '<tr><td colspan="5" class="empty-state">No tienes trámites registrados.</td></tr>';
-                return;
-            }
-            table.innerHTML = currentServices.map(item => `
-                <tr>
-                    <td class="fw-bold">${item.id}</td>
-                    <td>${item.type}</td>
-                    <td>${formatDate(item.request_date)}</td>
-                    <td>${statusBadge(item.status)}</td>
-                    <td>
-                        ${item.attachment_filename
-                            ? `<button class="btn btn-sm btn-outline-primary pill-button" onclick="downloadMyServiceAttachment(${item.id})"><i class="bi bi-paperclip me-1"></i>Ver</button>`
-                            : '<span class="text-secondary small">Sin adjunto</span>'}
-                    </td>
-                </tr>
-            `).join('');
-        }
+    function fixMojibakeString(input) {
+      if (typeof input !== 'string' || !input) return input;
+      if (!/[ÃÂâ]/.test(input)) return input;
+      try {
+        return decodeURIComponent(escape(input));
+      } catch (_) {
+        return input;
+      }
+    }
 
-        async function downloadMyServiceAttachment(serviceId) {
-            try {
-                const response = await fetch(`http://localhost:8000/users/me/services/${serviceId}/attachment`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) {
-                    const error = await response.json();
-                    showToast(error.detail || 'No se pudo descargar el adjunto', 'danger');
-                    return;
-                }
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `tramite_${serviceId}`;
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
-                URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error(error);
-                showToast('Error de conexión', 'danger');
-            }
-        }
-
-        function renderCharges() {
-            const table = document.getElementById('studentChargesTable');
-            const pendingCount = currentCharges.filter(item => item.status !== 'Pagado').length;
-            document.getElementById('studentPendingCharges').textContent = pendingCount;
-            if (!currentCharges.length) {
-                table.innerHTML = '<tr><td colspan="4" class="empty-state">No tienes cargos registrados.</td></tr>';
-                return;
-            }
-            table.innerHTML = currentCharges.slice(0, 8).map(item => `
-                <tr>
-                    <td>${item.concept || 'Cargo'}</td>
-                    <td>${formatDate(item.due_date)}</td>
-                    <td>${statusBadge(item.status)}</td>
-                    <td class="fw-semibold">${formatMoney(item.amount)}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderGrades() {
-            const table = document.getElementById('studentGradesTable');
-            const finalGrades = currentGrades.filter(item => item.subject_name || item.subject?.name);
-            const approved = finalGrades.filter(item => item.status === 'Aprobada').length;
-            const scored = finalGrades.filter(item => item.score !== null && item.score !== undefined);
-            const avg = scored.length
-                ? scored.reduce((sum, item) => sum + Number(item.score || 0), 0) / scored.length
-                : 0;
-            document.getElementById('studentApprovedSubjects').textContent = approved;
-            document.getElementById('studentAverage').textContent = avg.toFixed(1);
-
-            if (!finalGrades.length) {
-                table.innerHTML = '<tr><td colspan="3" class="empty-state">No hay calificaciones disponibles.</td></tr>';
-                return;
-            }
-
-            table.innerHTML = finalGrades.slice(0, 10).map(item => `
-                <tr>
-                    <td>${item.subject_name || item.subject?.name || 'Materia'}</td>
-                    <td>${statusBadge(item.status)}</td>
-                    <td class="fw-semibold">${item.score ?? '-'}</td>
-                </tr>
-            `).join('');
-        }
-
-        async function fetchPortalData() {
-            if (!token) {
-                window.location.href = 'login.html';
-                return;
-            }
-
-            try {
-                const [meRes, chargesRes, gradesRes, servicesRes] = await Promise.all([
-                    fetch('http://localhost:8000/users/me', { headers: { 'Authorization': `Bearer ${token}` } }),
-                    fetch('http://localhost:8000/users/me/charges', { headers: { 'Authorization': `Bearer ${token}` } }),
-                    fetch('http://localhost:8000/users/me/grades', { headers: { 'Authorization': `Bearer ${token}` } }),
-                    fetch('http://localhost:8000/users/me/services', { headers: { 'Authorization': `Bearer ${token}` } })
-                ]);
-
-                if (!meRes.ok) throw new Error('No se pudo cargar el perfil');
-
-                currentUser = await meRes.json();
-                currentCharges = chargesRes.ok ? await chargesRes.json() : [];
-                currentGrades = gradesRes.ok ? await gradesRes.json() : [];
-                currentServices = servicesRes.ok ? await servicesRes.json() : [];
-
-                renderProfile();
-                renderCharges();
-                renderGrades();
-                renderServices();
-            } catch (error) {
-                console.error(error);
-                showToast('No fue posible cargar tu portal', 'danger');
-            }
-        }
-
-        async function submitServiceRequest(event) {
-            event.preventDefault();
-            const dateValue = document.getElementById('studentServiceDate').value;
-            const selectedFile = document.getElementById('studentServiceFile').files[0];
-
-            try {
-                let response;
-                if (selectedFile) {
-                    const formData = new FormData();
-                    formData.append('type', document.getElementById('studentServiceType').value);
-                    formData.append('request_date', dateValue);
-                    formData.append('file', selectedFile);
-                    response = await fetch('http://localhost:8000/users/me/services/with-document', {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: formData
-                    });
-                } else {
-                    const payload = {
-                        type: document.getElementById('studentServiceType').value,
-                        request_date: dateValue
-                    };
-                    response = await fetch('http://localhost:8000/users/me/services', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                }
-                if (!response.ok) {
-                    const error = await response.json();
-                    showToast(error.detail || 'No se pudo registrar la solicitud', 'danger');
-                    return;
-                }
-                showToast('Solicitud registrada correctamente', 'success');
-                bootstrap.Modal.getInstance(document.getElementById('requestServiceModal')).hide();
-                document.getElementById('requestServiceForm').reset();
-                document.getElementById('studentServiceDate').value = new Date().toISOString().split('T')[0];
-                await fetchPortalData();
-            } catch (error) {
-                console.error(error);
-                showToast('Error de conexión', 'danger');
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('token_type');
-            window.location.href = 'login.html';
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('studentServiceDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('requestServiceForm').addEventListener('submit', submitServiceRequest);
-            fetchPortalData();
+    function fixMojibakeInDom(root = document.body) {
+      if (!root) return;
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      const textNodes = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+      textNodes.forEach((node) => {
+        const fixed = fixMojibakeString(node.nodeValue);
+        if (fixed !== node.nodeValue) node.nodeValue = fixed;
+      });
+      root.querySelectorAll('[title], [placeholder], [aria-label]').forEach((el) => {
+        ['title', 'placeholder', 'aria-label'].forEach((attr) => {
+          const value = el.getAttribute(attr);
+          if (!value) return;
+          const fixed = fixMojibakeString(value);
+          if (fixed !== value) el.setAttribute(attr, fixed);
         });
-    </script>
+      });
+    }
+
+    function displayStatusLabel(status) {
+      if (status === 'Cursando') return 'En curso';
+      if (status === 'Proximamente') return 'Próximamente';
+      return status || 'Sin estatus';
+    }
+
+    function statusBadge(status) {
+      const map = { 'Aprobada':'success', 'Reprobada':'danger', 'Cursando':'secondary', 'Proximamente':'info text-dark', 'En Proceso':'warning text-dark', 'Entregado':'success' };
+      return `<span class="badge bg-${map[status] || 'secondary'}">${displayStatusLabel(status)}</span>`;
+    }
+
+    function formatDate(v) { return v ? new Date(v).toLocaleDateString('es-MX') : '-'; }
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+    function initials(name) { const p = String(name || 'AL').trim().split(/\s+/); return (p[0][0] + (p[1]?.[0] || '')).toUpperCase(); }
+
+    function activeEnrollment(u) {
+      const e = u?.student_enrollments || [];
+      return e.find(x => x.is_active) || e[0] || null;
+    }
+
+    function normalizeTrackLabel(track) {
+      const map = {
+        'Ingenieria en Software': 'Ingeniería en Software',
+        'Ingenieria en Telematica': 'Ingeniería en Telemática',
+        'Bachillerato': 'Bachillerato',
+        'Cursos': 'Cursos',
+        'Capacitacion': 'Capacitación'
+      };
+      return map[track] || track || 'Sin asignar';
+    }
+
+    function stats() {
+      const approved = currentGrades.filter(g => g.status === 'Aprobada').length;
+      const inProgress = currentGrades.filter(g => g.status === 'Cursando').length;
+      const risk = currentGrades.filter(g => g.status === 'Reprobada').length;
+      const scores = currentGrades.filter(g => g.score !== null && g.score !== undefined);
+      const avg = scores.length ? scores.reduce((a,b) => a + Number(b.score || 0), 0) / scores.length : 0;
+      return { approved, inProgress, risk, avg };
+    }
+
+    function gradeTermLabel(grade) {
+      return grade.period || grade.semester || grade.subject?.semester || 'Sin cuatrimestre';
+    }
+
+    function gradeTermOrder(label) {
+      const match = String(label || '').match(/\d+/);
+      return match ? Number(match[0]) : Number.MAX_SAFE_INTEGER;
+    }
+
+    function gradeTermNumber(grade) {
+      const label = gradeTermLabel(grade);
+      const match = String(label || '').match(/\d+/);
+      if (!match) return null;
+      const value = Number(match[0]);
+      return Number.isFinite(value) ? value : null;
+    }
+
+    function cuatrimestreLabel(number) {
+      return `${number}° Cuatrimestre`;
+    }
+
+    function gradeNumericScore(grade) {
+      if (grade?.score === null || grade?.score === undefined || grade?.score === '') return null;
+      const value = Number(grade.score);
+      return Number.isFinite(value) ? value : null;
+    }
+
+    function averageForGrades(grades) {
+      const scored = (grades || [])
+        .map(gradeNumericScore)
+        .filter(score => score !== null);
+      if (!scored.length) return null;
+      return scored.reduce((sum, score) => sum + score, 0) / scored.length;
+    }
+
+    function renderGradesByTerm() {
+      const container = document.getElementById('gradesTable');
+      if (!container) return;
+
+      if (!currentGrades.length) {
+        container.innerHTML = Array.from({ length: 9 }, (_, index) => {
+          const cuatrimestre = index + 1;
+          return `
+            <div class="grades-term-block">
+              <div class="grades-term-title">${cuatrimestreLabel(cuatrimestre)}</div>
+              <div class="table-responsive">
+                <table class="table table-clean align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Materia</th>
+                      <th>Cuatrimestre</th>
+                      <th>Calificación</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="4" class="text-center text-muted py-3">Sin materias registradas.</td></tr>
+                    <tr>
+                      <td colspan="3" class="fw-bold text-end">Promedio del cuatrimestre</td>
+                      <td><b>-</b></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        }).join('');
+        return;
+      }
+
+      const gradesByCuatrimestre = new Map();
+      Array.from({ length: 9 }, (_, index) => index + 1).forEach(number => {
+        gradesByCuatrimestre.set(number, []);
+      });
+      currentGrades.forEach(grade => {
+        const termNumber = gradeTermNumber(grade);
+        if (termNumber && gradesByCuatrimestre.has(termNumber)) {
+          gradesByCuatrimestre.get(termNumber).push(grade);
+        }
+      });
+
+      container.innerHTML = Array.from({ length: 9 }, (_, index) => {
+        const cuatrimestre = index + 1;
+        const items = (gradesByCuatrimestre.get(cuatrimestre) || []).slice().sort((left, right) => {
+          const leftName = left.description || left.subject_name || left.subject?.name || '';
+          const rightName = right.description || right.subject_name || right.subject?.name || '';
+          return leftName.localeCompare(rightName, 'es');
+        });
+        const average = averageForGrades(items);
+        return `
+        <div class="grades-term-block">
+          <div class="grades-term-title">${cuatrimestreLabel(cuatrimestre)}</div>
+          <div class="table-responsive">
+            <table class="table table-clean align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Materia</th>
+                  <th>Cuatrimestre</th>
+                  <th>Calificación</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.length ? items.map(grade => {
+                  const score = gradeNumericScore(grade);
+                  const itemId = grade.grade_id || grade.subject_id || grade.subject?.id || grade.id || '-';
+                  return `
+                    <tr>
+                      <td>${escapeHtml(itemId)}</td>
+                      <td>${escapeHtml(grade.description || grade.subject_name || grade.subject?.name || 'Materia')}</td>
+                      <td>${escapeHtml(cuatrimestreLabel(cuatrimestre))}</td>
+                      <td><b>${score !== null ? score.toFixed(1) : '-'}</b></td>
+                    </tr>
+                  `;
+                }).join('') : '<tr><td colspan="4" class="text-center text-muted py-3">Sin materias registradas.</td></tr>'}
+                <tr>
+                  <td colspan="3" class="fw-bold text-end">Promedio del cuatrimestre</td>
+                  <td><b>${average !== null ? average.toFixed(1) : '-'}</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+
+    function normalizeCourses() {
+      if (!currentMoodle?.linked) return [];
+
+      const moodleCourses = (currentMoodle?.courses || []).filter(course => Number(course?.id));
+      const localCoursesByMoodleId = new Map(
+        (currentCourses || [])
+          .filter(course => Number(course?.moodle_course_id))
+          .map(course => [Number(course.moodle_course_id), course])
+      );
+
+      return moodleCourses.map(course => {
+        const moodleCourseId = Number(course.id || 0) || null;
+        const localMatch = moodleCourseId ? localCoursesByMoodleId.get(moodleCourseId) : null;
+        return {
+          name: course.displayname || course.fullname || localMatch?.name || 'Curso',
+          professor: localMatch?.professor || 'Docente por asignar',
+          semester: localMatch?.semester || '-',
+          progress: Number(course.progress || localMatch?.progress || 0),
+          status: localMatch?.status || 'Cursando',
+          score: localMatch?.score ?? null,
+          moodle_course_id: moodleCourseId,
+          url: course.view_url || localMatch?.moodle_view_url || currentMoodle?.url || currentMoodle?.launch_url || ''
+        };
+      });
+    }
+
+    function switchView(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id)?.classList.add('active');
+      document.querySelectorAll('.menu-btn[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === id));
+      document.querySelectorAll('.mobile-bottom-nav .mbtn[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === id));
+      const active = document.querySelector(`.menu-btn[data-view="${id}"]`);
+      document.getElementById('topTitle').textContent = active ? active.textContent.trim() : 'Aula Virtual';
+      if (id === 'view-courses') {
+        loadMoodleModulesPanel();
+      }
+      fixMojibakeInDom();
+      toggleSidebar(false);
+    }
+
+    function toggleSidebar(show) {
+      document.getElementById('sidebar').classList.toggle('show', !!show);
+      document.getElementById('overlay').classList.toggle('show', !!show);
+    }
+
+    function renderHeaderAndProfile() {
+      const e = activeEnrollment(currentUser);
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+      document.getElementById('studentWelcome').textContent = currentUser?.full_name || currentUser?.username || 'Alumno';
+      document.getElementById('studentName').textContent = currentUser?.full_name || 'Alumno';
+      document.getElementById('studentMeta').textContent = `${e?.career?.name || currentUser?.carrera || 'Sin carrera'} · ${e?.semester || currentUser?.semestre || 'Sin semestre'} · ${e?.group?.name || currentUser?.grupo || 'Sin grupo'}`;
+      document.getElementById('sideName').textContent = currentUser?.full_name || currentUser?.username || 'Alumno';
+      document.getElementById('sideMeta').textContent = `${e?.career?.name || currentUser?.carrera || 'Sin carrera'} · ${e?.semester || currentUser?.semestre || '-'}`;
+      document.getElementById('sideAvatar').textContent = initials(currentUser?.full_name || currentUser?.username);
+      setText('credName', currentUser?.full_name || currentUser?.username || '-');
+      setText('credTrack', normalizeTrackLabel(currentUser?.cursando));
+      setText('credCareer', e?.career?.name || currentUser?.carrera || 'Sin carrera');
+      setText('credIssueDate', `Emisión: ${new Date().toLocaleDateString('es-MX')}`);
+      setText('credMatricula', currentUser?.username || '-');
+      setText('credEmail', currentUser?.email || '-');
+      setText('credSemGroup', `${e?.semester || currentUser?.semestre || '-'} · ${e?.group?.name || currentUser?.grupo || '-'}`);
+      setText('credStatus', e?.enrollment_status || currentUser?.enrollment_status || 'Activo');
+      setText('credMoodle', currentMoodle?.moodle_id || 'Pendiente');
+      const profileName = currentUser?.full_name || currentUser?.username || '-';
+      const profileId = `ME-${currentUser?.username || 'ALUMNO'}-${currentMoodle?.moodle_id || 'PENDIENTE'}`;
+      document.getElementById('profileCredName').textContent = profileName;
+      document.getElementById('profileCredId').textContent = profileId;
+      document.getElementById('profileCredMatricula').textContent = currentUser?.username || '-';
+      document.getElementById('profileCredEmail').textContent = currentUser?.email || '-';
+      document.getElementById('profileCredCareer').textContent = e?.career?.name || currentUser?.carrera || '-';
+      document.getElementById('profileCredSemGroup').textContent = `${e?.semester || currentUser?.semestre || '-'} · ${e?.group?.name || currentUser?.grupo || '-'}`;
+      document.getElementById('profileCredTrack').textContent = normalizeTrackLabel(currentUser?.cursando);
+      document.getElementById('profileCredMoodle').textContent = currentMoodle?.moodle_id || 'Pendiente';
+      document.getElementById('profileMoodleUser').textContent = currentMoodle?.moodle_username || 'Pendiente';
+      document.getElementById('profileMoodlePass').textContent = currentMoodle?.password || (currentMoodle?.password_configured ? 'Configurada (oculta)' : 'Pendiente');
+      const qrPayload = encodeURIComponent(`ID:${profileId}|USER:${currentUser?.username || '-'}|MOODLE:${currentMoodle?.moodle_id || '-'}`);
+      document.getElementById('profileCredQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${qrPayload}`;
+      document.getElementById('dashCredName').textContent = profileName;
+      document.getElementById('dashCredId').textContent = profileId;
+      document.getElementById('dashCredMatricula').textContent = currentUser?.username || '-';
+      document.getElementById('dashCredCareer').textContent = e?.career?.name || currentUser?.carrera || '-';
+      document.getElementById('dashCredSemGroup').textContent = `${e?.semester || currentUser?.semestre || '-'} · ${e?.group?.name || currentUser?.grupo || '-'}`;
+      document.getElementById('dashCredMoodle').textContent = currentMoodle?.moodle_id || 'Pendiente';
+      document.getElementById('dashCredQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${qrPayload}`;
+      loadCredentialPhoto();
+    }
+
+    function credentialPhotoStorageKey() {
+      return `credentialPhoto:${currentUser?.username || 'anon'}`;
+    }
+
+    function loadCredentialPhoto() {
+      const saved = localStorage.getItem(credentialPhotoStorageKey());
+      const pairs = [
+        ['credentialAvatarImg', 'credentialAvatarPlaceholder'],
+        ['dashCredPhotoImg', 'dashCredPhotoPlaceholder'],
+        ['profileCredPhotoImg', 'profileCredPhotoPlaceholder'],
+      ];
+      pairs.forEach(([imgId, phId]) => {
+        const img = document.getElementById(imgId);
+        const placeholder = document.getElementById(phId);
+        if (!img || !placeholder) return;
+        if (saved) {
+          img.src = saved;
+          img.style.display = 'block';
+          placeholder.style.display = 'none';
+        } else {
+          img.removeAttribute('src');
+          img.style.display = 'none';
+          placeholder.style.display = 'block';
+        }
+      });
+    }
+
+    function saveCredentialPhoto(mode = 'dash') {
+      let input = mode === 'profile'
+        ? document.getElementById('profileCredPhotoInput')
+        : mode === 'dash'
+          ? document.getElementById('dashCredPhotoInput')
+          : document.getElementById('credentialPhotoInput');
+      if (!input || !input?.files?.[0]) {
+        input = document.getElementById('credentialPhotoInput') || input;
+      }
+      const file = input?.files?.[0];
+      if (!file) {
+        toast('Selecciona una imagen primero', 'warning');
+        return;
+      }
+      if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+        toast('Formato no válido. Usa PNG, JPG o WEBP', 'warning');
+        return;
+      }
+      if (file.size > 3 * 1024 * 1024) {
+        toast('La imagen debe ser menor a 3MB', 'warning');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        localStorage.setItem(credentialPhotoStorageKey(), String(reader.result || ''));
+        loadCredentialPhoto();
+        toast('Foto de credencial guardada');
+      };
+      reader.onerror = () => toast('No se pudo leer la imagen', 'danger');
+      reader.readAsDataURL(file);
+    }
+
+    function removeCredentialPhoto(mode = 'dash') {
+      localStorage.removeItem(credentialPhotoStorageKey());
+      let input = mode === 'profile'
+        ? document.getElementById('profileCredPhotoInput')
+        : mode === 'dash'
+          ? document.getElementById('dashCredPhotoInput')
+          : document.getElementById('credentialPhotoInput');
+      if (!input) input = document.getElementById('credentialPhotoInput');
+      if (input) input.value = '';
+      loadCredentialPhoto();
+      toast('Foto de credencial eliminada');
+    }
+
+    function updateDashAlerts() {
+      const charges = parseInt(document.getElementById('kpiCharges').textContent) || 0;
+      const services = parseInt(document.getElementById('kpiServices').textContent) || 0;
+      const wrap = document.getElementById('kpiChargesWrap');
+      if (wrap) wrap.classList.toggle('has-charges', charges > 0);
+      const banners = [];
+      if (charges > 0) banners.push(`
+        <div class="d-flex align-items-center justify-content-between gap-2 rounded-3 px-3 py-2 mb-2"
+             style="background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2)">
+          <span class="small fw-semibold" style="color:#b91c1c">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Tienes <strong>${charges} cargo${charges !== 1 ? 's' : ''}</strong> pendiente${charges !== 1 ? 's' : ''} de pago
+          </span>
+          <button class="btn btn-sm rounded-pill px-3 fw-semibold flex-shrink-0"
+                  style="background:#dc2626;color:#fff;font-size:.8rem" onclick="switchView('view-payments')">
+            Ver pagos
+          </button>
+        </div>`);
+      if (services > 0) banners.push(`
+        <div class="d-flex align-items-center justify-content-between gap-2 rounded-3 px-3 py-2 mb-2"
+             style="background:rgba(17,65,184,.07);border:1px solid rgba(17,65,184,.15)">
+          <span class="small fw-semibold" style="color:#1141b8">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            <strong>${services} trámite${services !== 1 ? 's' : ''}</strong> en proceso
+          </span>
+          <button class="btn btn-sm rounded-pill px-3 fw-semibold flex-shrink-0"
+                  style="background:#1141b8;color:#fff;font-size:.8rem" onclick="switchView('view-services')">
+            Ver trámites
+          </button>
+        </div>`);
+      const el = document.getElementById('dashAlertBanners');
+      if (el) el.innerHTML = banners.join('');
+    }
+
+    function renderKpisAndLists() {
+      const s = stats();
+      document.getElementById('kpiCharges').textContent = currentCharges.filter(c => c.status !== 'Pagado').length;
+      document.getElementById('kpiServices').textContent = currentServices.filter(x => x.status !== 'Entregado').length;
+      document.getElementById('kpiAvg').textContent = s.avg.toFixed(1);
+      document.getElementById('kpiApproved').textContent = s.approved;
+      updateDashAlerts();
+      document.getElementById('topSummary').textContent = `${normalizeCourses().length} materias · ${s.inProgress} en curso`;
+
+      const noticeCards = currentNotifications.slice(0, 6);
+      const notificationsHtml = noticeCards.length
+        ? noticeCards.map(item => {
+            const levelMap = { danger: 'bg-danger-subtle text-danger', warning: 'bg-warning-subtle text-warning-emphasis', success: 'bg-success-subtle text-success', info: 'bg-info-subtle text-info-emphasis' };
+            const levelText = { danger: 'Urgente', warning: 'Aviso', success: 'Confirmado', info: 'Info' };
+            return `<div class="card-soft"><div class="d-flex justify-content-between gap-2"><div class="fw-semibold">${item.title || 'Notificación'}</div><span class="badge ${levelMap[item.level] || 'bg-secondary-subtle text-secondary'}">${levelText[item.level] || 'Info'}</span></div><div class="small text-secondary mt-1">${item.message || ''}</div><div class="small text-secondary mt-2">${item.source || 'Sistema'} · ${formatDate(item.created_at)}</div></div>`;
+          }).join('')
+        : '<div class="empty">Sin notificaciones por ahora.</div>';
+      document.getElementById('dashActivities').innerHTML = notificationsHtml;
+      document.getElementById('agendaList').innerHTML = notificationsHtml;
+
+      const quickNotices = currentNotifications.slice(0, 3).map(n => n.title || n.message);
+      const notices = quickNotices.length ? quickNotices : [
+        currentMoodle?.linked ? 'Cuenta Moodle vinculada correctamente.' : 'Tu cuenta aún no está vinculada con Moodle.',
+        s.risk > 0 ? `Se detectaron ${s.risk} materias con riesgo académico.` : 'Sin alertas académicas críticas por ahora.',
+        currentCharges.some(c => c.status !== 'Pagado') ? 'Tienes cargos pendientes por revisar.' : 'No tienes cargos pendientes.'
+      ];
+      document.getElementById('dashNotices').innerHTML = notices.map(n => `<div class="card-soft small">${n}</div>`).join('');
+    }
+
+    function renderNotifications() {
+      const list = document.getElementById('studentNotificationList');
+      const countBadge = document.getElementById('topNoticeCount');
+      const unreadCount = currentNotifications.filter(item => item?.can_manage && !item?.is_read).length;
+      const rows = currentNotifications.length
+        ? currentNotifications.map(item => {
+            const levelClass = item.level === 'danger' ? 'bg-danger-subtle text-danger' : item.level === 'warning' ? 'bg-warning-subtle text-warning-emphasis' : item.level === 'success' ? 'bg-success-subtle text-success' : 'bg-info-subtle text-info-emphasis';
+            return `<div class="px-2 py-2 border-bottom"><div class="d-flex justify-content-between align-items-start gap-2"><div><div class="fw-semibold">${item.title || 'Notificación'}</div><div class="small text-secondary mt-1">${item.message || ''}</div><div class="small text-secondary mt-1">${item.source || 'Sistema'} · ${formatDate(item.created_at)}</div></div><span class="badge ${levelClass}">${item.level || 'info'}</span></div></div>`;
+          }).join('')
+        : '<div class="small text-muted px-2 py-2">Sin notificaciones por ahora.</div>';
+      if (list) list.innerHTML = rows;
+      if (countBadge) countBadge.textContent = String(unreadCount);
+      renderProfileNotifications();
+    }
+
+    function renderProfileNotifications() {
+      const container = document.getElementById('profileNotificationsList');
+      if (!container) return;
+      container.innerHTML = currentNotifications.length
+        ? currentNotifications.map(item => {
+            const isManaged = Boolean(item?.can_manage && item?.id);
+            const readBadge = isManaged
+              ? (item?.is_read
+                ? '<span class="badge bg-success-subtle text-success">Leída</span>'
+                : '<span class="badge bg-warning-subtle text-warning-emphasis">Nueva</span>')
+              : '<span class="badge bg-info-subtle text-info-emphasis">Informativa</span>';
+            return `
+              <div class="card-soft p-3">
+                <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                  <div>
+                    <div class="fw-semibold">${item.title || 'Notificación'}</div>
+                    <div class="small text-secondary mt-1">${item.message || ''}</div>
+                    <div class="small text-secondary mt-2">${item.source || 'Sistema'} · ${formatDate(item.created_at)}</div>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 flex-wrap">
+                    ${readBadge}
+                    ${isManaged && !item?.is_read ? `<button class="btn btn-sm btn-outline-primary pill" onclick="markNotificationRead(${Number(item.id)})">Marcar leída</button>` : ''}
+                    ${isManaged ? `<button class="btn btn-sm btn-outline-danger pill" onclick="deleteNotification(${Number(item.id)})">Borrar</button>` : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')
+        : '<div class="small text-secondary">No hay notificaciones disponibles.</div>';
+    }
+
+    async function markNotificationRead(notificationId) {
+      try {
+        const response = await fetch(`http://localhost:8000/users/me/notifications/${notificationId}/read`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          toast(payload?.detail || 'No se pudo marcar la notificación como leída', 'danger');
+          return;
+        }
+        currentNotifications = currentNotifications.map(item => item.id === notificationId
+          ? { ...item, is_read: true, read_at: new Date().toISOString() }
+          : item);
+        renderNotifications();
+        toast('Notificación marcada como leída', 'success');
+      } catch {
+        toast('Error de conexión al actualizar la notificación', 'danger');
+      }
+    }
+
+    async function deleteNotification(notificationId) {
+      try {
+        const response = await fetch(`http://localhost:8000/users/me/notifications/${notificationId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          toast(payload?.detail || 'No se pudo borrar la notificación', 'danger');
+          return;
+        }
+        currentNotifications = currentNotifications.filter(item => item.id !== notificationId);
+        renderNotifications();
+        toast('Notificación eliminada', 'success');
+      } catch {
+        toast('Error de conexión al borrar la notificación', 'danger');
+      }
+    }
+
+    function formatMoney(value) {
+      const amount = Number(value || 0);
+      return amount.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+    }
+
+    function renderPaymentsPanel() {
+      const rows = Array.isArray(currentCharges) ? [...currentCharges] : [];
+      const pendingRows = rows.filter(item => item.status !== 'Pagado');
+      const overdueRows = rows.filter(item => item.status === 'Vencido');
+
+      document.getElementById('paymentsTotalCount').textContent = String(rows.length);
+      document.getElementById('paymentsPendingAmount').textContent = formatMoney(
+        pendingRows.reduce((sum, item) => sum + Number(item.amount || 0), 0)
+      );
+      document.getElementById('paymentsOverdueCount').textContent = String(overdueRows.length);
+
+      document.getElementById('paymentsTable').innerHTML = rows.length ? rows.map(item => `
+        <tr>
+          <td>${item.id ?? '-'}</td>
+          <td>${item.concept || '-'}</td>
+          <td>${item.period_label || '-'}</td>
+          <td>${formatDate(item.due_date)}</td>
+          <td>${formatMoney(item.amount)}</td>
+          <td>${statusBadge(item.status)}</td>
+        </tr>
+      `).join('') : '<tr><td colspan="6" class="empty">No tienes cargos registrados.</td></tr>';
+    }
+
+    function renderCoursesAndGrades() {
+      const courses = normalizeCourses();
+      const chtml = courses.length ? courses.map(c => `<div class="col-md-6 col-xl-4"><div class="card-soft"><div class="d-flex justify-content-between align-items-start gap-2 mb-2"><div><div class="fw-bold">${c.name}</div><div class="small text-secondary">${c.professor}</div></div>${statusBadge(c.status)}</div><div class="small text-secondary mb-2">Semestre ${c.semester}</div><div class="progress-track mb-2"><span style="width:${Math.max(5,Math.min(100,c.progress || 0))}%"></span></div><div class="d-flex justify-content-between small text-secondary"><span>Avance</span><span>${Math.max(0,Math.min(100,c.progress || 0))}%</span></div><div class="d-flex justify-content-between align-items-center mt-3"><span class="small">Calificación: <b>${c.score ?? '-'}</b></span><button class="btn btn-sm btn-primary pill" onclick="openCourse('${c.url}')">Entrar</button></div></div></div>`).join('') : '<div class="col-12"><div class="empty">No hay materias visibles.</div></div>';
+      document.getElementById('dashCourses').innerHTML = chtml;
+      document.getElementById('coursesGrid').innerHTML = chtml;
+      document.getElementById('coursesCount').textContent = `${courses.length} materia${courses.length === 1 ? '' : 's'}`;
+
+      renderGradesByTerm();
+      document.getElementById('servicesTable').innerHTML = currentServices.length ? currentServices.map(s => `
+        <tr>
+          <td>${s.id}</td>
+          <td>${s.type || '-'}</td>
+          <td>${s.subject || '-'}</td>
+          <td>${formatDate(s.request_date)}</td>
+          <td>${statusBadge(s.status)}</td>
+          <td>
+            ${(s.admin_attachment_path || s.admin_attachment_filename)
+              ? `<button class="btn btn-sm btn-outline-primary pill" onclick="downloadServiceResponse(${s.id})"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</button>`
+              : '<span class="small text-secondary">Sin respuesta PDF</span>'}
+          </td>
+        </tr>
+      `).join('') : '<tr><td colspan="6" class="empty">No hay trámites registrados.</td></tr>';
+      renderPaymentsPanel();
+
+      const st = stats();
+      const total = currentGrades.length || 0;
+      const pct = total > 0 ? Math.round((st.approved / total) * 100) : 0;
+      const avgPct = Math.min(Math.round(st.avg * 10), 100);
+      const avgColor = st.avg >= 8 ? '#16a34a' : st.avg >= 6 ? '#d97706' : '#dc2626';
+      const avgLabel = st.avg >= 8 ? 'Sobresaliente' : st.avg >= 6 ? 'Suficiente' : st.avg > 0 ? 'Necesita mejora' : 'Sin calificaciones';
+      const riskColor = st.risk > 0 ? '#dc2626' : '#16a34a';
+      document.getElementById('trajectoryGrid').innerHTML = `
+        <div class="col-sm-6 col-xl-3">
+          <div class="card-soft text-center">
+            <div class="small text-secondary mb-1">Materias aprobadas</div>
+            <div style="font-size:2rem;font-weight:800;color:var(--primary);line-height:1">${st.approved}<span style="font-size:1rem;font-weight:500;color:var(--muted)"> / ${total}</span></div>
+            <div class="progress-track my-2"><span style="width:${pct}%"></span></div>
+            <div class="small fw-semibold" style="color:var(--primary)">${pct}% completado</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="card-soft text-center">
+            <div class="small text-secondary mb-1">Promedio general</div>
+            <div style="font-size:2rem;font-weight:800;color:${avgColor};line-height:1">${st.avg.toFixed(1)}</div>
+            <div class="progress-track my-2"><span style="width:${avgPct}%;background:${avgColor}"></span></div>
+            <div class="small fw-semibold" style="color:${avgColor}">${avgLabel}</div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="card-soft text-center">
+            <div class="small text-secondary mb-1">Materias en curso</div>
+            <div style="font-size:2rem;font-weight:800;color:#2563eb;line-height:1">${st.inProgress}</div>
+            <div class="mt-2">
+              <span style="background:rgba(37,99,235,.1);color:#2563eb;border-radius:999px;padding:2px 12px;font-size:.75rem;font-weight:700">Periodo activo</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <div class="card-soft text-center">
+            <div class="small text-secondary mb-1">Alertas de riesgo</div>
+            <div style="font-size:2rem;font-weight:800;color:${riskColor};line-height:1">${st.risk}</div>
+            <div class="mt-2">
+              <span style="background:${st.risk > 0 ? 'rgba(220,38,38,.1)' : 'rgba(22,163,74,.1)'};color:${riskColor};border-radius:999px;padding:2px 12px;font-size:.75rem;font-weight:700">
+                ${st.risk > 0 ? `${st.risk} reprobada(s)` : 'Sin alertas'}
+              </span>
+            </div>
+          </div>
+        </div>`;
+
+      const byTerm = new Map();
+      Array.from({length: 9}, (_, i) => i + 1).forEach(n => byTerm.set(n, []));
+      currentGrades.forEach(g => { const n = gradeTermNumber(g); if (n && byTerm.has(n)) byTerm.get(n).push(g); });
+      const termBlocks = Array.from({length: 9}, (_, i) => {
+        const n = i + 1;
+        const items = byTerm.get(n) || [];
+        const hasCursando = items.some(g => g.status === 'Cursando');
+        const hasRep = items.some(g => g.status === 'Reprobada');
+        const allOk = items.length > 0 && items.every(g => g.status === 'Aprobada');
+        const avg = averageForGrades(items);
+        let bg, borderColor, iconHtml, sublabel, textColor;
+        if (items.length === 0) {
+          bg='rgba(17,65,184,.05)'; borderColor='rgba(17,65,184,.1)'; iconHtml='<i class="bi bi-circle" style="font-size:1.1rem;color:#cbd5e1"></i>'; sublabel='Próximo'; textColor='#94a3b8';
+        } else if (allOk) {
+          bg='rgba(22,163,74,.1)'; borderColor='rgba(22,163,74,.3)'; iconHtml='<i class="bi bi-check-circle-fill" style="font-size:1.1rem;color:#16a34a"></i>'; sublabel=avg!==null?avg.toFixed(1):'OK'; textColor='#16a34a';
+        } else if (hasRep) {
+          bg='rgba(220,38,38,.08)'; borderColor='rgba(220,38,38,.25)'; iconHtml='<i class="bi bi-exclamation-circle-fill" style="font-size:1.1rem;color:#dc2626"></i>'; sublabel=avg!==null?avg.toFixed(1):'Riesgo'; textColor='#dc2626';
+        } else if (hasCursando) {
+          bg='rgba(37,99,235,.1)'; borderColor='rgba(37,99,235,.25)'; iconHtml='<i class="bi bi-play-circle-fill" style="font-size:1.1rem;color:#2563eb"></i>'; sublabel='En curso'; textColor='#2563eb';
+        } else {
+          bg='rgba(17,65,184,.05)'; borderColor='rgba(17,65,184,.1)'; iconHtml='<i class="bi bi-dash-circle" style="font-size:1.1rem;color:#94a3b8"></i>'; sublabel=avg!==null?avg.toFixed(1):'-'; textColor='#94a3b8';
+        }
+        return `<div style="flex:1;min-width:76px;text-align:center;background:${bg};border-radius:14px;padding:10px 6px;border:1px solid ${borderColor}">
+          ${iconHtml}
+          <div style="font-size:.78rem;font-weight:800;color:var(--primary-dark);margin:4px 0 2px">${n}°</div>
+          <div style="font-size:.68rem;font-weight:600;color:${textColor}">${sublabel}</div>
+        </div>`;
+      }).join('');
+      document.getElementById('trajectoryTimeline').innerHTML = `
+        <div class="card-soft">
+          <div class="fw-semibold mb-3">Avance por cuatrimestre</div>
+          <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px">${termBlocks}</div>
+          <div class="d-flex gap-3 mt-3 flex-wrap">
+            <span class="small" style="color:#16a34a"><i class="bi bi-check-circle-fill me-1"></i>Aprobado</span>
+            <span class="small" style="color:#2563eb"><i class="bi bi-play-circle-fill me-1"></i>En curso</span>
+            <span class="small" style="color:#dc2626"><i class="bi bi-exclamation-circle-fill me-1"></i>Con riesgo</span>
+            <span class="small text-secondary"><i class="bi bi-circle me-1"></i>Próximo</span>
+          </div>
+        </div>`;
+
+      const riskGrades = currentGrades.filter(g => g.status === 'Reprobada');
+      if (riskGrades.length) {
+        document.getElementById('trajectoryNotes').innerHTML = `
+          <div class="card-soft" style="border-color:rgba(220,38,38,.25);background:linear-gradient(180deg,#fff 0%,#fff5f5 100%)">
+            <div class="fw-semibold mb-2" style="color:#dc2626"><i class="bi bi-exclamation-triangle-fill me-2"></i>Materias con riesgo académico</div>
+            <div class="vstack gap-2">
+              ${riskGrades.map(g => {
+                const sc = gradeNumericScore(g);
+                return `<div class="d-flex align-items-center gap-2 flex-wrap">
+                  <span style="background:rgba(220,38,38,.1);color:#dc2626;border:1px solid rgba(220,38,38,.2);border-radius:999px;padding:1px 10px;font-size:.75rem;font-weight:700">${sc!==null?sc.toFixed(1):'Rep.'}</span>
+                  <span class="small fw-semibold">${escapeHtml(g.description||g.subject_name||g.subject?.name||'Materia')}</span>
+                  <span class="small text-secondary ms-auto">${escapeHtml(gradeTermLabel(g))}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>`;
+      } else {
+        document.getElementById('trajectoryNotes').innerHTML = total
+          ? '<div class="card-soft small" style="color:#16a34a"><i class="bi bi-check2-circle me-2"></i>Sin alertas de riesgo activas. ¡Excelente trayectoria!</div>'
+          : '<div class="card-soft small text-secondary">Aún no hay calificaciones registradas en el sistema.</div>';
+      }
+      document.getElementById('profileCards').innerHTML = [
+        ['Matrícula', currentUser?.username || '-'],
+        ['Correo', currentUser?.email || '-'],
+        ['Cursando', normalizeTrackLabel(currentUser?.cursando)],
+        ['Moodle ID', currentMoodle?.moodle_id || 'Pendiente'],
+        ['Materias', courses.length]
+      ].map(i => `<div class="col-md-6"><div class="card-soft"><div class="small text-secondary">${i[0]}</div><div class="fw-bold mt-1">${i[1]}</div></div></div>`).join('');
+
+      const supportOptions = [
+        ['Reporte de plataforma', 'Plataforma', 'Error técnico de plataforma', 'Levanta un ticket por errores de acceso o carga de contenido.'],
+        ['Problemas de contraseña', 'Plataforma', 'Acceso y contraseña', 'Recuperación guiada de credenciales institucionales.'],
+        ['Soporte Moodle', 'Moodle', 'Moodle / Aula Virtual', 'Ayuda para cursos, módulos y navegación en Aula Virtual Moodle.'],
+        ['Estado de servicios', 'Plataforma', 'Contenido o actividades', 'Consulta el estado de incidencias abiertas.']
+      ];
+      document.getElementById('supportOptions').innerHTML = supportOptions.map(item => `<div class="col-md-6"><div class="card-soft h-100"><div class="fw-semibold">${item[0]}</div><div class="small text-secondary mt-1">${item[3]}</div><button class="btn btn-sm btn-primary pill mt-3" onclick="openSupportTicketModal('${item[1]}','${item[0].replace(/'/g, "\\'")}','${item[2]}')">Levantar ticket</button></div></div>`).join('');
+
+      const frequentIssues = [
+        { text: 'No puedo entrar a Moodle con mi usuario.', source: 'Moodle', category: 'Moodle / Aula Virtual' },
+        { text: 'No carga una actividad o módulo en la materia.', source: 'Moodle', category: 'Contenido o actividades' },
+        { text: 'No aparece una materia inscrita en el tablero.', source: 'Plataforma', category: 'Contenido o actividades' },
+        { text: 'La plataforma va lenta o muestra error de sesión.', source: 'Plataforma', category: 'Error técnico de plataforma' }
+      ];
+      document.getElementById('frequentIssues').innerHTML = frequentIssues.map((issue, idx) => `
+        <button class="btn btn-light text-start border w-100 d-flex align-items-start gap-2" onclick="openSupportTicketModal('${issue.source}','${issue.text.replace(/'/g, "\\'")}','${issue.category}')">
+          <span class="badge bg-light text-primary border mt-1">${idx + 1}</span>
+          <span class="small">${issue.text}</span>
+        </button>
+      `).join('');
+
+      const ticketHistory = currentSupportTickets.length
+        ? currentSupportTickets.slice(0, 6).map(s => `<div class="card-soft p-3"><div class="d-flex justify-content-between gap-2"><div class="fw-semibold small">Ticket #${s.id} · ${s.subject || s.type}</div>${statusBadge(s.status)}</div><div class="small text-secondary mt-1">Origen: ${s.source_system || 'Plataforma'} · Fecha: ${formatDate(s.request_date)}</div><div class="small text-secondary mt-1">${s.admin_response ? `Respuesta admin: ${s.admin_response}` : 'Sin respuesta aún'}</div></div>`).join('')
+        : '<div class="small text-secondary">Sin tickets aún. Puedes levantar el primero desde las opciones superiores.</div>';
+      document.getElementById('ticketHistory').innerHTML = ticketHistory;
+
+      const e = activeEnrollment(currentUser);
+      const risk = stats().risk;
+      const advisor = currentAdvisor || {};
+      const advisorName = advisor.teacher_full_name || advisor.teacher_username || 'Sin asesor asignado';
+      const advisorAssigned = Boolean(advisor.teacher_id || advisor.teacher_username || advisor.teacher_full_name);
+      document.getElementById('advisorName').textContent = advisorName;
+      document.getElementById('advisorAssignment').textContent = advisor.period_label ? `Periodo: ${advisor.period_label}` : `Carrera: ${e?.career?.name || currentUser?.carrera || 'Pendiente'}`;
+      document.getElementById('advisorEmail').textContent = advisor.teacher_email || 'Pendiente';
+      document.getElementById('advisorFocus').textContent = advisor.notes || (risk > 0 ? `Refuerzo en ${risk} materia(s) con riesgo.` : 'Seguimiento preventivo y continuidad académica.');
+      document.getElementById('advisorAvatar').src = advisorAssigned && advisor.photo_url ? advisor.photo_url : 'assets/axolotl_scientist.png';
+      document.getElementById('advisorStatusHint').textContent = advisorAssigned
+        ? 'Asesor activo y vinculado a tu expediente.'
+        : 'Aún no tienes asesor asignado por administración.';
+
+      document.getElementById('advisorActions').innerHTML = [
+        advisorAssigned ? 'Seguimiento personalizado por periodo activo.' : 'Pendiente de asignación formal de asesor.',
+        'Canal de orientación académica y tutoría.',
+        'Monitoreo de desempeño y alertas académicas.',
+        'Plan de mejora por materias y hábitos de estudio.'
+      ].map(a => `<div class="col-md-6"><div class="small"><i class="bi bi-check2-circle text-primary me-2"></i>${a}</div></div>`).join('');
+
+      document.getElementById('advisorMessagesList').innerHTML = (currentAdvisorMessages || []).length
+        ? currentAdvisorMessages.slice(0, 6).map(msg => `
+            <div class="card-soft p-2">
+              <div class="fw-semibold small">${escapeHtml(msg.title || 'Mensaje de asesoría')}</div>
+              <div class="small text-secondary">${escapeHtml(msg.message || '')}</div>
+              <div class="small text-muted mt-1">${msg.created_at ? new Date(msg.created_at).toLocaleDateString('es-MX') : ''}</div>
+            </div>`).join('')
+        : '<div class="small text-secondary">Sin mensajes de asesoría todavía.</div>';
+
+      const now = new Date();
+      const sessions = currentAdvisorSessions || [];
+      const upcoming = sessions.filter(s => new Date(s.scheduled_at) >= now && s.status !== 'Cancelada' && s.status !== 'Realizada');
+      const past = sessions.filter(s => new Date(s.scheduled_at) < now || s.status === 'Realizada');
+      function sessionStatusStyle(st) {
+        return st === 'Confirmada' ? 'background:rgba(22,163,74,.12);color:#16a34a;border-color:rgba(22,163,74,.3)'
+          : st === 'Cancelada' ? 'background:rgba(220,38,38,.1);color:#dc2626;border-color:rgba(220,38,38,.25)'
+          : st === 'Realizada' ? 'background:rgba(100,116,139,.1);color:#64748b;border-color:rgba(100,116,139,.25)'
+          : 'background:rgba(234,179,8,.12);color:#b45309;border-color:rgba(234,179,8,.3)';
+      }
+      function sessionCard(s) {
+        const d = new Date(s.scheduled_at);
+        const dateStr = d.toLocaleDateString('es-MX', { weekday:'short', day:'2-digit', month:'short' });
+        const timeStr = d.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+        return `<div class="session-row d-flex gap-3 align-items-start">
+          <div style="min-width:52px;text-align:center;background:var(--bg);border-radius:10px;padding:6px 4px">
+            <div style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase">${dateStr.split(' ')[0]}</div>
+            <div style="font-size:1.1rem;font-weight:800;color:var(--primary)">${dateStr.split(' ')[1]}</div>
+            <div style="font-size:.68rem;color:var(--muted)">${timeStr}</div>
+          </div>
+          <div class="flex-fill min-w-0">
+            <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+              <span class="session-badge" style="${sessionStatusStyle(s.status)}">${s.status}</span>
+              <span class="small fw-semibold">${escapeHtml(s.topic)}</span>
+            </div>
+            <div class="small text-secondary">Asesor: ${escapeHtml(s.teacher_name || '-')} · ${s.duration_minutes} min</div>
+            ${s.notes ? `<div class="small text-muted mt-1"><i class="bi bi-sticky-fill me-1"></i>${escapeHtml(s.notes)}</div>` : ''}
+          </div>
+        </div>`;
+      }
+      let sessionsHtml = '';
+      if (upcoming.length) sessionsHtml += upcoming.map(sessionCard).join('');
+      if (past.length) sessionsHtml += `<div class="small fw-semibold text-muted mt-3 mb-2">Historial</div>` + past.slice(0, 5).map(sessionCard).join('');
+      document.getElementById('studentSessionsList').innerHTML = sessionsHtml || '<div class="small text-secondary">No hay asesorías programadas todavía.</div>';
+    }
+
+    async function loadMoodleModulesPanel() {
+      const target = document.getElementById('moodleModules');
+      if (!target) return;
+
+      if (!currentMoodle?.enabled) {
+        target.innerHTML = '<div class="col-12"><div class="empty">La integración de Moodle no está habilitada en este entorno.</div></div>';
+        return;
+      }
+      if (!currentMoodle?.linked) {
+        target.innerHTML = '<div class="col-12"><div class="empty">Tu cuenta aún no está vinculada con Moodle. Solicita sincronización a administración.</div></div>';
+        return;
+      }
+
+      const uniqueCourses = [];
+      const seen = new Set();
+      for (const course of normalizeCourses()) {
+        const cid = Number(course?.moodle_course_id || 0);
+        if (!cid || seen.has(cid)) continue;
+        seen.add(cid);
+        uniqueCourses.push(course);
+      }
+
+      if (!uniqueCourses.length) {
+        target.innerHTML = '<div class="col-12"><div class="empty">No hay materias con moodle_course_id disponible.</div></div>';
+        return;
+      }
+
+      target.innerHTML = '<div class="col-12"><div class="empty">Consultando contenido del curso...</div></div>';
+
+      const moduleCards = await Promise.all(uniqueCourses.slice(0, 8).map(async (course) => {
+        const courseId = Number(course.moodle_course_id);
+        try {
+          const response = await fetch(`http://localhost:8000/users/me/moodle-courses/${courseId}/contents`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (!response.ok) {
+            return {
+              ok: false,
+              courseId,
+              name: course.name,
+              professor: course.professor,
+              url: course.url,
+              message: 'No fue posible consultar los módulos del curso.'
+            };
+          }
+          const payload = await response.json();
+          const sections = payload.sections || [];
+          const modules = sections.flatMap(section => section.modules || []);
+          return {
+            ok: true,
+            courseId,
+            name: course.name,
+            professor: course.professor,
+            url: course.url,
+            sectionsCount: sections.length,
+            modulesCount: modules.length,
+            moduleNames: modules.slice(0, 4).map(module => `${module.name || 'Recurso'} (${module.modname || 'módulo'})`)
+          };
+        } catch {
+          return {
+            ok: false,
+            courseId,
+            name: course.name,
+            professor: course.professor,
+            url: course.url,
+            message: 'Error de conexión al consultar el contenido del curso.'
+          };
+        }
+      }));
+
+      target.innerHTML = moduleCards.map(item => {
+        if (!item.ok) {
+          return `
+            <div class="col-md-6 col-xl-4">
+              <div class="card-soft">
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                  <div>
+                    <div class="fw-bold">${item.name}</div>
+                    <div class="small text-secondary">${item.professor || 'Docente por asignar'}</div>
+                  </div>
+                  <span class="badge bg-warning text-dark">Sin datos</span>
+                </div>
+                <div class="small text-secondary mb-3">${item.message}</div>
+                <button class="btn btn-sm btn-outline-primary pill" onclick="openCourse('${item.url || ''}')">Entrar al curso</button>
+              </div>
+            </div>
+          `;
+        }
+        const modulesHtml = item.moduleNames.length
+          ? item.moduleNames.map(name => `<div class="small text-secondary">• ${name}</div>`).join('')
+          : '<div class="small text-secondary">Sin módulos visibles por ahora.</div>';
+        return `
+          <div class="col-md-6 col-xl-4">
+            <div class="card-soft">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <div>
+                  <div class="fw-bold">${item.name}</div>
+                  <div class="small text-secondary">${item.professor || 'Docente por asignar'}</div>
+                </div>
+                <span class="badge bg-success-subtle text-success border border-success-subtle">Curso #${item.courseId}</span>
+              </div>
+              <div class="small text-secondary mb-2">Secciones: ${item.sectionsCount} · Módulos: ${item.modulesCount}</div>
+              <div class="vstack gap-1 mb-3">${modulesHtml}</div>
+              <button class="btn btn-sm btn-primary pill" onclick="openCourse('${item.url || ''}')">Entrar al curso</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderMoodleCard() {
+      const st = document.getElementById('moodleStatus');
+      const txt = document.getElementById('moodleText');
+      const btn = document.getElementById('moodleBtn');
+      const sbtn = document.getElementById('sideMoodleBtn');
+      const courses = document.getElementById('moodleCourses');
+      if (!currentMoodle?.enabled) {
+        st.className = 'badge rounded-pill bg-warning text-dark mb-2';
+        st.textContent = 'Integración no disponible';
+        txt.textContent = 'La integración con Moodle no está habilitada en este entorno.';
+        btn.disabled = true; sbtn.disabled = true;
+        courses.textContent = 'Sin conexión disponible.';
+        return;
+      }
+      if (!currentMoodle?.linked) {
+        st.className = 'badge rounded-pill bg-secondary text-white mb-2';
+        st.textContent = 'Cuenta pendiente de vínculo';
+        txt.textContent = 'Tu cuenta aún no tiene moodle_id asignado.';
+        btn.disabled = true; sbtn.disabled = true;
+        courses.textContent = 'El acceso se habilitará cuando administración sincronice la cuenta.';
+        return;
+      }
+      st.className = 'badge rounded-pill bg-light text-primary mb-2';
+      st.textContent = `Vinculado · ID ${currentMoodle.moodle_id}`;
+      txt.textContent = currentMoodle.password_configured
+        ? (currentMoodle.has_courses ? `Tienes ${currentMoodle.courses_count} cursos visibles.` : 'Cuenta vinculada; sin cursos visibles por ahora.')
+        : 'Cuenta vinculada, pero aún no tiene contraseña Moodle configurada.';
+      btn.disabled = false; sbtn.disabled = false;
+      courses.innerHTML = currentMoodle.courses?.length ? currentMoodle.courses.slice(0,4).map(c => `<div class="card-soft mt-2 text-dark"><div class="fw-semibold">${c.displayname || c.fullname || 'Curso'}</div><div class="small text-secondary">${c.shortname || 'Sin clave'}</div></div>`).join('') : 'Sin cursos visibles por ahora.';
+    }
+
+    async function openMoodleInSession(targetUrl = '') {
+      try {
+        const finalTarget = targetUrl || currentMoodle?.launch_url || '';
+        const endpoint = `http://localhost:8000/users/me/moodle-launch?target_url=${encodeURIComponent(finalTarget)}`;
+        const response = await fetch(endpoint, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!response.ok) {
+          toast('No fue posible preparar el acceso a Moodle', 'danger');
+          return;
+        }
+        const payload = await response.json();
+        if (!payload.can_auto_login) {
+          if (payload.reason === 'password_not_configured') {
+            toast('Tu cuenta Moodle no tiene contraseña configurada. Solicita configuración a administración.', 'warning');
+          } else if (payload.reason === 'not_linked') {
+            toast('Tu cuenta aún no está vinculada con Moodle', 'warning');
+          }
+          window.open(payload.url || payload.login_url || 'http://localhost:8080/login/index.php', '_blank');
+          return;
+        }
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = payload.login_post_url || 'http://localhost:8080/login/index.php';
+        form.target = '_blank';
+        form.style.display = 'none';
+
+        const fields = {
+          username: payload.username || '',
+          password: payload.password || '',
+          rememberusername: 1,
+          wantsurl: payload.target_url || payload.url || ''
+        };
+        Object.entries(fields).forEach(([key, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = String(value ?? '');
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+        form.remove();
+      } catch {
+        toast('Error de conexión al abrir Moodle', 'danger');
+      }
+    }
+
+    function openCourse(url) {
+      if (!url) { toast('Este curso aún no tiene enlace directo', 'warning'); return; }
+      if ((url || '').includes('/course/view.php') || (url || '').includes('localhost:8080')) {
+        openMoodleInSession(url);
+        return;
+      }
+      window.open(url, '_blank');
+    }
+
+    async function goToMoodle() {
+      if (!currentMoodle?.linked) { toast('Tu cuenta aún no está vinculada con Moodle', 'warning'); return; }
+      try {
+        const res = await fetch('http://localhost:8000/users/me/moodle-url', { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!res.ok) throw new Error();
+        currentMoodle = await res.json();
+        renderMoodleCard();
+        await openMoodleInSession(currentMoodle.launch_url || currentMoodle.url || '');
+      } catch {
+        toast('Error accediendo a Moodle', 'danger');
+      }
+    }
+
+    function handleSupportCategoryChange() {
+      const select = document.getElementById('supportTicketCategory');
+      const wrap = document.getElementById('supportCategoryOtherWrap');
+      const otherInput = document.getElementById('supportTicketCategoryOther');
+      const isOther = (select?.value || '') === 'Otra';
+      if (wrap) wrap.style.display = isOther ? '' : 'none';
+      if (!isOther && otherInput) otherInput.value = '';
+    }
+
+    function openSupportTicketModal(source = 'Plataforma', suggestedSubject = '', suggestedCategory = '') {
+      const sourceInput = document.getElementById('supportSourceSystem');
+      const subjectInput = document.getElementById('supportTicketSubject');
+      const categorySelect = document.getElementById('supportTicketCategory');
+      if (sourceInput) sourceInput.value = source;
+      if (subjectInput) subjectInput.value = suggestedSubject || '';
+      if (categorySelect) categorySelect.value = suggestedCategory || '';
+      handleSupportCategoryChange();
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('requestServiceModal')).show();
+    }
+
+    function openAcademicServiceModal() {
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('academicServiceModal')).show();
+    }
+
+    async function downloadServiceResponse(serviceId) {
+      try {
+        const response = await fetch(`http://localhost:8000/users/me/services/${serviceId}/admin-attachment`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) {
+          toast('No hay documento de respuesta disponible para este trámite', 'warning');
+          return;
+        }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `tramite_${serviceId}_respuesta.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } catch {
+        toast('Error de conexión al descargar el PDF', 'danger');
+      }
+    }
+
+    function renderPasaporte() {
+      const pp = currentPasaporte;
+      const e = activeEnrollment(currentUser);
+
+      // Populate identity fields (reuse credential data already loaded)
+      const ppName = document.getElementById('ppName');
+      const ppMatricula = document.getElementById('ppMatricula');
+      const ppCareerSem = document.getElementById('ppCareerSem');
+      const ppLevelBadge = document.getElementById('ppLevelBadge');
+      if (ppName) ppName.textContent = currentUser?.full_name || '-';
+      if (ppMatricula) ppMatricula.textContent = currentUser?.username || '-';
+      const career = e?.career?.name || currentUser?.carrera || '—';
+      const sem = e?.semester || currentUser?.semestre || '—';
+      if (ppCareerSem) ppCareerSem.textContent = `${career} · ${sem}`;
+
+      const isUniversity = pp?.is_university ?? true;
+      if (ppLevelBadge) {
+        ppLevelBadge.textContent = isUniversity ? 'Universidad' : 'Preparatoria';
+        ppLevelBadge.className = `badge ${isUniversity ? 'bg-light text-primary' : 'bg-warning text-dark'}`;
+      }
+
+      // Sync credential photo to pasaporte
+      const savedPhoto = localStorage.getItem(`credentialPhoto:${currentUser?.username || 'anon'}`);
+      const ppImg = document.getElementById('ppPhotoImg');
+      const ppPh = document.getElementById('ppPhotoPlaceholder');
+      if (ppImg && ppPh) {
+        if (savedPhoto) { ppImg.src = savedPhoto; ppImg.style.display = 'block'; ppPh.style.display = 'none'; }
+        else { ppImg.style.display = 'none'; ppPh.style.display = 'block'; }
+      }
+
+      // QR
+      const qrPayload = encodeURIComponent(`PASAPORTE|USER:${currentUser?.username || '-'}|NIVEL:${isUniversity ? 'UNI' : 'PREPA'}`);
+      const ppQrEl = document.getElementById('ppQr');
+      if (ppQrEl) ppQrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${qrPayload}`;
+
+      // Prepa notice / hide thesis
+      const prepaNotice = document.getElementById('ppPrepaNotice');
+      const thesisWrap = document.getElementById('ppThesisWrap');
+      if (!isUniversity) {
+        prepaNotice?.classList.remove('d-none');
+        thesisWrap?.classList.add('d-none');
+      } else {
+        prepaNotice?.classList.add('d-none');
+        thesisWrap?.classList.remove('d-none');
+        thesisWrap?.classList.remove('d-none');
+      }
+
+      // Thesis steps definition
+            const THESIS_STEPS = [
+        { key: 'Sin Iniciar',    label: 'Sin Iniciar',         icon: 'bi-hourglass',              cuatri: '—',   kpi: 'Registro inicial' },
+        { key: 'Perfil',         label: 'Perfil\nProyecto',    icon: 'bi-lightbulb-fill',          cuatri: '3°',  kpi: 'Problema < 300 pal.' },
+        { key: 'Protocolo',      label: 'Protocolo',           icon: 'bi-file-earmark-text-fill',  cuatri: '4°',  kpi: 'Gantt 100% tareas' },
+        { key: 'Marco Teorico',  label: 'Marco\nTeórico',      icon: 'bi-book-fill',               cuatri: '5°',  kpi: '25 fuentes APA 7' },
+        { key: 'Diseño',         label: 'Diseño\nSistema',     icon: 'bi-diagram-3-fill',          cuatri: '6°',  kpi: 'UML + Normaliz.' },
+        { key: 'Implementacion', label: 'Implementación',      icon: 'bi-gear-wide-connected',     cuatri: '7°',  kpi: 'Git + 80% Cobert.' },
+        { key: 'Pruebas',        label: 'Pruebas\nValidac.',   icon: 'bi-clipboard2-check-fill',   cuatri: '8°a', kpi: '100% Req. Func.' },
+        { key: 'Redaccion',      label: 'Redacción\nFinal',    icon: 'bi-pencil-fill',             cuatri: '8°b', kpi: 'Turnitin < 15%' },
+        { key: 'Revisiones',     label: 'Revisiones\nComité',  icon: 'bi-eye-fill',                cuatri: '9°a', kpi: 'Respuesta < 72h' },
+        { key: 'Defensa',        label: 'Examen\nProfesional', icon: 'bi-mic-fill',                cuatri: '9°b', kpi: '20 min / 10 slides' },
+        { key: 'Titulado',       label: 'Titulado',            icon: 'bi-award-fill',              cuatri: '✓',   kpi: 'Cierre Proceso' },
+      ];
+
+      // Social service steps definition
+      const SS_STEPS = [
+        { key: 'Pendiente', label: 'Pendiente', icon: 'bi-hourglass' },
+        { key: 'Registrado', label: 'Registrado', icon: 'bi-clipboard-check-fill' },
+        { key: 'En Servicio', label: 'En Servicio', icon: 'bi-person-check-fill' },
+        { key: 'Completado', label: 'Completado', icon: 'bi-check-circle-fill' },
+        { key: 'Liberado', label: 'Liberado', icon: 'bi-shield-fill-check' },
+      ];
+      function renderSteps(containerId, steps, currentStatus) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const currentIdx = steps.findIndex(s => s.key === currentStatus);
+        container.innerHTML = steps.map((step, idx) => {
+          const isDone = idx < currentIdx;
+          const isActive = idx === currentIdx;
+          const cls = isDone ? 'done' : isActive ? 'active' : '';
+          const icon = isDone ? 'bi-check-lg' : step.icon;
+          const cuatriBadge = step.cuatri && step.cuatri !== '—' ? `<span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill position-absolute top-0 start-50 translate-middle-x" style="font-size:0.45rem; z-index:2; padding: 2px 5px; margin-top:-10px;">${step.cuatri}</span>` : '';
+          return `<div class="pp-step ${cls}" title="KPI: ${step.kpi}" style="position:relative;">
+            ${cuatriBadge}
+            <div class="pp-dot"><i class="bi ${icon}"></i></div>
+            <div class="pp-step-label">${step.label.replace('\n', '<br>')}</div>
+            <div class="small fw-bold text-muted mt-1" style="font-size:0.5rem; opacity:0.8;">KPI: ${step.kpi || ""}</div>
+          </div>`;
+        }).join('');
+      }
+
+      function statusBadgeClass(status) {
+        const map = {
+          'Sin Iniciar': 'pp-status-Pendiente',
+          'Perfil': 'pp-status-EleccionTema',
+          'Protocolo': 'pp-status-Protocolo',
+          'Marco Teorico': 'pp-status-Investigacion',
+          'Diseño': 'pp-status-Redaccion',
+          'Implementacion': 'pp-status-Revision',
+          'Pruebas': 'pp-status-Defensa',
+          'Redaccion': 'pp-status-Defensa',
+          'Revisiones': 'pp-status-Defensa',
+          'Defensa': 'pp-status-Defensa',
+          'Titulado': 'pp-status-Titulado',
+          'Registrado': 'pp-status-Registrado',
+          'En Servicio': 'pp-status-EnServicio',
+          'Completado': 'pp-status-Completado',
+          'Liberado': 'pp-status-Liberado',
+          'Pendiente': 'pp-status-Pendiente'
+        };
+        return `pp-status-badge ${map[status] || 'pp-status-Pendiente'}`;
+      }
+      function fmtDate(iso) {
+        if (!iso) return '—';
+        return new Date(iso).toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
+      }
+
+      // ── Render Thesis ──────────────────────────────────────────────
+      if (isUniversity) {
+        const thesis = pp?.thesis || {};
+        const tStatus = thesis.status || 'Pendiente';
+        const tBadge = document.getElementById('ppThesisStatusBadge');
+        if (tBadge) { tBadge.textContent = tStatus; tBadge.className = statusBadgeClass(tStatus); }
+        renderSteps('ppThesisSteps', THESIS_STEPS, tStatus);
+        const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v || '—'; };
+        setText('ppThesisTitle', thesis.title);
+        setText('ppThesisDirector', thesis.director);
+        setText('ppThesisInstitution', thesis.institution);
+        setText('ppThesisStarted', fmtDate(thesis.started_at));
+        const notesEl = document.getElementById('ppThesisNotes');
+        if (notesEl) notesEl.textContent = thesis.notes ? `Notas: ${thesis.notes}` : '';
+      }
+
+      // ── Render Social Services ─────────────────────────────────────
+      function renderSSPanel(wrapId, stepContId, statusBadgeId, hrsCompId, hrsReqId, hrsBarId, instId, startId, endId, notesId, serviceTypeKey) {
+        const ss = pp?.social_services?.find(s => s.service_type === serviceTypeKey) || {};
+        const ssStatus = ss.status || 'Pendiente';
+        const badge = document.getElementById(statusBadgeId);
+        if (badge) { badge.textContent = ssStatus; badge.className = statusBadgeClass(ssStatus); }
+        renderSteps(stepContId, SS_STEPS, ssStatus);
+        const hrsComp = ss.hours_completed ?? 0;
+        const hrsReq = ss.hours_required ?? 480;
+        const pct = hrsReq > 0 ? Math.min(100, Math.round((hrsComp / hrsReq) * 100)) : 0;
+        const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        setT(hrsCompId, hrsComp);
+        setT(hrsReqId, hrsReq);
+        const bar = document.getElementById(hrsBarId);
+        if (bar) bar.style.width = `${pct}%`;
+        setT(instId, ss.institution || '—');
+        setT(startId, fmtDate(ss.start_date));
+        setT(endId, fmtDate(ss.end_date));
+        const notesEl = document.getElementById(notesId);
+        if (notesEl) notesEl.textContent = ss.notes ? `Notas: ${ss.notes}` : '';
+      }
+
+      renderSSPanel('ppSSUniWrap', 'ppSSUniSteps', 'ppSSUniStatusBadge', 'ppSSUniHrsComp', 'ppSSUniHrsReq', 'ppSSUniHrsBar', 'ppSSUniInstitution', 'ppSSUniStart', 'ppSSUniEnd', 'ppSSUniNotes', 'Universitario');
+      renderSSPanel('ppSSSegWrap', 'ppSSSegSteps', 'ppSSSegStatusBadge', 'ppSSSegHrsComp', 'ppSSSegHrsReq', 'ppSSSegHrsBar', 'ppSSSegInstitution', 'ppSSSegStart', 'ppSSSegEnd', 'ppSSSegNotes', 'Seguro Social');
+    }
+
+    async function loadData() {
+      if (!token) { window.location.href = 'login.html'; return; }
+      try {
+        const [me, charges, grades, services, supportTickets, moodle, moodleLaunch, courses, notifications, advisor, advisorSessions, pasaporte] = await Promise.all([
+          fetch('http://localhost:8000/users/me', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/charges', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/grades', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/services', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/support-tickets', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/moodle-url', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/moodle-launch', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/courses', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/notifications', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/advisor', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/advisor/sessions', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('http://localhost:8000/users/me/pasaporte', { headers: { 'Authorization': `Bearer ${token}` } }),
+        ]);
+        if (!me.ok) throw new Error();
+        currentUser = await me.json();
+        currentCharges = charges.ok ? await charges.json() : [];
+        currentGrades = grades.ok ? await grades.json() : [];
+        currentServices = services.ok ? await services.json() : [];
+        if (supportTickets.ok) {
+          currentSupportTickets = await supportTickets.json();
+        } else {
+          currentSupportTickets = [];
+          toast('No se pudo cargar el historial de tickets en este intento', 'warning');
+        }
+        currentMoodle = moodle.ok ? await moodle.json() : null;
+        if (moodleLaunch.ok && currentMoodle) {
+          const launchInfo = await moodleLaunch.json();
+          currentMoodle.password = launchInfo?.password || '';
+        }
+        currentCourses = courses.ok ? await courses.json() : [];
+        currentNotifications = notifications.ok ? ((await notifications.json())?.items || []) : [];
+        if (advisor.ok) {
+          const advisorPayload = await advisor.json();
+          currentAdvisor = advisorPayload?.advisor || null;
+          currentAdvisorMessages = advisorPayload?.messages || [];
+        } else {
+          currentAdvisor = null;
+          currentAdvisorMessages = [];
+        }
+        currentAdvisorSessions = advisorSessions?.ok ? ((await advisorSessions.json())?.sessions || []) : [];
+        currentPasaporte = pasaporte?.ok ? await pasaporte.json() : null;
+        renderHeaderAndProfile();
+        renderKpisAndLists();
+        renderCoursesAndGrades();
+        renderNotifications();
+        renderMoodleCard();
+        renderPasaporte();
+        await loadMoodleModulesPanel();
+        fixMojibakeInDom();
+      } catch {
+        toast('No fue posible cargar tu aula virtual', 'danger');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('token_type');
+      window.location.href = 'login.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fixMojibakeInDom();
+      const observer = new MutationObserver(() => fixMojibakeInDom());
+      observer.observe(document.body, { childList: true, subtree: true });
+      document.querySelectorAll('.menu-btn[data-view]').forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
+      document.querySelectorAll('.mobile-bottom-nav .mbtn[data-view]').forEach(b => b.addEventListener('click', () => switchView(b.dataset.view)));
+      document.getElementById('requestServiceForm')?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const sourceSystem = document.getElementById('supportSourceSystem')?.value || 'Plataforma';
+        const subject = document.getElementById('supportTicketSubject')?.value?.trim() || '';
+        const description = document.getElementById('supportTicketDescription')?.value?.trim() || '';
+        const selectedCategory = document.getElementById('supportTicketCategory')?.value || '';
+        const otherCategory = document.getElementById('supportTicketCategoryOther')?.value?.trim() || '';
+        const category = selectedCategory === 'Otra' ? otherCategory : selectedCategory;
+        const normalizedCategory = (category || '').toLowerCase();
+        const ticketSource = normalizedCategory.includes('moodle') ? 'Moodle' : sourceSystem;
+        if (!subject || !description || !category) {
+          toast('Completa objeto, descripción y categoría del ticket', 'warning');
+          return;
+        }
+        try {
+          const response = await fetch('http://localhost:8000/users/me/support-tickets', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              type: category,
+              category,
+              source_system: ticketSource,
+              subject,
+              description
+            })
+          });
+          if (!response.ok) {
+            const payload = await response.json().catch(() => ({}));
+            toast(payload?.detail || 'No se pudo levantar el ticket', 'danger');
+            return;
+          }
+          toast('Ticket enviado correctamente', 'success');
+          bootstrap.Modal.getInstance(document.getElementById('requestServiceModal'))?.hide();
+          document.getElementById('requestServiceForm')?.reset();
+          handleSupportCategoryChange();
+          await loadData();
+        } catch (error) {
+          console.error(error);
+          toast('Error de conexión al enviar ticket', 'danger');
+        }
+      });
+      document.getElementById('academicServiceForm')?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const type = document.getElementById('academicServiceType')?.value || '';
+        const subject = document.getElementById('academicServiceSubject')?.value?.trim() || '';
+        const description = document.getElementById('academicServiceDescription')?.value?.trim() || '';
+        if (!type || !subject || !description) {
+          toast('Completa tipo, asunto y descripción', 'warning');
+          return;
+        }
+        try {
+          const response = await fetch('http://localhost:8000/users/me/academic-services', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ type, subject, description })
+          });
+          if (!response.ok) {
+            const payload = await response.json().catch(() => ({}));
+            toast(payload?.detail || 'No se pudo enviar el trámite', 'danger');
+            return;
+          }
+          toast('Trámite enviado correctamente', 'success');
+          bootstrap.Modal.getInstance(document.getElementById('academicServiceModal'))?.hide();
+          document.getElementById('academicServiceForm')?.reset();
+          await loadData();
+        } catch {
+          toast('Error de conexión al enviar trámite', 'danger');
+        }
+      });
+      loadData();
+    });
+  </script>
+  <nav class="mobile-bottom-nav">
+    <button class="mbtn active" data-view="view-dashboard"><i class="bi bi-grid-1x2-fill"></i><span>Inicio</span></button>
+    <button class="mbtn" data-view="view-courses"><i class="bi bi-journal-bookmark-fill"></i><span>Cursos</span></button>
+    <button class="mbtn" data-view="view-grades"><i class="bi bi-journal-check"></i><span>Calificaciones</span></button>
+    <button class="mbtn" data-view="view-payments"><i class="bi bi-credit-card-2-front-fill"></i><span>Pagos</span></button>
+    <button class="mbtn" data-view="view-profile"><i class="bi bi-person-vcard-fill"></i><span>Perfil</span></button>
+  </nav>
 </body>
 </html>

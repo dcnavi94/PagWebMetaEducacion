@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procesos de Grupos — Documentación</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body { background: #f8fafc; font-family: Inter, system-ui, sans-serif; }
+  .doc-header { background: linear-gradient(135deg,#1d4ed8,#3b82f6); color:#fff; padding: 2.5rem 0 2rem; }
+  .doc-header .back-link { color: rgba(255,255,255,.8); text-decoration:none; font-size:.9rem; }
+  .doc-header .back-link:hover { color:#fff; }
+  code { background:#f1f5f9; color:#1d4ed8; padding:.15em .4em; border-radius:.3em; font-size:.95em; }
+  .badge-key { font-family:monospace; font-size:1.1rem; padding:.35em .65em; border-radius:.4em; font-weight:700; }
+  .part-card { border-radius:12px; border:2px solid; padding:1.25rem 1rem; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="container">
+    <a href="javascript:window.close()" class="back-link d-inline-flex align-items-center gap-1 mb-3">
+      <i class="bi bi-arrow-left"></i> Cerrar
+    </a>
+    <div class="d-flex align-items-center gap-3">
+      <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:56px;height:56px;background:rgba(255,255,255,.2);">
+        <i class="bi bi-people-fill fs-3"></i>
+      </div>
+      <div>
+        <h1 class="fw-bold mb-0 fs-3">Procesos de Grupos</h1>
+        <p class="mb-0 opacity-75">Nomenclatura y asignación de grupos — Estándar institucional</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5" style="max-width:860px;">
+
+  <!-- Descripción -->
+  <div class="alert alert-primary border-0 rounded-3 mb-5 d-flex gap-3 align-items-start">
+    <i class="bi bi-info-circle-fill fs-5 flex-shrink-0 mt-1"></i>
+    <div>Todos los grupos registrados en el sistema <strong>deben seguir este formato de clave</strong> sin excepción. Una clave mal formada puede generar conflictos en asignaciones, calificaciones y reportes automáticos.</div>
+  </div>
+
+  <!-- Formato -->
+  <h4 class="fw-bold mb-3">Formato de la clave</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-4 text-center">
+    <div class="text-secondary small fw-semibold text-uppercase mb-3" style="letter-spacing:.08em;">Estructura</div>
+    <div class="d-flex justify-content-center align-items-end gap-2 flex-wrap mb-3">
+      <div>
+        <div class="part-card" style="border-color:#1d4ed8;background:#dbeafe;color:#1d4ed8;min-width:64px;">
+          <div style="font-size:2.2rem;font-family:monospace;font-weight:800;line-height:1;">X</div>
+        </div>
+        <div class="small text-secondary mt-2 fw-semibold">Carrera</div>
+      </div>
+      <div>
+        <div class="part-card" style="border-color:#15803d;background:#dcfce7;color:#15803d;min-width:64px;">
+          <div style="font-size:2.2rem;font-family:monospace;font-weight:800;line-height:1;">N</div>
+        </div>
+        <div class="small text-secondary mt-2 fw-semibold">Grado</div>
+      </div>
+      <div>
+        <div class="part-card" style="border-color:#94a3b8;background:#f1f5f9;color:#64748b;min-width:64px;">
+          <div style="font-size:2.2rem;font-family:monospace;font-weight:800;line-height:1;">00</div>
+        </div>
+        <div class="small text-secondary mt-2 fw-semibold">Fijo</div>
+      </div>
+      <div>
+        <div class="part-card" style="border-color:#854d0e;background:#fef9c3;color:#854d0e;min-width:64px;">
+          <div style="font-size:2.2rem;font-family:monospace;font-weight:800;line-height:1;">G</div>
+        </div>
+        <div class="small text-secondary mt-2 fw-semibold">Grupo</div>
+      </div>
+    </div>
+    <div class="fw-bold text-secondary small">Longitud total: 6 caracteres</div>
+  </div>
+
+  <!-- Ejemplo desglosado -->
+  <h4 class="fw-bold mb-3">Ejemplo: <code class="fs-5">T2001</code></h4>
+  <div class="row g-3 mb-5">
+    <div class="col-6 col-md-3">
+      <div class="bg-white border rounded-3 p-3 text-center shadow-sm h-100">
+        <div class="fw-bold" style="font-size:2.5rem;font-family:monospace;color:#1d4ed8;line-height:1;">T</div>
+        <div class="small fw-semibold mt-2">Inicial de carrera</div>
+        <div class="small text-secondary">Telemática</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="bg-white border rounded-3 p-3 text-center shadow-sm h-100">
+        <div class="fw-bold" style="font-size:2.5rem;font-family:monospace;color:#15803d;line-height:1;">2</div>
+        <div class="small fw-semibold mt-2">Grado / semestre</div>
+        <div class="small text-secondary">Segundo grado</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="bg-white border rounded-3 p-3 text-center shadow-sm h-100">
+        <div class="fw-bold" style="font-size:2.5rem;font-family:monospace;color:#64748b;line-height:1;">00</div>
+        <div class="small fw-semibold mt-2">Relleno fijo</div>
+        <div class="small text-secondary">Siempre "00"</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="bg-white border rounded-3 p-3 text-center shadow-sm h-100">
+        <div class="fw-bold" style="font-size:2.5rem;font-family:monospace;color:#854d0e;line-height:1;">1</div>
+        <div class="small fw-semibold mt-2">Número de grupo</div>
+        <div class="small text-secondary">Primer grupo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Iniciales por carrera -->
+  <h4 class="fw-bold mb-3">Iniciales por carrera</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th style="width:120px;">Inicial</th>
+            <th>Carrera / Nivel</th>
+            <th>Observaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge-key" style="background:#dbeafe;color:#1d4ed8;">T</span></td>
+            <td class="fw-semibold">Telemática</td>
+            <td class="text-secondary small">Ingeniería en Telemática. Nivel universitario.</td>
+          </tr>
+          <tr>
+            <td><span class="badge-key" style="background:#ede9fe;color:#7c3aed;">S</span></td>
+            <td class="fw-semibold">Software</td>
+            <td class="text-secondary small">Ingeniería en Desarrollo de Software. Nivel universitario.</td>
+          </tr>
+          <tr>
+            <td><span class="badge-key" style="background:#ccfbf1;color:#0f766e;">P</span></td>
+            <td class="fw-semibold">Preparatoria</td>
+            <td class="text-secondary small">Bachillerato / Preparatoria. Nivel medio superior.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tabla de ejemplos -->
+  <h4 class="fw-bold mb-3">Tabla de referencia rápida</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th>Clave</th>
+            <th>Carrera</th>
+            <th>Grado</th>
+            <th>Grupo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>T1001</code></td><td>Telemática</td><td>1°</td><td>1</td></tr>
+          <tr><td><code>T1002</code></td><td>Telemática</td><td>1°</td><td>2</td></tr>
+          <tr><td><code>T2001</code></td><td>Telemática</td><td>2°</td><td>1</td></tr>
+          <tr><td><code>T3001</code></td><td>Telemática</td><td>3°</td><td>1</td></tr>
+          <tr class="table-light"><td><code>S1001</code></td><td>Software</td><td>1°</td><td>1</td></tr>
+          <tr class="table-light"><td><code>S2001</code></td><td>Software</td><td>2°</td><td>1</td></tr>
+          <tr class="table-light"><td><code>S2002</code></td><td>Software</td><td>2°</td><td>2</td></tr>
+          <tr><td><code>P1001</code></td><td>Preparatoria</td><td>1°</td><td>1</td></tr>
+          <tr><td><code>P2001</code></td><td>Preparatoria</td><td>2°</td><td>1</td></tr>
+          <tr><td><code>P3002</code></td><td>Preparatoria</td><td>3°</td><td>2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Reglas -->
+  <h4 class="fw-bold mb-3">Reglas adicionales</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4">
+    <ul class="mb-0 d-flex flex-column gap-2">
+      <li>La clave <strong>no lleva espacios, guiones ni puntos</strong>.</li>
+      <li>La inicial de carrera siempre va en <strong>mayúscula</strong>.</li>
+      <li>Los dos ceros del centro son <strong>siempre "00"</strong>, sin excepción.</li>
+      <li>El número de grupo comienza en <strong>1</strong> (no en 0).</li>
+      <li>Si se abre un segundo grupo en el mismo grado, el dígito final cambia: <code>T2001</code> → <code>T2002</code>.</li>
+      <li>Clave máxima recomendada: <strong>6 caracteres</strong> (inicial + 1 dígito de grado + 00 + 1 dígito de grupo).</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

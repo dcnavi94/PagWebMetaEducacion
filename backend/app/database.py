@@ -14,7 +14,7 @@ if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
         poolclass=StaticPool
     )
 else:
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_size=50, max_overflow=100)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

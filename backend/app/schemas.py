@@ -45,6 +45,7 @@ class GradeStatus(str, enum.Enum):
 
 class AttemptType(str, enum.Enum):
     REGULAR = "Regular"
+    RECURSA = "Recursa"
     EXTEMPORANEO = "Extemporaneo"
 
 class ServiceRequestType(str, enum.Enum):
@@ -69,6 +70,7 @@ class UserBase(BaseModel):
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
     role: UserRole
+    moodle_id: Optional[int] = None
     user_status: UserStatus = UserStatus.ACTIVO
     enrollment_status: EnrollmentStatus = EnrollmentStatus.NO_INSCRITO
     career_id: Optional[int] = None
@@ -77,9 +79,46 @@ class UserBase(BaseModel):
     modalidad: Optional[str] = None
     semestre: Optional[str] = None
     grupo: Optional[str] = None
+    academic_advisor_id: Optional[int] = None
 
 class UserCreate(UserBase):
     password: str
+
+    @staticmethod
+    def _normalize_semestre_value(v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        raw = str(v).strip()
+        if not raw:
+            return None
+        lowered = raw.lower()
+        if lowered == "especial":
+            return "Especial"
+
+        label_match = re.search(r"(\d{1,2})", raw)
+        if label_match and ("semestre" in lowered or any(suffix in lowered for suffix in ("er", "do", "to", "mo", "vo"))):
+            sem = int(label_match.group(1))
+            if not 1 <= sem <= 9:
+                raise ValueError('Semestre must be between 1 and 9 or "Especial"')
+            suffix_map = {
+                1: "1er Semestre",
+                2: "2do Semestre",
+                3: "3er Semestre",
+                4: "4to Semestre",
+                5: "5to Semestre",
+                6: "6to Semestre",
+                7: "7mo Semestre",
+                8: "8vo Semestre",
+                9: "9no Semestre",
+            }
+            return suffix_map[sem]
+
+        if not re.match(r"^\d{1,2}$", raw):
+            raise ValueError('Semestre must be a number between 1 and 9, a semester label like "1er Semestre", or "Especial"')
+        sem = int(raw)
+        if not 1 <= sem <= 9:
+            raise ValueError('Semestre must be between 1 and 9 or "Especial"')
+        return str(sem)
 
     @field_validator("username")
     @classmethod
@@ -98,15 +137,7 @@ class UserCreate(UserBase):
     @field_validator("semestre")
     @classmethod
     def validate_semestre(cls, v):
-        if v is not None:
-            if v.lower() == "especial":
-                return "Especial"
-            if not re.match(r'^\d{1,2}$', v):
-                raise ValueError('Semestre must be a number between 1 and 9 or "Especial"')
-            sem = int(v)
-            if not 1 <= sem <= 9:
-                raise ValueError('Semestre must be between 1 and 9 or "Especial"')
-        return v
+        return cls._normalize_semestre_value(v)
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
@@ -120,6 +151,11 @@ class UserUpdate(BaseModel):
     modalidad: Optional[str] = None
     semestre: Optional[str] = None
     grupo: Optional[str] = None
+
+    @field_validator("semestre")
+    @classmethod
+    def validate_semestre(cls, v):
+        return UserCreate._normalize_semestre_value(v)
 
 class PaymentBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -219,6 +255,7 @@ class SubjectBase(BaseModel):
     credits: int = Field(gt=0)
     semester: str
     career: str
+    modality: Optional[str] = "presencial"
 
     @field_validator("semester")
     @classmethod
@@ -230,6 +267,18 @@ class SubjectBase(BaseModel):
             raise ValueError('Semester must be at most 50 characters')
         return v
 
+    @field_validator("modality", mode="before")
+    @classmethod
+    def normalize_modality(cls, v):
+        if v is None:
+            return "presencial"
+        normalized = str(v).strip().lower()
+        if normalized in {"híbrido", "hibrido"}:
+            return "hibrido"
+        if normalized not in {"presencial", "virtual", "hibrido"}:
+            raise ValueError("Modality must be presencial, virtual or hibrido")
+        return normalized
+
 class SubjectCreate(SubjectBase):
     pass
 
@@ -238,6 +287,7 @@ class SubjectUpdate(BaseModel):
     credits: Optional[int] = Field(None, gt=0)
     semester: Optional[str] = None
     career: Optional[str] = None
+    modality: Optional[str] = None
     teacher_username: Optional[str] = None
 
     @field_validator("semester")
@@ -250,8 +300,21 @@ class SubjectUpdate(BaseModel):
                 raise ValueError('Semester must be at most 50 characters')
         return v
 
+    @field_validator("modality", mode="before")
+    @classmethod
+    def normalize_modality(cls, v):
+        if v is None:
+            return None
+        normalized = str(v).strip().lower()
+        if normalized in {"híbrido", "hibrido"}:
+            return "hibrido"
+        if normalized not in {"presencial", "virtual", "hibrido"}:
+            raise ValueError("Modality must be presencial, virtual or hibrido")
+        return normalized
+
 class Subject(SubjectBase):
     id: int
+    moodle_course_id: Optional[int] = None
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -307,9 +370,11 @@ class SubjectAssignmentCreate(BaseModel):
     subject_id: int
     teacher_username: str
     cycle_id: Optional[int] = None  # None = usar ciclo activo automáticamente
+    group_id: Optional[int] = None
 
 class SubjectAssignmentUpdate(BaseModel):
     teacher_username: Optional[str] = None
+    group_id: Optional[int] = None
 
 class SubjectInfo(BaseModel):
     """Info mínima de materia para incrustar en asignación."""
@@ -326,8 +391,10 @@ class SubjectAssignment(BaseModel):
     subject_id: int
     teacher_id: Optional[int] = None
     cycle_id: Optional[int] = None
+    group_id: Optional[int] = None
     subject: Optional[SubjectInfo] = None
     teacher: Optional[TeacherInfo] = None
+    group: Optional["Group"] = None
 
 class GradeBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -355,6 +422,78 @@ class Grade(GradeBase):
     teacher_locked: bool = False
     subject: Optional[Subject] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+class NotificationMessageCreate(BaseModel):
+    recipient_role: UserRole = UserRole.STUDENT
+    recipient_username: Optional[str] = None
+    recipient_group_id: Optional[int] = None
+    target_scope: str = Field(default="role", max_length=30)
+    category: str = Field(default="general", max_length=30)
+    title: str = Field(min_length=1, max_length=180)
+    message: str = Field(min_length=1, max_length=2000)
+    level: str = Field(default="info", max_length=20)
+    action_url: Optional[str] = Field(default=None, max_length=500)
+
+    @field_validator("recipient_role")
+    @classmethod
+    def validate_recipient_role(cls, v: UserRole) -> UserRole:
+        if v not in (UserRole.STUDENT, UserRole.TEACHER):
+            raise ValueError("recipient_role must be student or teacher")
+        return v
+
+    @field_validator("target_scope")
+    @classmethod
+    def validate_target_scope(cls, v: str) -> str:
+        normalized = (v or "role").strip().lower()
+        if normalized not in {"role", "user", "group"}:
+            raise ValueError("target_scope must be role, user or group")
+        return normalized
+
+    @field_validator("category")
+    @classmethod
+    def validate_category(cls, v: str) -> str:
+        normalized = (v or "general").strip().lower()
+        return normalized or "general"
+
+
+class NotificationMessageOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    recipient_role: UserRole
+    recipient_user_id: Optional[int] = None
+    recipient_username: Optional[str] = None
+    recipient_group_id: Optional[int] = None
+    recipient_group_name: Optional[str] = None
+    target_scope: str = "role"
+    category: str = "general"
+    title: str
+    message: str
+    level: str = "info"
+    source: Optional[str] = None
+    action_url: Optional[str] = None
+    is_active: bool = True
+    is_read: bool = False
+    read_at: Optional[datetime] = None
+    created_at: datetime
+
+
+class StudentAdvisorAssign(BaseModel):
+    teacher_id: Optional[int] = None
+
+
+class AdvisorySessionCreate(BaseModel):
+    student_username: str
+    scheduled_at: datetime
+    duration_minutes: int = 30
+    topic: str
+    notes: Optional[str] = None
+
+
+class AdvisorySessionStatusUpdate(BaseModel):
+    status: str
+    notes: Optional[str] = None
 
 
 class AcademicHistoryItem(BaseModel):
@@ -437,6 +576,77 @@ class User(UserBase):
     grades: List[Grade] = []
     service_requests: List[ServiceRequest] = []
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserListItem(UserBase):
+    id: int
+    average_score: Optional[float] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class StudentRef(BaseModel):
+    username: str
+    full_name: Optional[str] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class PaymentListItem(BaseModel):
+    id: int
+    student_id: int
+    charge_id: Optional[int] = None
+    concept: Optional[str] = None
+    amount: Optional[float] = None
+    due_date: Optional[datetime] = None
+    status: PaymentStatus
+    student: Optional[StudentRef] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ChargeListItem(BaseModel):
+    id: int
+    student_id: int
+    student_enrollment_id: Optional[int] = None
+    cycle_id: Optional[int] = None
+    cycle_period: Optional[str] = None
+    charge_type: ChargeType = ChargeType.OTHER
+    concept: str
+    period_label: Optional[str] = None
+    amount: float
+    due_date: datetime
+    status: PaymentStatus = PaymentStatus.PENDIENTE
+    created_at: datetime
+    student: Optional[StudentRef] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ServiceRequestListItem(BaseModel):
+    id: int
+    student_id: int
+    type: str
+    status: str
+    request_date: datetime
+    attachment_filename: Optional[str] = None
+    attachment_path: Optional[str] = None
+    student: Optional[StudentRef] = None
+    model_config = ConfigDict(from_attributes=True)
+
+
+class UserProfileOut(BaseModel):
+    """Perfil completo del alumno con datos resueltos desde la inscripción activa."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    username: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    role: UserRole
+    user_status: UserStatus
+    enrollment_status: EnrollmentStatus
+    career_name: Optional[str] = None
+    modality_name: Optional[str] = None
+    semester: Optional[str] = None
+    group_name: Optional[str] = None
+    cycle_period: Optional[str] = None
 
 class Career(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -524,6 +734,7 @@ class GroupUpdate(BaseModel):
     name: Optional[str] = None
     modality_id: Optional[int] = None
     tutor_id: Optional[int] = None
+    career_id: Optional[int] = None
     is_active: Optional[bool] = None
 
 
@@ -540,6 +751,7 @@ class GroupSummary(BaseModel):
     modality_id: Optional[int] = None
     tutor_id: Optional[int] = None
     tutor_name: Optional[str] = None
+    career_id: Optional[int] = None
 
 
 class MigrationAuditResult(BaseModel):
@@ -570,6 +782,7 @@ class GradeOutcomeRow(BaseModel):
     subject_name: Optional[str] = None
     teacher_name: Optional[str] = None
     cycle_period: Optional[str] = None
+    group_name: Optional[str] = None
     approved_count: int
     failed_count: int
     in_progress_count: int
@@ -643,6 +856,59 @@ class ServiceSummaryRow(BaseModel):
     service_type: str
     status: str
     total_requests: int
+
+
+# ── Pasaporte Digital ────────────────────────────────────────────────────────
+
+class ThesisOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: Optional[int] = None
+    title: Optional[str] = None
+    director: Optional[str] = None
+    institution: Optional[str] = None
+    status: str = "Pendiente"
+    notes: Optional[str] = None
+    started_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+
+class ThesisAdminUpdate(BaseModel):
+    title: Optional[str] = None
+    director: Optional[str] = None
+    institution: Optional[str] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+    started_at: Optional[datetime] = None
+
+
+class SocialServiceOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: Optional[int] = None
+    service_type: str
+    institution: Optional[str] = None
+    status: str = "Pendiente"
+    hours_required: Optional[int] = 480
+    hours_completed: Optional[int] = 0
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    notes: Optional[str] = None
+    updated_at: Optional[datetime] = None
+
+
+class SocialServiceAdminUpdate(BaseModel):
+    institution: Optional[str] = None
+    status: Optional[str] = None
+    hours_required: Optional[int] = None
+    hours_completed: Optional[int] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    notes: Optional[str] = None
+
+
+class PasaporteOut(BaseModel):
+    is_university: bool
+    thesis: Optional[ThesisOut] = None
+    social_services: List[SocialServiceOut] = []
 
 
 class ChargeBreakdownRow(BaseModel):
@@ -721,6 +987,7 @@ class MoveStudentGroupRequest(BaseModel):
 
 
 StudyPlanWithSubjects.model_rebuild()
+SubjectAssignment.model_rebuild()
 
 
 # ── Página Web ──────────────────────────────────────────────────────────────

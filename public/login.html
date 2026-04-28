@@ -489,6 +489,61 @@
             btnLoading.classList.toggle('d-none', !on);
         }
 
+        async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const rawFetch = window.rawFetch || window.fetch.bind(window);
+                return await rawFetch(url, { ...options, signal: controller.signal });
+            } finally {
+                clearTimeout(timeoutId);
+            }
+        }
+
+        async function fetchProfileWithFallback(accessToken, apiBase) {
+            const profileHeaders = { 'Authorization': `Bearer ${accessToken}` };
+            const candidates = [
+                `${apiBase}/users/me`,
+                'http://localhost:8000/users/me'
+            ];
+            let lastError = null;
+
+            for (const url of candidates) {
+                try {
+                    const response = await fetchWithTimeout(url, { headers: profileHeaders }, 15000);
+                    if (response.ok) return response;
+                    lastError = new Error(`HTTP ${response.status} en ${url}`);
+                } catch (error) {
+                    lastError = error;
+                }
+            }
+
+            throw lastError || new Error('No se pudo verificar el perfil');
+        }
+
+        async function postLoginWithFallback(body, apiBase) {
+            const candidates = [
+                `${apiBase}/token`,
+                'http://localhost:8000/token'
+            ];
+            let lastError = null;
+
+            for (const url of candidates) {
+                try {
+                    const response = await fetchWithTimeout(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body
+                    }, 15000);
+                    return response;
+                } catch (error) {
+                    lastError = error;
+                }
+            }
+
+            throw lastError || new Error('No se pudo iniciar sesión');
+        }
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorBox.style.display = 'none';
@@ -500,23 +555,19 @@
             const body = new URLSearchParams();
             body.append('username', username);
             body.append('password', password);
+            const apiBase = window.API_BASE || `${window.location.origin}/api`;
 
             try {
-                const res = await fetch('http://localhost:8000/token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body
-                });
+                const res = await postLoginWithFallback(body, apiBase);
 
                 if (res.ok) {
                     const data = await res.json();
                     localStorage.setItem('token', data.access_token);
+                    localStorage.setItem('refresh_token', data.refresh_token || '');
                     localStorage.setItem('token_type', data.token_type);
 
                     try {
-                        const meRes = await fetch('http://localhost:8000/users/me', {
-                            headers: { 'Authorization': `Bearer ${data.access_token}` }
-                        });
+                        const meRes = await fetchProfileWithFallback(data.access_token, apiBase);
                         if (meRes.ok) {
                             const me = await meRes.json();
                             if      (me.role === 'admin')    window.location.href = 'admin.html';

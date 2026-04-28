@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesis — Documentación</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body { background: #f8fafc; font-family: Inter, system-ui, sans-serif; }
+  .doc-header { background: linear-gradient(135deg,#7c3aed,#a855f7); color:#fff; padding: 2.5rem 0 2rem; }
+  .doc-header .back-link { color: rgba(255,255,255,.8); text-decoration:none; font-size:.9rem; }
+  .doc-header .back-link:hover { color:#fff; }
+  .step-badge { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;flex-shrink:0; }
+  code { background:#f1f5f9; color:#7c3aed; padding:.15em .4em; border-radius:.3em; font-size:.95em; }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="container">
+    <a href="javascript:window.close()" class="back-link d-inline-flex align-items-center gap-1 mb-3">
+      <i class="bi bi-arrow-left"></i> Cerrar
+    </a>
+    <div class="d-flex align-items-center gap-3">
+      <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:56px;height:56px;background:rgba(255,255,255,.2);">
+        <i class="bi bi-journal-text fs-3"></i>
+      </div>
+      <div>
+        <h1 class="fw-bold mb-0 fs-3">Proceso de Tesis</h1>
+        <p class="mb-0 opacity-75">Guía de titulación para carreras universitarias</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5" style="max-width:860px;">
+
+  <div class="alert border-0 rounded-3 mb-5 d-flex gap-3 align-items-start" style="background:#ede9fe;color:#4c1d95;">
+    <i class="bi bi-info-circle-fill fs-5 flex-shrink-0 mt-1"></i>
+    <div>Este proceso aplica a alumnos de <strong>Telemática</strong> y <strong>Software</strong>. El seguimiento se registra en el sistema desde el apartado <strong>Pasaporte Digital</strong> de cada alumno.</div>
+  </div>
+
+  <!-- Etapas -->
+  <h4 class="fw-bold mb-4">Etapas del proceso</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="d-flex flex-column gap-4">
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">1</div>
+        <div>
+          <div class="fw-bold">Sin Iniciar</div>
+          <div class="text-secondary small">El alumno aún no ha comenzado ninguna actividad relacionada con la tesis. Estado inicial al cursar los últimos semestres.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">2</div>
+        <div>
+          <div class="fw-bold">Perfil</div>
+          <div class="text-secondary small">El alumno define el tema, área de investigación y director de tesis. Se entrega el formato de perfil de tesis firmado.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">3</div>
+        <div>
+          <div class="fw-bold">Protocolo</div>
+          <div class="text-secondary small">Se elabora el protocolo de investigación: planteamiento del problema, objetivos, hipótesis y metodología. Debe ser aprobado por el comité.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">4</div>
+        <div>
+          <div class="fw-bold">Marco Teórico</div>
+          <div class="text-secondary small">Revisión y redacción del sustento teórico y estado del arte. Incluye citas y referencias bibliográficas en formato APA.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">5</div>
+        <div>
+          <div class="fw-bold">Diseño</div>
+          <div class="text-secondary small">Diseño del sistema, arquitectura, diagramas UML, modelo de base de datos y demás artefactos técnicos.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">6</div>
+        <div>
+          <div class="fw-bold">Implementación</div>
+          <div class="text-secondary small">Desarrollo del proyecto o investigación conforme al diseño aprobado. El director valida los avances periódicamente.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">7</div>
+        <div>
+          <div class="fw-bold">Pruebas</div>
+          <div class="text-secondary small">Aplicación de pruebas unitarias, de integración y validación con usuarios o expertos. Se documentan resultados.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">8</div>
+        <div>
+          <div class="fw-bold">Redacción</div>
+          <div class="text-secondary small">Redacción del documento final completo: introducción, capítulos, conclusiones y anexos conforme a la plantilla institucional.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">9</div>
+        <div>
+          <div class="fw-bold">Revisiones</div>
+          <div class="text-secondary small">El director y el comité revisor emiten observaciones. El alumno realiza las correcciones solicitadas hasta obtener el visto bueno.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#ede9fe;color:#7c3aed;">10</div>
+        <div>
+          <div class="fw-bold">Defensa</div>
+          <div class="text-secondary small">Presentación oral ante el jurado calificador. El alumno expone su trabajo y responde preguntas. El jurado emite veredicto.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-badge" style="background:#dcfce7;color:#15803d;">✓</div>
+        <div>
+          <div class="fw-bold">Titulado</div>
+          <div class="text-secondary small">El alumno aprueba la defensa, entrega empastado y documentación a Control Escolar. Se gestiona el título y cédula profesional.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Requisitos -->
+  <h4 class="fw-bold mb-3">Requisitos generales</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <ul class="mb-0 d-flex flex-column gap-2">
+      <li>Tener el <strong>100 % de créditos</strong> cubiertos de la carrera.</li>
+      <li>No tener <strong>adeudos administrativos</strong> ni de biblioteca.</li>
+      <li>Acreditar el <strong>servicio social</strong> (liberación) antes de la defensa.</li>
+      <li>Entregar <strong>3 ejemplares empastados</strong> del documento final (1 para la institución, 1 para el director, 1 para el alumno).</li>
+      <li>Fotografías y formato de <strong>datos personales</strong> para el trámite de título.</li>
+    </ul>
+  </div>
+
+  <!-- Responsable de registro -->
+  <h4 class="fw-bold mb-3">Registro en el sistema</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4">
+    <p class="text-secondary mb-2">El avance de tesis se actualiza en el <strong>Pasaporte Digital</strong> de cada alumno desde el panel de administración:</p>
+    <ol class="mb-0 text-secondary d-flex flex-column gap-1">
+      <li>Ir a <strong>Alumnos</strong> → seleccionar alumno → pestaña <strong>Pasaporte Digital</strong>.</li>
+      <li>En la sección <strong>Tesis de Titulación</strong>, actualizar el estado y los datos del director.</li>
+      <li>Guardar cambios. El historial queda registrado en la base de datos.</li>
+    </ol>
+  </div>
+
+</div>
+</body>
+</html>

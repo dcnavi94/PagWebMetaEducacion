@@ -62,6 +62,7 @@ class GradeStatus(str, enum.Enum):
 
 class AttemptType(str, enum.Enum):
     REGULAR = "Regular"
+    RECURSA = "Recursa"
     EXTEMPORANEO = "Extemporaneo"
 
 class ServiceRequestStatus(str, enum.Enum):
@@ -77,6 +78,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     full_name = Column(String)
     hashed_password = Column(String)
+    moodle_id = Column(Integer, unique=True, nullable=True, index=True)
     role = Column(
         SQLEnum(UserRole, name="user_role", values_callable=lambda x: [e.value for e in x]),
         default=UserRole.STUDENT,
@@ -103,6 +105,7 @@ class User(Base):
     modality_id = Column(Integer, ForeignKey("modalities.id", ondelete="SET NULL"), nullable=True)
     semestre = Column(String, nullable=True)
     grupo = Column(String, nullable=True)
+    academic_advisor_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
 
     career_rel = relationship("Career", back_populates="students")
     modality_rel = relationship("Modality", back_populates="students")
@@ -113,6 +116,19 @@ class User(Base):
     student_enrollments = relationship("StudentEnrollment", back_populates="student", passive_deletes=True)
     # Asignaciones del docente (qué materias imparte en qué ciclos)
     assignments = relationship("SubjectAssignment", back_populates="teacher", passive_deletes=True)
+    received_notifications = relationship(
+        "NotificationMessage",
+        back_populates="recipient_user",
+        passive_deletes=True,
+        foreign_keys="NotificationMessage.recipient_user_id",
+    )
+    sent_notifications = relationship(
+        "NotificationMessage",
+        back_populates="created_by_user",
+        passive_deletes=True,
+        foreign_keys="NotificationMessage.created_by_user_id",
+    )
+    academic_advisor = relationship("User", remote_side=[id], foreign_keys=[academic_advisor_id])
 
 class Charge(Base):
     __tablename__ = "charges"
@@ -171,6 +187,8 @@ class Subject(Base):
     credits = Column(Integer)
     semester = Column(String)
     career = Column(String)
+    modality = Column(String, default="presencial")
+    moodle_course_id = Column(Integer, unique=True, nullable=True)
 
     grades = relationship("Grade", back_populates="subject", passive_deletes=True)
     assignments = relationship("SubjectAssignment", back_populates="subject", passive_deletes=True)
@@ -185,18 +203,20 @@ class SubjectAssignment(Base):
     """
     __tablename__ = "subject_assignments"
     __table_args__ = (
-        # Un docente no puede tener dos asignaciones de la misma materia en el mismo ciclo
-        UniqueConstraint("subject_id", "teacher_id", "cycle_id", name="uq_assignment_subject_teacher_cycle"),
+        # Un docente no puede tener dos asignaciones de la misma materia para el mismo grupo en el mismo ciclo.
+        UniqueConstraint("subject_id", "teacher_id", "cycle_id", "group_id", name="uq_assignment_subject_teacher_cycle_group"),
     )
 
     id = Column(Integer, primary_key=True, index=True)
     subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
     teacher_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     cycle_id = Column(Integer, ForeignKey("school_cycles.id", ondelete="SET NULL"), nullable=True)
+    group_id = Column(Integer, ForeignKey("groups.id", ondelete="SET NULL"), nullable=True)
 
     subject = relationship("Subject", back_populates="assignments")
     teacher = relationship("User", back_populates="assignments")
     cycle = relationship("SchoolCycle", back_populates="assignments")
+    group = relationship("Group")
     grades = relationship("Grade", back_populates="assignment", passive_deletes=True)
     course_enrollments = relationship("CourseEnrollment", back_populates="assignment", passive_deletes=True)
 
@@ -233,6 +253,8 @@ class Grade(Base):
         server_default=GradeStatus.CURSANDO.value,
         nullable=False,
     )
+    document_filename = Column(String, nullable=True)
+    document_path = Column(String, nullable=True)
 
     student = relationship("User", back_populates="grades")
     subject = relationship("Subject", back_populates="grades")
@@ -332,11 +354,13 @@ class Group(Base):
     name = Column(String, nullable=False, index=True)
     modality_id = Column(Integer, ForeignKey("modalities.id", ondelete="SET NULL"), nullable=True)
     tutor_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    career_id = Column(Integer, ForeignKey("careers.id", ondelete="SET NULL"), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     modality = relationship("Modality")
     tutor = relationship("User", foreign_keys=[tutor_id])
+    career = relationship("Career", foreign_keys=[career_id])
     student_enrollments = relationship("StudentEnrollment", back_populates="group")
 
 
@@ -400,6 +424,63 @@ class CourseEnrollment(Base):
     student_enrollment = relationship("StudentEnrollment", back_populates="course_enrollments")
     assignment = relationship("SubjectAssignment", back_populates="course_enrollments")
     grades = relationship("Grade", back_populates="course_enrollment", passive_deletes=True)
+
+
+class NotificationMessage(Base):
+    __tablename__ = "notification_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    recipient_role = Column(
+        SQLEnum(UserRole, name="notification_recipient_role", values_callable=lambda x: [e.value for e in x]),
+        nullable=False,
+    )
+    recipient_user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
+    created_by_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    target_scope = Column(String, nullable=False, default="role", server_default="role")
+    recipient_group_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"), nullable=True)
+    category = Column(String, nullable=False, default="general", server_default="general")
+    title = Column(String, nullable=False)
+    message = Column(String, nullable=False)
+    level = Column(String, nullable=False, default="info", server_default="info")
+    action_url = Column(String, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True, server_default="true")
+    is_read = Column(Boolean, nullable=False, default=False, server_default="false")
+    read_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    expires_at = Column(DateTime, nullable=True)
+
+    recipient_user = relationship("User", back_populates="received_notifications", foreign_keys=[recipient_user_id])
+    created_by_user = relationship("User", back_populates="sent_notifications", foreign_keys=[created_by_user_id])
+    recipient_group = relationship("Group", foreign_keys=[recipient_group_id])
+
+
+class AdvisorySessionStatus(str, enum.Enum):
+    PENDIENTE = "Pendiente"
+    CONFIRMADA = "Confirmada"
+    CANCELADA = "Cancelada"
+    REALIZADA = "Realizada"
+
+
+class AdvisorySession(Base):
+    __tablename__ = "advisory_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    teacher_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    scheduled_at = Column(DateTime, nullable=False)
+    duration_minutes = Column(Integer, default=30, nullable=False)
+    topic = Column(String, nullable=False)
+    notes = Column(String, nullable=True)
+    status = Column(
+        SQLEnum(AdvisorySessionStatus, name="advisory_session_status", values_callable=lambda x: [e.value for e in x]),
+        default=AdvisorySessionStatus.PENDIENTE,
+        server_default=AdvisorySessionStatus.PENDIENTE.value,
+        nullable=False,
+    )
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    teacher = relationship("User", foreign_keys=[teacher_id])
+    student = relationship("User", foreign_keys=[student_id])
 
 
 # ── Página Web ──────────────────────────────────────────────────────────────
@@ -498,6 +579,87 @@ class ExtracurricularCourse(Base):
     sort_order    = Column(Integer, default=0, nullable=False)
     is_active     = Column(Boolean, default=True, nullable=False)
     created_at    = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+# ── Pasaporte Digital ───────────────────────────────────────────────────────
+
+class ThesisStatus(str, enum.Enum):
+    SIN_INICIAR = "Sin Iniciar"
+    PERFIL = "Perfil"
+    PROTOCOLO = "Protocolo"
+    MARCO_TEORICO = "Marco Teorico"
+    DISENO = "Diseño"
+    IMPLEMENTACION = "Implementacion"
+    PRUEBAS = "Pruebas"
+    REDACCION = "Redaccion"
+    REVISIONES = "Revisiones"
+    DEFENSA = "Defensa"
+    TITULADO = "Titulado"
+
+
+class SocialServiceStatus(str, enum.Enum):
+    PENDIENTE = "Pendiente"
+    REGISTRADO = "Registrado"
+    EN_SERVICIO = "En Servicio"
+    COMPLETADO = "Completado"
+    LIBERADO = "Liberado"
+
+
+class SocialServiceType(str, enum.Enum):
+    UNIVERSITARIO = "Universitario"
+    SEGURO_SOCIAL = "Seguro Social"
+
+
+class ThesisRecord(Base):
+    __tablename__ = "thesis_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
+    title = Column(String, nullable=True)
+    director = Column(String, nullable=True)
+    institution = Column(String, nullable=True)
+    status = Column(
+        SQLEnum(ThesisStatus, name="thesis_status", values_callable=lambda x: [e.value for e in x]),
+        default=ThesisStatus.SIN_INICIAR,
+        server_default=ThesisStatus.SIN_INICIAR.value,
+        nullable=False,
+    )
+    notes = Column(String, nullable=True)
+    started_at = Column(DateTime, nullable=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    student = relationship("User", foreign_keys=[student_id])
+
+
+class SocialServiceRecord(Base):
+    __tablename__ = "social_service_records"
+    __table_args__ = (
+        UniqueConstraint("student_id", "service_type", name="uq_social_service_student_type"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    service_type = Column(
+        SQLEnum(SocialServiceType, name="social_service_type", values_callable=lambda x: [e.value for e in x]),
+        nullable=False,
+    )
+    institution = Column(String, nullable=True)
+    status = Column(
+        SQLEnum(SocialServiceStatus, name="social_service_status", values_callable=lambda x: [e.value for e in x]),
+        default=SocialServiceStatus.PENDIENTE,
+        server_default=SocialServiceStatus.PENDIENTE.value,
+        nullable=False,
+    )
+    hours_required = Column(Integer, nullable=True, default=480)
+    hours_completed = Column(Integer, nullable=True, default=0)
+    start_date = Column(DateTime, nullable=True)
+    end_date = Column(DateTime, nullable=True)
+    notes = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    student = relationship("User", foreign_keys=[student_id])
 
 
 class CommunityColor(str, enum.Enum):

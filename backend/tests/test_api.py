@@ -660,6 +660,85 @@ class TestAdminStudents:
         assert {subject.name for subject in subjects} == {"PRUEBA", "Programacion I", "Bases de Datos"}
         assert {grade.subject.name for grade in grades} == {"PRUEBA", "Programacion I", "Bases de Datos"}
 
+    def test_create_student_accepts_semester_labels_from_admin_ui(self, client, auth_headers_admin, db_session, monkeypatch):
+        monkeypatch.setitem(
+            CURRICULUM_CREDITS,
+            "Ingeniería en Software",
+            {
+                "1": [{"name": "Programacion I", "credits": 8}],
+                "2": [{"name": "Bases de Datos", "credits": 8}],
+            },
+        )
+        db_session.add_all([
+            models.Subject(name="Programacion I", credits=8, semester="1", career="Ingeniería en Software"),
+            models.Subject(name="Bases de Datos", credits=8, semester="2", career="Ingeniería en Software"),
+        ])
+        db_session.commit()
+
+        response = client.post(
+            "/admin/students",
+            headers=auth_headers_admin,
+            json={
+                "username": "2024887",
+                "email": "semestre-label@test.com",
+                "full_name": "Alumno Semestre Label",
+                "password": "pass123",
+                "role": "student",
+                "carrera": "Ingeniería en Software",
+                "semestre": "1er Semestre",
+                "grupo": "A",
+            },
+        )
+
+        assert response.status_code == 200
+        assert response.json()["semestre"] == "1er Semestre"
+
+    def test_update_student_semester_refreshes_curriculum_statuses(self, client, auth_headers_admin, db_session, monkeypatch):
+        monkeypatch.setitem(
+            CURRICULUM_CREDITS,
+            "Ingeniería en Software",
+            {
+                "1": [{"name": "Programacion I", "credits": 8}],
+                "2": [{"name": "Bases de Datos", "credits": 8}],
+            },
+        )
+        db_session.add_all([
+            models.Subject(name="Programacion I", credits=8, semester="1", career="Ingeniería en Software"),
+            models.Subject(name="Bases de Datos", credits=8, semester="2", career="Ingeniería en Software"),
+        ])
+        db_session.commit()
+
+        create_response = client.post(
+            "/admin/students",
+            headers=auth_headers_admin,
+            json={
+                "username": "2024665",
+                "email": "refresh-curriculum@test.com",
+                "full_name": "Alumno Refresh",
+                "password": "pass123",
+                "role": "student",
+                "carrera": "Ingeniería en Software",
+                "semestre": "1",
+                "grupo": "A",
+            },
+        )
+        assert create_response.status_code == 200
+
+        update_response = client.put(
+            "/admin/students/2024665",
+            headers=auth_headers_admin,
+            json={"semestre": "2do Semestre"},
+        )
+        assert update_response.status_code == 200
+
+        created_student = db_session.query(models.User).filter_by(username="2024665").first()
+        grades = db_session.query(models.Grade).filter(models.Grade.student_id == created_student.id).all()
+        statuses = {grade.subject.name: grade.status for grade in grades}
+
+        assert update_response.json()["semestre"] == "2do Semestre"
+        assert statuses["Programacion I"] == models.GradeStatus.REPROBADA
+        assert statuses["Bases de Datos"] == models.GradeStatus.CURSANDO
+
     def test_create_student_duplicate_username(self, client, auth_headers_admin, student_user):
         """POST /admin/students con matrícula duplicada devuelve 400."""
         response = client.post(
@@ -835,6 +914,28 @@ class TestStudentGrades:
             for item in grades
         )
 
+    def test_get_grades_hides_unassigned_curriculum_placeholders(
+        self, client, auth_headers_student, db_session, student_user
+    ):
+        subject = models.Subject(name="Materia Placeholder", credits=6, semester="6", career="Ingeniería")
+        db_session.add(subject)
+        db_session.flush()
+
+        grade = models.Grade(
+            student_id=student_user.id,
+            subject_id=subject.id,
+            attempt_type=models.AttemptType.REGULAR,
+            status=models.GradeStatus.PROXIMAMENTE,
+        )
+        db_session.add(grade)
+        db_session.commit()
+
+        response = client.get("/users/me/grades", headers=auth_headers_student)
+
+        assert response.status_code == 200
+        grades = response.json()
+        assert not any(item["description"] == "Materia Placeholder" for item in grades)
+
 
 class TestStudentPayments:
     """Tests de pagos del alumno."""
@@ -999,6 +1100,45 @@ class TestTeacherGrades:
         )
         assert second.status_code == 403
 
+    def test_teacher_grade_of_five_is_failed(self, client, auth_headers_teacher, db_session, student_user, teacher_user):
+        cycle = models.SchoolCycle(
+            period="2026-1",
+            start_date=datetime.utcnow(),
+            end_date=datetime.utcnow() + timedelta(days=120),
+            monthly_amount=1000,
+            is_active=True,
+        )
+        subject = models.Subject(name="Algebra", credits=6, semester="2", career="Ingeniería")
+        db_session.add_all([cycle, subject])
+        db_session.flush()
+
+        assignment = models.SubjectAssignment(
+            subject_id=subject.id,
+            teacher_id=teacher_user.id,
+            cycle_id=cycle.id,
+        )
+        db_session.add(assignment)
+        db_session.flush()
+
+        grade = models.Grade(
+            student_id=student_user.id,
+            subject_id=subject.id,
+            assignment_id=assignment.id,
+            score=None,
+            status=models.GradeStatus.CURSANDO,
+        )
+        db_session.add(grade)
+        db_session.commit()
+
+        response = client.put(
+            f"/teacher/grades/{grade.id}",
+            headers=auth_headers_teacher,
+            json={"score": 5},
+        )
+
+        assert response.status_code == 200
+        assert response.json()["status"] == "Reprobada"
+
     def test_admin_can_correct_teacher_locked_grade(self, client, auth_headers_teacher, auth_headers_admin, db_session, student_user, teacher_user):
         cycle = models.SchoolCycle(
             period="2026-1",
@@ -1043,6 +1183,44 @@ class TestTeacherGrades:
         )
         assert admin_fix.status_code == 200
         assert admin_fix.json()["score"] == 9.0
+
+    def test_teacher_receives_admin_notification(self, client, auth_headers_teacher, auth_headers_admin, db_session, teacher_user):
+        notice = client.post(
+            "/admin/notifications/messages",
+            headers=auth_headers_admin,
+            json={
+                "recipient_role": "teacher",
+                "recipient_username": teacher_user.username,
+                "title": "Cierre de actas",
+                "message": "Recuerda capturar tus calificaciones hoy.",
+                "level": "warning",
+            },
+        )
+        assert notice.status_code == 200
+
+        response = client.get("/teacher/notifications", headers=auth_headers_teacher)
+        assert response.status_code == 200
+        items = response.json()["items"]
+        assert any(item["title"] == "Cierre de actas" for item in items)
+
+    def test_student_receives_admin_notification(self, client, auth_headers_admin, auth_headers_student, db_session, student_user):
+        notice = client.post(
+            "/admin/notifications/messages",
+            headers=auth_headers_admin,
+            json={
+                "recipient_role": "student",
+                "recipient_username": student_user.username,
+                "title": "Aviso escolar",
+                "message": "Revisa tu portal para novedades administrativas.",
+                "level": "info",
+            },
+        )
+        assert notice.status_code == 200
+
+        response = client.get("/users/me/notifications", headers=auth_headers_student)
+        assert response.status_code == 200
+        items = response.json()["items"]
+        assert any(item["title"] == "Aviso escolar" for item in items)
 
 class TestAdminCourseEnrollments:
     """Carga académica administrativa sobre CourseEnrollment."""
@@ -1502,6 +1680,31 @@ class TestAdminMigrationAudit:
         assert body["student_enrollments_in_active_cycle"] >= 1
         assert "grades_total" in body
         assert "grades_without_course_enrollment" in body
+
+    def test_admin_can_download_student_boleta_pdf(self, client, auth_headers_admin, db_session, student_user):
+        subject = models.Subject(
+            name="Programacion",
+            credits=8,
+            semester="1",
+            career="Ingeniería",
+        )
+        grade = models.Grade(
+            student_id=student_user.id,
+            subject_id=1,
+            score=8.0,
+            status=models.GradeStatus.APROBADA,
+        )
+        db_session.add(subject)
+        db_session.flush()
+        grade.subject_id = subject.id
+        db_session.add(grade)
+        db_session.commit()
+
+        response = client.get(f"/admin/students/{student_user.username}/boleta", headers=auth_headers_admin)
+
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith("application/pdf")
+        assert response.content.startswith(b"%PDF")
 
 
 class TestAdminBackfill:
@@ -2070,6 +2273,28 @@ class TestUserExtras:
             and item["final_score"] == 9.0
             for item in history
         )
+
+    def test_user_academic_history_hides_unassigned_curriculum_placeholders(
+        self, client, auth_headers_student, db_session, student_user
+    ):
+        subject = models.Subject(name="Curricula Oculta", credits=5, semester="7", career="Ingeniería")
+        db_session.add(subject)
+        db_session.flush()
+
+        grade = models.Grade(
+            student_id=student_user.id,
+            subject_id=subject.id,
+            attempt_type=models.AttemptType.REGULAR,
+            status=models.GradeStatus.PROXIMAMENTE,
+        )
+        db_session.add(grade)
+        db_session.commit()
+
+        resp = client.get("/users/me/academic-history", headers=auth_headers_student)
+
+        assert resp.status_code == 200
+        history = resp.json()
+        assert not any(item["subject_name"] == "Curricula Oculta" for item in history)
 
     def test_documents_empty_list(self, client, auth_headers_student):
         resp = client.get("/users/me/documents", headers=auth_headers_student)

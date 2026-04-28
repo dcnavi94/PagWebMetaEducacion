@@ -1,0 +1,13 @@
+.pytest_tmp
+.pytest_cache
+.pytest_work
+__pycache__
+*.pyc
+.env
+tmp_files
+uploads
+uploads_test
+alumnos_2026-03-06.csv
+calificaciones.csv
+py_out.txt
+test_out.txt

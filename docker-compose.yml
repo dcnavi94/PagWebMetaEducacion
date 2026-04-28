@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
@@ -20,12 +20,15 @@ services:
     container_name: unives-backend
     env_file:
       - backend/.env
+    volumes:
+      - ./backend/app:/app/app
+    ports:
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
-      test:
-        ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=3)"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=3)"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -40,5 +43,58 @@ services:
       backend:
         condition: service_healthy
 
+  moodle-db:
+    image: bitnamilegacy/mariadb:11.4
+    container_name: unives-moodle-db
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - MARIADB_ROOT_PASSWORD=Unives_root123
+      - MARIADB_DATABASE=bitnami_moodle
+      - MARIADB_USER=bn_moodle
+      - MARIADB_PASSWORD=Unives12345
+    volumes:
+      - moodle_mariadb_data:/bitnami/mariadb
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  moodle:
+    image: bitnamilegacy/moodle:latest
+    container_name: unives-moodle
+    ports:
+      - "8081:8080"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - MOODLE_DATABASE_TYPE=mariadb
+      - MOODLE_DATABASE_HOST=moodle-db
+      - MOODLE_DATABASE_PORT_NUMBER=3306
+      - MOODLE_DATABASE_NAME=bitnami_moodle
+      - MOODLE_DATABASE_USER=bn_moodle
+      - MOODLE_DATABASE_PASSWORD=Unives12345
+      - MOODLE_USERNAME=admin
+      - MOODLE_PASSWORD=Admin12345!
+      - MOODLE_EMAIL=admin@unives.local
+      - MOODLE_SITE_NAME=UNIVES Moodle
+      - MOODLE_SKIP_BOOTSTRAP=no
+      - BITNAMI_DEBUG=true
+    volumes:
+      - moodle_app_data:/bitnami/moodle
+      - moodledata_data:/bitnami/moodledata
+    depends_on:
+      moodle-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/login/index.php >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
 volumes:
   postgres_data:
+  moodle_mariadb_data:
+  moodle_app_data:
+  moodledata_data:

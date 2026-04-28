@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pagos y Colegiaturas — Documentación</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body { background:#f8fafc; font-family:Inter,system-ui,sans-serif; }
+  .doc-header { background:linear-gradient(135deg,#9f1239,#f43f5e); color:#fff; padding:2.5rem 0 2rem; }
+  .back-link { color:rgba(255,255,255,.8); text-decoration:none; font-size:.9rem; }
+  .back-link:hover { color:#fff; }
+  .step-num { width:34px;height:34px;border-radius:50%;background:#ffe4e6;color:#9f1239;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0; }
+  code { background:#f1f5f9;color:#9f1239;padding:.15em .4em;border-radius:.3em; }
+  .monto-card { border-radius:12px;padding:1.25rem;text-align:center;border:2px solid; }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="container">
+    <a href="javascript:window.close()" class="back-link d-inline-flex align-items-center gap-1 mb-3">
+      <i class="bi bi-arrow-left"></i> Cerrar
+    </a>
+    <div class="d-flex align-items-center gap-3">
+      <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:56px;height:56px;background:rgba(255,255,255,.2);">
+        <i class="bi bi-cash-coin fs-3"></i>
+      </div>
+      <div>
+        <h1 class="fw-bold mb-0 fs-3">Pagos y Colegiaturas</h1>
+        <p class="mb-0 opacity-75">Montos, fechas de corte, recargos y obtención de comprobantes</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5" style="max-width:860px;">
+
+  <div class="alert border-0 rounded-3 mb-5 d-flex gap-3" style="background:#ffe4e6;color:#881337;">
+    <i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0 mt-1"></i>
+    <div>El <strong>no pago de colegiatura</strong> en la fecha de corte puede resultar en la <strong>suspensión temporal del acceso</strong> a la plataforma y restricción para presentar exámenes. Consulta tu estado de cuenta antes de la fecha límite.</div>
+  </div>
+
+  <!-- Conceptos de pago -->
+  <h4 class="fw-bold mb-3">Conceptos de pago</h4>
+  <div class="row g-3 mb-5">
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="monto-card h-100" style="border-color:#fecaca;background:#fff5f5;">
+        <i class="bi bi-door-open fs-3 mb-2" style="color:#9f1239;"></i>
+        <div class="fw-bold small">Inscripción</div>
+        <div class="text-secondary small mt-1">Pago único al inicio de cada ciclo escolar. Cubre el registro formal en el sistema.</div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="monto-card h-100" style="border-color:#fecaca;background:#fff5f5;">
+        <i class="bi bi-calendar-month fs-3 mb-2" style="color:#9f1239;"></i>
+        <div class="fw-bold small">Colegiatura mensual</div>
+        <div class="text-secondary small mt-1">Pago mensual por los servicios educativos. Varía según nivel y carrera.</div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="monto-card h-100" style="border-color:#fecaca;background:#fff5f5;">
+        <i class="bi bi-file-earmark-x fs-3 mb-2" style="color:#9f1239;"></i>
+        <div class="fw-bold small">Examen extraordinario</div>
+        <div class="text-secondary small mt-1">Pago por derecho a examen en periodo extraordinario. Por materia.</div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="monto-card h-100" style="border-color:#fecaca;background:#fff5f5;">
+        <i class="bi bi-mortarboard fs-3 mb-2" style="color:#9f1239;"></i>
+        <div class="fw-bold small">Titulación</div>
+        <div class="text-secondary small mt-1">Cubre trámites de titulación: revisión de tesis, defensa y documentación oficial.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Montos vigentes -->
+  <h4 class="fw-bold mb-3">Montos vigentes <span class="badge bg-secondary rounded-pill fs-6 fw-normal ms-2" style="font-size:.7rem!important;">Ciclo escolar en curso</span></h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="alert border-0 mb-3" style="background:#f1f5f9;border-radius:.75rem;">
+      <i class="bi bi-info-circle me-2 text-secondary"></i><span class="text-secondary small">Los montos exactos son definidos por Tesorería al inicio de cada ciclo. Los valores aquí son de referencia; consulta la lista oficial en ventanilla o en el portal del alumno.</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle mb-0">
+        <thead class="table-dark">
+          <tr><th>Concepto</th><th>Preparatoria</th><th>Universidad</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Inscripción</td><td class="text-center">Consultar en Tesorería</td><td class="text-center">Consultar en Tesorería</td></tr>
+          <tr><td>Colegiatura mensual</td><td class="text-center">Consultar en Tesorería</td><td class="text-center">Consultar en Tesorería</td></tr>
+          <tr><td>Examen extraordinario (por materia)</td><td class="text-center">Consultar en Tesorería</td><td class="text-center">Consultar en Tesorería</td></tr>
+          <tr><td>Trámite de titulación</td><td class="text-center">N/A</td><td class="text-center">Consultar en Tesorería</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Fechas y recargos -->
+  <h4 class="fw-bold mb-3">Fechas de corte y recargos</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="row g-4 mb-4">
+      <div class="col-12 col-md-6">
+        <div class="border rounded-3 p-3 h-100">
+          <div class="fw-bold mb-2"><i class="bi bi-calendar-check me-2 text-success"></i>Pago en fecha</div>
+          <ul class="text-secondary small mb-0 d-flex flex-column gap-1">
+            <li>Colegiatura: del <strong>1 al 10</strong> de cada mes.</li>
+            <li>Sin recargo adicional.</li>
+            <li>Acceso completo a plataforma y exámenes.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="border border-warning rounded-3 p-3 h-100" style="background:#fffbeb;">
+          <div class="fw-bold mb-2"><i class="bi bi-calendar-x me-2 text-warning"></i>Pago extemporáneo</div>
+          <ul class="text-secondary small mb-0 d-flex flex-column gap-1">
+            <li>Del <strong>11 al último día del mes</strong>: recargo del 10 %.</li>
+            <li>Mes siguiente: recargo del 20 % acumulado.</li>
+            <li>Más de 2 meses de adeudo: restricción de acceso a plataforma.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="alert border-0 mb-0" style="background:#fee2e2;color:#991b1b;border-radius:.75rem;">
+      <i class="bi bi-x-circle-fill me-2"></i>Con <strong>3 o más meses de adeudo</strong>, el alumno no podrá presentar evaluaciones parciales ni finales hasta regularizar su situación con Tesorería.
+    </div>
+  </div>
+
+  <!-- Métodos de pago -->
+  <h4 class="fw-bold mb-3">Métodos de pago aceptados</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="row g-3">
+      <div class="col-12 col-sm-6 col-md-3 text-center">
+        <div class="border rounded-3 p-3 h-100">
+          <i class="bi bi-cash fs-3 mb-2 text-success d-block"></i>
+          <div class="fw-semibold small">Efectivo</div>
+          <div class="text-secondary" style="font-size:.75rem;">En ventanilla de Tesorería</div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3 text-center">
+        <div class="border rounded-3 p-3 h-100">
+          <i class="bi bi-credit-card fs-3 mb-2 text-primary d-block"></i>
+          <div class="fw-semibold small">Tarjeta débito/crédito</div>
+          <div class="text-secondary" style="font-size:.75rem;">Terminal en Tesorería</div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3 text-center">
+        <div class="border rounded-3 p-3 h-100">
+          <i class="bi bi-bank fs-3 mb-2 text-info d-block"></i>
+          <div class="fw-semibold small">Transferencia bancaria</div>
+          <div class="text-secondary" style="font-size:.75rem;">Solicitar CLABE en Tesorería</div>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-md-3 text-center">
+        <div class="border rounded-3 p-3 h-100">
+          <i class="bi bi-upc-scan fs-3 mb-2" style="color:#9f1239;" d-block></i>
+          <div class="fw-semibold small">Referencia de pago</div>
+          <div class="text-secondary" style="font-size:.75rem;">OXXO / tiendas de conveniencia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comprobantes -->
+  <h4 class="fw-bold mb-3">Obtención de comprobante</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4">
+    <div class="d-flex flex-column gap-3">
+      <div class="d-flex gap-3"><div class="step-num">1</div><div><div class="fw-bold">Pago en ventanilla</div><div class="text-secondary small">Tesorería entrega recibo impreso en el momento del pago. <strong>Conservarlo durante todo el ciclo escolar.</strong></div></div></div>
+      <div class="d-flex gap-3"><div class="step-num">2</div><div><div class="fw-bold">Pago por transferencia o referencia</div><div class="text-secondary small">El alumno presenta el comprobante de transacción (captura de pantalla o voucher) en Tesorería para que se emita el recibo oficial.</div></div></div>
+      <div class="d-flex gap-3"><div class="step-num">3</div><div><div class="fw-bold">Estado de cuenta</div><div class="text-secondary small">El alumno puede consultar su historial de pagos en el <strong>Campus Virtual → sección Finanzas</strong>. Los pagos registrados por Tesorería aparecen en el sistema en un plazo de 24 h hábiles.</div></div></div>
+      <div class="d-flex gap-3"><div class="step-num">4</div><div><div class="fw-bold">Recibo perdido</div><div class="text-secondary small">En caso de pérdida, solicitar reimpresión en Tesorería presentando identificación y la fecha aproximada del pago. Se genera una copia con sello de "Duplicado".</div></div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

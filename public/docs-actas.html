@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Actas — Documentación</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+  body { background: #f8fafc; font-family: Inter, system-ui, sans-serif; }
+  .doc-header { background: linear-gradient(135deg,#b45309,#f59e0b); color:#fff; padding: 2.5rem 0 2rem; }
+  .doc-header .back-link { color: rgba(255,255,255,.8); text-decoration:none; font-size:.9rem; }
+  .doc-header .back-link:hover { color:#fff; }
+  .step-num { width:34px;height:34px;border-radius:50%;background:#fef9c3;color:#854d0e;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0; }
+  code { background:#f1f5f9; color:#b45309; padding:.15em .4em; border-radius:.3em; font-size:.95em; }
+  .type-badge { display:inline-block;padding:.25em .65em;border-radius:.4em;font-size:.8rem;font-weight:600; }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="container">
+    <a href="javascript:window.close()" class="back-link d-inline-flex align-items-center gap-1 mb-3">
+      <i class="bi bi-arrow-left"></i> Cerrar
+    </a>
+    <div class="d-flex align-items-center gap-3">
+      <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width:56px;height:56px;background:rgba(255,255,255,.2);">
+        <i class="bi bi-file-earmark-ruled fs-3"></i>
+      </div>
+      <div>
+        <h1 class="fw-bold mb-0 fs-3">Control de Actas</h1>
+        <p class="mb-0 opacity-75">Registro, firma y archivo de actas académicas — Procedimiento institucional</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5" style="max-width:860px;">
+
+  <div class="alert border-0 rounded-3 mb-5 d-flex gap-3 align-items-start" style="background:#fef9c3;color:#713f12;">
+    <i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0 mt-1"></i>
+    <div>Las actas son documentos <strong>legales e irremplazables</strong>. Cualquier error debe reportarse de inmediato a Control Escolar antes de la firma definitiva. Una vez firmada y sellada, el acta no puede modificarse.</div>
+  </div>
+
+  <!-- Tipos de actas -->
+  <h4 class="fw-bold mb-3">Tipos de actas</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <div class="border rounded-3 p-3 h-100 text-center">
+          <i class="bi bi-file-earmark-text fs-3 mb-2" style="color:#1d4ed8;"></i>
+          <div class="fw-bold">Acta Parcial</div>
+          <div class="text-secondary small mt-1">Registra calificaciones de evaluaciones parciales durante el periodo escolar.</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="border rounded-3 p-3 h-100 text-center">
+          <i class="bi bi-file-earmark-check fs-3 mb-2" style="color:#15803d;"></i>
+          <div class="fw-bold">Acta Final</div>
+          <div class="text-secondary small mt-1">Registra la calificación definitiva de la materia al cierre del periodo ordinario.</div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="border rounded-3 p-3 h-100 text-center">
+          <i class="bi bi-file-earmark-x fs-3 mb-2" style="color:#b45309;"></i>
+          <div class="fw-bold">Acta Extraordinaria</div>
+          <div class="text-secondary small mt-1">Para alumnos que no acreditaron en ordinario. Se levanta en el periodo de extraordinarios.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proceso de elaboración -->
+  <h4 class="fw-bold mb-3">Proceso de elaboración y entrega</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="d-flex flex-column gap-4">
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-num">1</div>
+        <div>
+          <div class="fw-bold">Generación del formato</div>
+          <div class="text-secondary small">Control Escolar genera el formato de acta a partir del sistema, con los datos del grupo, materia y docente. No se aceptan formatos externos o modificados manualmente.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-num">2</div>
+        <div>
+          <div class="fw-bold">Captura de calificaciones por el docente</div>
+          <div class="text-secondary small">El docente recibe el acta impresa o digital, captura las calificaciones de todos los alumnos del grupo y verifica que ningún campo quede vacío. Las calificaciones van de <strong>0 a 10</strong>; mínimo aprobatorio: <strong>6</strong>.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-num">3</div>
+        <div>
+          <div class="fw-bold">Revisión y firma del docente</div>
+          <div class="text-secondary small">El docente firma y sella el acta. Al firmar, acepta la responsabilidad sobre la veracidad de las calificaciones registradas.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-num">4</div>
+        <div>
+          <div class="fw-bold">Entrega a Control Escolar</div>
+          <div class="text-secondary small">El acta firmada se entrega en Control Escolar dentro del plazo institucional. <strong>No se reciben actas fuera de fecha</strong> sin autorización de la Dirección Académica.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-num">5</div>
+        <div>
+          <div class="fw-bold">Validación y sello institucional</div>
+          <div class="text-secondary small">Control Escolar verifica que las calificaciones sean coherentes con los registros del sistema, aplica sello y firma de validación, y registra el acta en el expediente escolar del grupo.</div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 align-items-start">
+        <div class="step-num">6</div>
+        <div>
+          <div class="fw-bold">Archivo físico y digital</div>
+          <div class="text-secondary small">Se guarda una copia física en el archivo de Control Escolar y se digitaliza (escaneo) para el expediente electrónico. El docente conserva una copia para su archivo personal.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Plazos -->
+  <h4 class="fw-bold mb-3">Plazos de entrega</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th>Tipo de acta</th>
+            <th>Plazo máximo de entrega</th>
+            <th>Consecuencia por retraso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="type-badge" style="background:#dbeafe;color:#1d4ed8;">Parcial</span></td>
+            <td>5 días hábiles tras la evaluación</td>
+            <td>Reporte a Dirección Académica</td>
+          </tr>
+          <tr>
+            <td><span class="type-badge" style="background:#dcfce7;color:#15803d;">Final</span></td>
+            <td>3 días hábiles tras el cierre del periodo</td>
+            <td>Retención de pago de nómina hasta entrega</td>
+          </tr>
+          <tr>
+            <td><span class="type-badge" style="background:#fef9c3;color:#854d0e;">Extraordinaria</span></td>
+            <td>2 días hábiles tras el examen extraordinario</td>
+            <td>Reporte a Dirección y posible sanción</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Correcciones -->
+  <h4 class="fw-bold mb-3">Corrección de actas</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4 mb-5">
+    <div class="alert border-0 mb-3" style="background:#fee2e2;color:#991b1b;border-radius:.75rem;">
+      <i class="bi bi-x-circle-fill me-2"></i><strong>Ninguna corrección puede hacerse directamente sobre el acta original.</strong>
+    </div>
+    <ol class="mb-0 text-secondary d-flex flex-column gap-2">
+      <li>El docente redacta un <strong>oficio de corrección</strong> dirigido a Control Escolar indicando: matrícula del alumno, materia, periodo, calificación incorrecta y calificación correcta.</li>
+      <li>El oficio debe estar <strong>firmado y con sello</strong> del docente y del Coordinador de carrera.</li>
+      <li>Control Escolar emite un <strong>acta de corrección</strong> oficial que se adjunta al expediente.</li>
+      <li>El plazo para solicitar correcciones es de <strong>10 días hábiles</strong> tras la entrega del acta original.</li>
+    </ol>
+  </div>
+
+  <!-- Consulta -->
+  <h4 class="fw-bold mb-3">Consulta de actas</h4>
+  <div class="bg-white rounded-4 shadow-sm p-4">
+    <ul class="mb-0 d-flex flex-column gap-2 text-secondary">
+      <li>Los docentes pueden solicitar copia de sus actas anteriores presentándose en Control Escolar con identificación.</li>
+      <li>Los alumnos pueden consultar su historial de calificaciones a través del <strong>portal del alumno</strong> (Campus Virtual).</li>
+      <li>Para trámites externos (becas, cambio de institución), Control Escolar emite <strong>constancias de calificaciones certificadas</strong> con sello oficial.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

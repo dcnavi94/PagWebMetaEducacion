@@ -113,15 +113,15 @@
                         <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">Comunidad</a>
                         <ul class="dropdown-menu nav-dropdown shadow-lg border-0 rounded-4 p-2">
-                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#comunidad">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="comunidad.html#comunidad">
                                 <i class="bi bi-images nav-drop-icon text-pink me-2"></i>
                                 <span class="fw-semibold">Galería Axolot</span>
                             </a></li>
-                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#comunidades">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="comunidad.html#comunidades">
                                 <i class="bi bi-people-fill nav-drop-icon text-blue me-2"></i>
                                 <span class="fw-semibold">Comunidades Axolot</span>
                             </a></li>
-                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#cursos">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="comunidad.html#cursos">
                                 <i class="bi bi-laptop nav-drop-icon text-blue me-2"></i>
                                 <span class="fw-semibold">Cursos</span>
                             </a></li>
@@ -148,7 +148,7 @@
                                 <i class="bi bi-send-check nav-drop-icon text-blue me-2"></i>
                                 <span class="fw-semibold">Solicitar Información</span>
                             </a></li>
-                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#admisiones">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#calculadora">
                                 <i class="bi bi-clipboard-check nav-drop-icon text-blue me-2"></i>
                                 <span class="fw-semibold">Proceso de Inscripción</span>
                             </a></li>
@@ -171,11 +171,11 @@
                                 <i class="bi bi-people nav-drop-icon text-pink me-2"></i>
                                 <span class="fw-semibold">Vida Escolar</span>
                             </a></li>
-                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#nosotros">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="institucion.html#nosotros">
                                 <i class="bi bi-building nav-drop-icon text-blue me-2"></i>
                                 <span class="fw-semibold">Nosotros</span>
                             </a></li>
-                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#eventos">
+                            <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="institucion.html#eventos">
                                 <i class="bi bi-calendar-event nav-drop-icon text-pink me-2"></i>Eventos
                             </a></li>
                             <li><a class="dropdown-item nav-drop-item rounded-3 py-2" href="index.html#faq">
@@ -1383,13 +1383,13 @@
         });
     </script>
 
-    <!-- PWA Service Worker Registration -->
+    <!-- Service Worker Disabled In Development -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Service Worker registered', reg))
-                    .catch(err => console.log('Service Worker registration failed', err));
+                navigator.serviceWorker.getRegistrations()
+                    .then(registrations => Promise.all(registrations.map(reg => reg.unregister())))
+                    .catch(err => console.log('Service Worker cleanup failed', err));
             });
         }
     </script>

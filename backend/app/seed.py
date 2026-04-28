@@ -54,6 +54,13 @@ def seed_db():
                 "email": "profesor@unives.edu.mx",
                 "role": models.UserRole.TEACHER,
                 "password": "Unives12345"
+            },
+            {
+                "username": "alumno_demo",
+                "full_name": "Alumno Demo",
+                "email": "alumno@unives.edu.mx",
+                "role": models.UserRole.STUDENT,
+                "password": "Unives12345"
             }
         ]
 

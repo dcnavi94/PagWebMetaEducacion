@@ -1,6 +1,6 @@
 from collections import defaultdict, deque
 from datetime import datetime, timedelta
-from typing import DefaultDict, Deque, List, Optional
+from typing import Any, DefaultDict, Deque, Dict, List, Optional, Union
 from pathlib import Path
 import json
 import logging
@@ -13,11 +13,13 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from sqlalchemy.orm import Session, aliased
+from sqlalchemy import inspect, or_, text
 
 from . import models, schemas, auth
 from .curriculum import ensure_subjects_for_career, get_public_curriculum
-from .database import get_db
+from .database import engine, get_db
 from .config import settings
+from .moodle_client import moodle_client
 
 # Intentos de login por IP en memoria para rate limiting simple
 _login_attempts: DefaultDict[str, Deque[datetime]] = defaultdict(deque)
@@ -106,6 +108,439 @@ def _store_service_attachment(*, student_username: str, file: UploadFile) -> tup
     return safe_name, str(relative_dir / stored_name)
 
 
+_portal_extensions_ready = False
+_moodle_credentials_schema_ready = False
+
+
+def _table_has_column(db: Session, table_name: str, column_name: str) -> bool:
+    inspector = inspect(db.connection())
+    return any(column.get("name") == column_name for column in inspector.get_columns(table_name))
+
+
+def _ensure_portal_extensions(db: Session) -> None:
+    pass
+
+
+def _ensure_runtime_schema_extensions(db: Optional[Session] = None) -> None:
+    statements = [
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS moodle_id INTEGER",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS academic_advisor_id INTEGER REFERENCES users(id) ON DELETE SET NULL",
+        "CREATE UNIQUE INDEX IF NOT EXISTS ix_users_moodle_id ON users (moodle_id)",
+        "ALTER TABLE subjects ADD COLUMN IF NOT EXISTS moodle_course_id INTEGER",
+        "ALTER TABLE subjects ADD COLUMN IF NOT EXISTS modality VARCHAR DEFAULT 'presencial'",
+        "CREATE UNIQUE INDEX IF NOT EXISTS ix_subjects_moodle_course_id ON subjects (moodle_course_id)",
+        "ALTER TABLE subject_assignments ADD COLUMN IF NOT EXISTS group_id INTEGER REFERENCES groups(id) ON DELETE SET NULL",
+        "CREATE INDEX IF NOT EXISTS ix_subject_assignments_group_id ON subject_assignments (group_id)",
+        "ALTER TABLE groups ADD COLUMN IF NOT EXISTS career_id INTEGER REFERENCES careers(id) ON DELETE SET NULL",
+        """
+        CREATE TABLE IF NOT EXISTS moodle_user_credentials (
+            user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+            moodle_username VARCHAR NOT NULL,
+            moodle_password VARCHAR NULL,
+            updated_by VARCHAR NULL,
+            password_updated_at TIMESTAMP NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+        )
+        """,
+        "ALTER TABLE moodle_user_credentials ADD COLUMN IF NOT EXISTS moodle_username VARCHAR",
+        "ALTER TABLE moodle_user_credentials ADD COLUMN IF NOT EXISTS moodle_password VARCHAR",
+        "ALTER TABLE moodle_user_credentials ADD COLUMN IF NOT EXISTS updated_by VARCHAR",
+        "ALTER TABLE moodle_user_credentials ADD COLUMN IF NOT EXISTS password_updated_at TIMESTAMP",
+        "ALTER TABLE moodle_user_credentials ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW()",
+        "ALTER TABLE moodle_user_credentials ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW()",
+    ]
+    if db is not None:
+        pass
+    else:
+        with engine.begin() as connection:
+            for statement in statements:
+                connection.execute(text(statement))
+
+            if connection.dialect.name == "postgresql":
+                connection.execute(text("ALTER TYPE attempt_type ADD VALUE IF NOT EXISTS 'Recursa'"))
+                connection.execute(text("ALTER TYPE course_enrollment_attempt_type ADD VALUE IF NOT EXISTS 'Recursa'"))
+                connection.execute(text("ALTER TABLE subject_assignments DROP CONSTRAINT IF EXISTS uq_assignment_subject_teacher_cycle"))
+                connection.execute(text("""
+                    DO $$
+                    BEGIN
+                        IF NOT EXISTS (
+                            SELECT 1
+                            FROM information_schema.table_constraints
+                            WHERE constraint_name = 'uq_assignment_subject_teacher_cycle_group'
+                              AND table_name = 'subject_assignments'
+                        ) THEN
+                            ALTER TABLE subject_assignments
+                            ADD CONSTRAINT uq_assignment_subject_teacher_cycle_group
+                            UNIQUE (subject_id, teacher_id, cycle_id, group_id);
+                        END IF;
+                    END$$;
+                """))
+
+            # También ejecutamos las extensiones del portal aquí en el arranque
+            portal_statements = [
+                ("service_requests", "subject", "ALTER TABLE service_requests ADD COLUMN subject VARCHAR(180)"),
+                ("service_requests", "description", "ALTER TABLE service_requests ADD COLUMN description TEXT"),
+                ("service_requests", "source_system", "ALTER TABLE service_requests ADD COLUMN source_system VARCHAR(80)"),
+                ("service_requests", "admin_response", "ALTER TABLE service_requests ADD COLUMN admin_response TEXT"),
+                ("service_requests", "history_json", "ALTER TABLE service_requests ADD COLUMN history_json TEXT"),
+                ("service_requests", "is_support_ticket", "ALTER TABLE service_requests ADD COLUMN is_support_ticket BOOLEAN DEFAULT FALSE"),
+                ("service_requests", "closed_at", "ALTER TABLE service_requests ADD COLUMN closed_at TIMESTAMP"),
+                ("service_requests", "updated_at", "ALTER TABLE service_requests ADD COLUMN updated_at TIMESTAMP"),
+            ]
+            inspector = inspect(connection)
+            for table_name, column_name, sql in portal_statements:
+                if not any(c.get("name") == column_name for c in inspector.get_columns(table_name)):
+                    connection.execute(text(sql))
+
+
+def _ensure_moodle_credentials_schema(db: Session) -> None:
+    pass
+
+
+def _ensure_notification_schema(db: Optional[Session] = None) -> None:
+    bind = db.get_bind() if db is not None else engine
+    models.NotificationMessage.__table__.create(bind=bind, checkfirst=True)
+    statements = [
+        "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS target_scope VARCHAR(30) DEFAULT 'role'",
+        "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS recipient_group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE",
+        "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS category VARCHAR(30) DEFAULT 'general'",
+        "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS read_at TIMESTAMP",
+    ]
+    if db is not None:
+        for statement in statements:
+            db.execute(text(statement))
+        db.commit()
+    else:
+        with engine.begin() as connection:
+            for statement in statements:
+                connection.execute(text(statement))
+
+
+def _serialize_custom_notification(notification: models.NotificationMessage) -> dict:
+    return {
+        "id": notification.id,
+        "type": "admin_message",
+        "title": notification.title,
+        "message": notification.message,
+        "level": notification.level or "info",
+        "source": notification.created_by_user.full_name if notification.created_by_user and notification.created_by_user.full_name
+            else (notification.created_by_user.username if notification.created_by_user else "Administracion"),
+        "action_url": notification.action_url,
+        "created_at": (notification.created_at or datetime.utcnow()).isoformat(),
+        "recipient_role": notification.recipient_role,
+        "recipient_user_id": notification.recipient_user_id,
+        "recipient_username": notification.recipient_user.username if notification.recipient_user else None,
+        "recipient_group_id": notification.recipient_group_id,
+        "recipient_group_name": notification.recipient_group.name if notification.recipient_group else None,
+        "target_scope": notification.target_scope or "role",
+        "category": notification.category or "general",
+        "is_read": bool(notification.is_read),
+        "read_at": notification.read_at.isoformat() if notification.read_at else None,
+        "can_manage": True,
+    }
+
+
+def _get_custom_notifications_for_user(db: Session, user: models.User) -> list[dict]:
+    _ensure_notification_schema(db)
+    now = datetime.utcnow()
+    active_enrollment = _get_active_student_enrollment(db, user.id) if user.role == models.UserRole.STUDENT else None
+    active_group_id = active_enrollment.group_id if active_enrollment else None
+    rows = (
+        db.query(models.NotificationMessage)
+        .filter(
+            models.NotificationMessage.is_active == True,
+            models.NotificationMessage.recipient_role == user.role,
+            or_(
+                models.NotificationMessage.target_scope == "role",
+                models.NotificationMessage.recipient_user_id == user.id,
+                models.NotificationMessage.recipient_group_id == active_group_id if active_group_id else False,
+            ),
+            or_(
+                models.NotificationMessage.expires_at.is_(None),
+                models.NotificationMessage.expires_at >= now,
+            ),
+        )
+        .order_by(models.NotificationMessage.created_at.desc(), models.NotificationMessage.id.desc())
+        .limit(20)
+        .all()
+    )
+    return [_serialize_custom_notification(row) for row in rows]
+
+
+def _get_user_manageable_notification(
+    db: Session,
+    *,
+    notification_id: int,
+    user: models.User,
+) -> Optional[models.NotificationMessage]:
+    _ensure_notification_schema(db)
+    active_enrollment = _get_active_student_enrollment(db, user.id) if user.role == models.UserRole.STUDENT else None
+    active_group_id = active_enrollment.group_id if active_enrollment else None
+    now = datetime.utcnow()
+    return (
+        db.query(models.NotificationMessage)
+        .filter(
+            models.NotificationMessage.id == notification_id,
+            models.NotificationMessage.is_active == True,
+            models.NotificationMessage.recipient_role == user.role,
+            or_(
+                models.NotificationMessage.target_scope == "role",
+                models.NotificationMessage.recipient_user_id == user.id,
+                models.NotificationMessage.recipient_group_id == active_group_id if active_group_id else False,
+            ),
+            or_(
+                models.NotificationMessage.expires_at.is_(None),
+                models.NotificationMessage.expires_at >= now,
+            ),
+        )
+        .first()
+    )
+
+
+def _get_effective_student_advisor(db: Session, student: models.User) -> Optional[models.User]:
+    if not student:
+        return None
+    if student.academic_advisor_id:
+        direct_advisor = db.query(models.User).filter(models.User.id == student.academic_advisor_id).first()
+        if direct_advisor and direct_advisor.role == models.UserRole.TEACHER:
+            return direct_advisor
+    active_enrollment = _get_active_student_enrollment(db, student.id)
+    if active_enrollment and active_enrollment.group and active_enrollment.group.tutor:
+        return active_enrollment.group.tutor
+    return None
+
+
+def _teacher_can_advise_student(db: Session, teacher_id: int, student: models.User) -> bool:
+    if not student:
+        return False
+    if student.academic_advisor_id == teacher_id:
+        return True
+    active_enrollment = _get_active_student_enrollment(db, student.id)
+    return bool(active_enrollment and active_enrollment.group and active_enrollment.group.tutor_id == teacher_id)
+
+
+def _safe_ticket_history(raw_value: Optional[str]) -> list[dict]:
+    if not raw_value:
+        return []
+    try:
+        parsed = json.loads(raw_value)
+        return parsed if isinstance(parsed, list) else []
+    except json.JSONDecodeError:
+        return []
+
+
+def _append_ticket_history(raw_value: Optional[str], *, actor: str, action: str, message: str, status_value: Optional[str] = None) -> str:
+    history = _safe_ticket_history(raw_value)
+    history.insert(0, {
+        "actor": actor,
+        "action": action,
+        "message": message,
+        "status": status_value,
+        "created_at": datetime.utcnow().isoformat(),
+    })
+    return json.dumps(history, ensure_ascii=True)
+
+
+def _serialize_ticket_row(row) -> dict:
+    data = dict(row._mapping)
+    data["history"] = _safe_ticket_history(data.get("history_json"))
+    return data
+
+
+def _build_moodle_url(path: str = "") -> str:
+    base = (settings.MOODLE_BASE_URL or "").rstrip("/")
+    if not base:
+        return ""
+    if not path:
+        return base
+    if not path.startswith("/"):
+        path = "/" + path
+    return f"{base}{path}"
+
+
+def _build_moodle_public_url(path: str = "") -> str:
+    base = (settings.MOODLE_PUBLIC_URL or settings.MOODLE_BASE_URL or "").rstrip("/")
+    if not base:
+        return ""
+    if not path:
+        return base
+    if not path.startswith("/"):
+        path = "/" + path
+    return f"{base}{path}"
+
+
+def _get_active_student_enrollment(db: Session, student_id: int):
+    return (
+        db.query(models.StudentEnrollment)
+        .filter(
+            models.StudentEnrollment.student_id == student_id,
+            models.StudentEnrollment.is_active == True,
+        )
+        .order_by(models.StudentEnrollment.id.desc())
+        .first()
+    )
+
+
+def _push_notification(items: list[dict], *, notif_type: str, title: str, message: str, level: str = "info", source: str = "Sistema", action_url: Optional[str] = None, created_at: Optional[datetime] = None) -> None:
+    items.append({
+        "type": notif_type,
+        "title": title,
+        "message": message,
+        "level": level,
+        "source": source,
+        "action_url": action_url,
+        "created_at": (created_at or datetime.utcnow()).isoformat(),
+    })
+
+
+def _upsert_moodle_credentials(
+    db: Session,
+    *,
+    user_id: int,
+    moodle_username: str,
+    moodle_password: Optional[str],
+    updated_by: str,
+    overwrite_password: bool,
+) -> None:
+    _ensure_moodle_credentials_schema(db)
+    db.execute(
+        text(
+            """
+            INSERT INTO moodle_user_credentials (user_id, moodle_username, moodle_password, updated_by, password_updated_at, created_at, updated_at)
+            VALUES (:user_id, :moodle_username, :moodle_password, :updated_by, :password_updated_at, NOW(), NOW())
+            ON CONFLICT (user_id) DO UPDATE SET
+                moodle_username = EXCLUDED.moodle_username,
+                moodle_password = CASE
+                    WHEN :overwrite_password THEN EXCLUDED.moodle_password
+                    ELSE moodle_user_credentials.moodle_password
+                END,
+                updated_by = EXCLUDED.updated_by,
+                password_updated_at = CASE
+                    WHEN :overwrite_password THEN EXCLUDED.password_updated_at
+                    ELSE moodle_user_credentials.password_updated_at
+                END,
+                updated_at = NOW()
+            """
+        ),
+        {
+            "user_id": user_id,
+            "moodle_username": moodle_username,
+            "moodle_password": moodle_password if overwrite_password else None,
+            "updated_by": updated_by,
+            "password_updated_at": datetime.utcnow() if overwrite_password else None,
+            "overwrite_password": bool(overwrite_password),
+        },
+    )
+    db.commit()
+
+
+def _get_moodle_credentials_for_user(db: Session, user: models.User) -> dict:
+    _ensure_moodle_credentials_schema(db)
+    row = db.execute(
+        text(
+            """
+            SELECT user_id, moodle_username, moodle_password, updated_by, password_updated_at, updated_at
+            FROM moodle_user_credentials
+            WHERE user_id = :user_id
+            """
+        ),
+        {"user_id": user.id},
+    ).mappings().first()
+    fallback_username = (user.username or "").strip().lower()
+    if not row:
+        return {
+            "user_id": user.id,
+            "moodle_username": fallback_username,
+            "moodle_password": None,
+            "password_configured": False,
+            "updated_by": None,
+            "password_updated_at": None,
+            "updated_at": None,
+        }
+    return {
+        "user_id": row.get("user_id"),
+        "moodle_username": row.get("moodle_username") or fallback_username,
+        "moodle_password": row.get("moodle_password"),
+        "password_configured": bool(row.get("moodle_password")),
+        "updated_by": row.get("updated_by"),
+        "password_updated_at": row.get("password_updated_at"),
+        "updated_at": row.get("updated_at"),
+    }
+
+
+def _build_moodle_sync_evidence(*, entity_type: str, entity_key: str, action: str) -> dict:
+    return {
+        "entity_type": entity_type,
+        "entity_key": entity_key,
+        "action": action,
+        "started_at": datetime.utcnow().isoformat(),
+        "steps": [],
+    }
+
+
+def _append_moodle_step(evidence: dict, step: str, status: str, detail: str, **extra) -> None:
+    payload = {
+        "step": step,
+        "status": status,
+        "detail": detail,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+    payload.update(extra)
+    evidence["steps"].append(payload)
+
+
+def _finalize_moodle_evidence(evidence: dict, *, success: bool) -> dict:
+    evidence["success"] = success
+    evidence["finished_at"] = datetime.utcnow().isoformat()
+    return evidence
+
+
+def _split_full_name(full_name: Optional[str]) -> tuple[str, str]:
+    normalized = (full_name or "").strip() or "Usuario Moodle"
+    parts = normalized.split(" ", 1)
+    first_name = parts[0]
+    last_name = parts[1] if len(parts) > 1 else "Portal"
+    return first_name, last_name
+
+
+def _build_temp_moodle_password(username: str) -> str:
+    suffix = "".join(ch for ch in (username or "Alumno").strip() if ch.isalnum())[:6] or "Alumno"
+    return f"Portal#{suffix}2026!"
+
+
+def _latest_moodle_error() -> Optional[str]:
+    return moodle_client.get_last_error()
+
+
+def _serialize_moodle_course(course: dict) -> dict:
+    return {
+        "id": course.get("id"),
+        "shortname": course.get("shortname"),
+        "fullname": course.get("fullname"),
+        "displayname": course.get("displayname") or course.get("fullname"),
+        "summary": course.get("summary"),
+        "progress": course.get("progress"),
+        "visible": course.get("visible"),
+        "categoryid": course.get("categoryid"),
+        "view_url": _build_moodle_public_url(f"/course/view.php?id={course.get('id')}") if course.get("id") else None,
+    }
+
+
+async def _find_moodle_course_by_shortname(shortname: str) -> Optional[dict]:
+    if not shortname:
+        return None
+    courses = await moodle_client.search_courses(shortname)
+    if not courses:
+        return None
+    lowered = shortname.strip().lower()
+    for course in courses:
+        if (course.get("shortname") or "").strip().lower() == lowered:
+            return course
+    return None
+
+
 import re as _re
 
 def _parse_semester_num(semester_str: Optional[str]) -> int:
@@ -129,6 +564,224 @@ def _grade_status_for_semester(subject_sem: int, student_sem: int) -> "models.Gr
     if subject_sem == student_sem:
         return models.GradeStatus.CURSANDO
     return models.GradeStatus.PROXIMAMENTE
+
+
+def _is_passing_score(score: Optional[float]) -> bool:
+    """La calificacion minima aprobatoria es 6; 5 o menos es reprobatoria."""
+    return score is not None and score > 5
+
+
+def _build_subject_moodle_shortname(subject: models.Subject) -> str:
+    career_token = "".join(ch for ch in (subject.career or "GEN") if ch.isalnum()).upper()[:4] or "GEN"
+    semester_num = _parse_semester_num(subject.semester)
+    return f"UNV-{career_token}-S{semester_num}-{subject.id:04d}"
+
+
+async def _sync_student_to_moodle(db: Session, *, user: models.User, password: Optional[str] = None) -> dict:
+    evidence = _build_moodle_sync_evidence(entity_type="student", entity_key=user.username, action="sync_student_to_moodle")
+    _append_moodle_step(evidence, "validate_user", "ok", "Alumno localizado en base local", user_id=user.id)
+
+    first_name, last_name = _split_full_name(user.full_name)
+    moodle_username = (user.username or "").strip().lower()
+    chosen_password: Optional[str] = None
+    moodle_id = user.moodle_id
+
+    if moodle_id and not await moodle_client.check_user_exists(int(moodle_id)):
+        _append_moodle_step(
+            evidence,
+            "validate_existing_link",
+            "warning",
+            "El moodle_id local no existe en Moodle, se recreara el vinculo",
+            moodle_id=moodle_id,
+            moodle_error=_latest_moodle_error(),
+        )
+        user.moodle_id = None
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        moodle_id = None
+
+    if not moodle_id:
+        moodle_id = await moodle_client.get_user_by_username(moodle_username)
+        if not moodle_id and user.email:
+            moodle_id = await moodle_client.get_user_by_email(user.email)
+        if not moodle_id:
+            chosen_password = password or _build_temp_moodle_password(user.username)
+            moodle_id = await moodle_client.create_user(
+                moodle_username,
+                chosen_password,
+                first_name,
+                last_name,
+                user.email or f"{user.username}@portal.local",
+            )
+            if not moodle_id:
+                _append_moodle_step(
+                    evidence,
+                    "create_remote_user",
+                    "error",
+                    "Moodle no devolvio un ID de usuario",
+                    moodle_error=_latest_moodle_error(),
+                )
+                return _finalize_moodle_evidence(evidence, success=False)
+            _append_moodle_step(evidence, "create_remote_user", "ok", "Usuario creado en Moodle", moodle_id=moodle_id)
+
+    user.moodle_id = int(moodle_id)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    _append_moodle_step(evidence, "persist_local_link", "ok", "moodle_id guardado localmente", moodle_id=user.moodle_id)
+
+    role_assigned = await moodle_client.assign_system_role(
+        user_id=int(user.moodle_id),
+        role_id=settings.MOODLE_STUDENT_ROLE_ID,
+        context_level=settings.MOODLE_ROLE_CONTEXT_LEVEL,
+        instance_id=settings.MOODLE_ROLE_INSTANCE_ID or None,
+    )
+    if not role_assigned:
+        _append_moodle_step(evidence, "assign_role", "error", "No se pudo asignar rol student", moodle_error=_latest_moodle_error())
+        return _finalize_moodle_evidence(evidence, success=False)
+
+    _upsert_moodle_credentials(
+        db,
+        user_id=user.id,
+        moodle_username=moodle_username,
+        moodle_password=chosen_password,
+        updated_by="system_sync",
+        overwrite_password=bool(chosen_password),
+    )
+    _append_moodle_step(evidence, "assign_role", "ok", "Rol student asignado", moodle_id=user.moodle_id)
+    return _finalize_moodle_evidence(evidence, success=True)
+
+
+async def _sync_teacher_to_moodle(db: Session, *, user: models.User, password: Optional[str] = None) -> dict:
+    evidence = _build_moodle_sync_evidence(entity_type="teacher", entity_key=user.username, action="sync_teacher_to_moodle")
+    _append_moodle_step(evidence, "validate_user", "ok", "Docente localizado en base local", user_id=user.id)
+
+    first_name, last_name = _split_full_name(user.full_name)
+    moodle_username = (user.username or "").strip().lower()
+    chosen_password: Optional[str] = None
+    moodle_id = user.moodle_id
+
+    if moodle_id and not await moodle_client.check_user_exists(int(moodle_id)):
+        user.moodle_id = None
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        moodle_id = None
+
+    if not moodle_id:
+        moodle_id = await moodle_client.get_user_by_username(moodle_username)
+        if not moodle_id and user.email:
+            moodle_id = await moodle_client.get_user_by_email(user.email)
+        if not moodle_id:
+            chosen_password = password or _build_temp_moodle_password(user.username)
+            moodle_id = await moodle_client.create_user(
+                moodle_username,
+                chosen_password,
+                first_name,
+                last_name,
+                user.email or f"{user.username}@portal.local",
+            )
+            if not moodle_id:
+                _append_moodle_step(
+                    evidence,
+                    "create_remote_user",
+                    "error",
+                    "Moodle no devolvio un ID de usuario docente",
+                    moodle_error=_latest_moodle_error(),
+                )
+                return _finalize_moodle_evidence(evidence, success=False)
+
+    user.moodle_id = int(moodle_id)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    role_assigned = await moodle_client.assign_system_role(
+        user_id=int(user.moodle_id),
+        role_id=settings.MOODLE_TEACHER_ROLE_ID,
+        context_level=settings.MOODLE_ROLE_CONTEXT_LEVEL,
+        instance_id=settings.MOODLE_ROLE_INSTANCE_ID or None,
+    )
+    if not role_assigned:
+        _append_moodle_step(evidence, "assign_role", "error", "No se pudo asignar rol teacher", moodle_error=_latest_moodle_error())
+        return _finalize_moodle_evidence(evidence, success=False)
+
+    _upsert_moodle_credentials(
+        db,
+        user_id=user.id,
+        moodle_username=moodle_username,
+        moodle_password=chosen_password,
+        updated_by="system_sync",
+        overwrite_password=bool(chosen_password),
+    )
+    _append_moodle_step(evidence, "assign_role", "ok", "Rol teacher asignado", moodle_id=user.moodle_id)
+    return _finalize_moodle_evidence(evidence, success=True)
+
+
+async def _sync_subject_to_moodle_internal(db: Session, *, subject: models.Subject, category_id: int = 1) -> dict:
+    evidence = _build_moodle_sync_evidence(entity_type="subject", entity_key=str(subject.id), action="sync_subject_to_moodle")
+    shortname = _build_subject_moodle_shortname(subject)
+    moodle_course_id = subject.moodle_course_id
+
+    if moodle_course_id and await moodle_client.check_course_exists(int(moodle_course_id)):
+        _append_moodle_step(evidence, "verify_existing_course", "ok", "La materia ya estaba vinculada", moodle_course_id=moodle_course_id)
+        return {
+            "success": True,
+            "action": "already_linked",
+            "message": "La materia ya esta vinculada con Moodle",
+            "moodle_course_id": moodle_course_id,
+            "shortname": shortname,
+            "evidence": _finalize_moodle_evidence(evidence, success=True),
+        }
+
+    existing_by_shortname = await _find_moodle_course_by_shortname(shortname)
+    if existing_by_shortname and existing_by_shortname.get("id"):
+        subject.moodle_course_id = int(existing_by_shortname["id"])
+        db.add(subject)
+        db.commit()
+        db.refresh(subject)
+        _append_moodle_step(evidence, "link_existing_course_by_shortname", "ok", "Curso Moodle encontrado por shortname", moodle_course_id=subject.moodle_course_id)
+        return {
+            "success": True,
+            "action": "linked_existing_shortname",
+            "message": "Materia vinculada a curso Moodle existente",
+            "moodle_course_id": subject.moodle_course_id,
+            "shortname": shortname,
+            "evidence": _finalize_moodle_evidence(evidence, success=True),
+        }
+
+    created = await moodle_client.create_course_admin(
+        fullname=subject.name or f"Materia {subject.id}",
+        shortname=shortname,
+        category_id=category_id,
+        summary=f"Curso sincronizado desde el portal institucional para la materia #{subject.id}.",
+        format_name="topics",
+        visible=True,
+    )
+    if not created or not created.get("id"):
+        _append_moodle_step(evidence, "create_course", "error", "No se pudo crear el curso en Moodle", moodle_error=_latest_moodle_error())
+        return {
+            "success": False,
+            "action": "error",
+            "message": "Error al crear curso Moodle",
+            "moodle_error": _latest_moodle_error(),
+            "shortname": shortname,
+            "evidence": _finalize_moodle_evidence(evidence, success=False),
+        }
+
+    subject.moodle_course_id = int(created["id"])
+    db.add(subject)
+    db.commit()
+    db.refresh(subject)
+    _append_moodle_step(evidence, "create_course", "ok", "Curso creado y vinculado", moodle_course_id=subject.moodle_course_id)
+    return {
+        "success": True,
+        "action": "created",
+        "message": "Materia sincronizada exitosamente",
+        "moodle_course_id": subject.moodle_course_id,
+        "shortname": shortname,
+        "evidence": _finalize_moodle_evidence(evidence, success=True),
+    }
 
 
 def _assign_curriculum_to_student(db: Session, student_id: int, career_name: Optional[str]) -> None:
@@ -157,12 +810,21 @@ def _assign_curriculum_to_student(db: Session, student_id: int, career_name: Opt
 
     active_cycle = db.query(models.SchoolCycle).filter(models.SchoolCycle.is_active == True).first()
 
-    # IDs de materias en las que el alumno ya tiene un registro (evita duplicados)
-    existing_subject_ids = {
-        grade.subject_id
-        for grade in db.query(models.Grade).filter(
-            models.Grade.student_id == student_id,
-        ).all()
+    student_grades = (
+        db.query(models.Grade)
+        .filter(models.Grade.student_id == student_id)
+        .all()
+    )
+    existing_subject_ids = {grade.subject_id for grade in student_grades}
+    placeholder_grades_by_subject_id = {
+        grade.subject_id: grade
+        for grade in student_grades
+        if grade.subject_id is not None
+        and grade.attempt_type == models.AttemptType.REGULAR
+        and grade.score is None
+        and grade.recorded_at is None
+        and grade.course_enrollment_id is None
+        and not grade.teacher_locked
     }
 
     if active_cycle:
@@ -188,11 +850,20 @@ def _assign_curriculum_to_student(db: Session, student_id: int, career_name: Opt
         # Materias con asignación → usar estatus por cuatrimestre
         assigned_subject_ids = set()
         for assignment in assignments:
-            if assignment.id in existing_assignment_ids:
-                assigned_subject_ids.add(assignment.subject_id)
-                continue
             subject_sem = _parse_semester_num(assignment.subject.semester if assignment.subject else None)
             status = _grade_status_for_semester(subject_sem, student_sem)
+            if assignment.id in existing_assignment_ids:
+                placeholder = placeholder_grades_by_subject_id.get(assignment.subject_id)
+                if placeholder and placeholder.status != status:
+                    placeholder.status = status
+                assigned_subject_ids.add(assignment.subject_id)
+                continue
+            placeholder = placeholder_grades_by_subject_id.get(assignment.subject_id)
+            if placeholder:
+                placeholder.assignment_id = assignment.id
+                placeholder.status = status
+                assigned_subject_ids.add(assignment.subject_id)
+                continue
             db.add(
                 models.Grade(
                     student_id=student_id,
@@ -207,10 +878,17 @@ def _assign_curriculum_to_student(db: Session, student_id: int, career_name: Opt
 
         # Materias sin asignación → crear grade sin assignment_id con estatus por cuatrimestre
         for subject in subjects:
-            if subject.id in existing_subject_ids or subject.id in assigned_subject_ids:
+            if subject.id in assigned_subject_ids:
                 continue
             subject_sem = _parse_semester_num(subject.semester)
             status = _grade_status_for_semester(subject_sem, student_sem)
+            placeholder = placeholder_grades_by_subject_id.get(subject.id)
+            if placeholder:
+                if placeholder.status != status:
+                    placeholder.status = status
+                continue
+            if subject.id in existing_subject_ids:
+                continue
             db.add(
                 models.Grade(
                     student_id=student_id,
@@ -223,10 +901,15 @@ def _assign_curriculum_to_student(db: Session, student_id: int, career_name: Opt
     else:
         # Sin ciclo activo: inscribir todas las materias con estatus por cuatrimestre
         for subject in subjects:
-            if subject.id in existing_subject_ids:
-                continue
             subject_sem = _parse_semester_num(subject.semester)
             status = _grade_status_for_semester(subject_sem, student_sem)
+            placeholder = placeholder_grades_by_subject_id.get(subject.id)
+            if placeholder:
+                if placeholder.status != status:
+                    placeholder.status = status
+                continue
+            if subject.id in existing_subject_ids:
+                continue
             db.add(
                 models.Grade(
                     student_id=student_id,
@@ -427,6 +1110,38 @@ def _get_or_create_student_enrollment_for_cycle(
     return enrollment
 
 
+def _assignment_group_label(assignment: Optional[models.SubjectAssignment]) -> str:
+    if assignment and assignment.group and assignment.group.name:
+        return assignment.group.name
+    return "Sin grupo"
+
+
+def _validate_assignment_group_for_enrollment(
+    *,
+    student_enrollment: models.StudentEnrollment,
+    assignment: models.SubjectAssignment,
+    attempt_type: models.AttemptType,
+) -> None:
+    if not assignment.group_id:
+        return
+
+    current_group_id = student_enrollment.group_id
+    is_regular_attempt = attempt_type == models.AttemptType.REGULAR
+
+    if current_group_id is None and is_regular_attempt:
+        student_enrollment.group_id = assignment.group_id
+        return
+
+    if current_group_id == assignment.group_id:
+        return
+
+    if is_regular_attempt:
+        raise HTTPException(
+            status_code=400,
+            detail=f"El alumno pertenece a otro grupo del ciclo activo. Debe inscribirse en la asignación de su grupo ({_assignment_group_label(assignment)}).",
+        )
+
+
 def _get_or_create_course_enrollment(
     db: Session,
     *,
@@ -440,6 +1155,11 @@ def _get_or_create_course_enrollment(
         student,
         assignment.cycle_id,
         reason="Inscripcion academica automatica",
+    )
+    _validate_assignment_group_for_enrollment(
+        student_enrollment=student_enrollment,
+        assignment=assignment,
+        attempt_type=attempt_type,
     )
     course_enrollment = (
         db.query(models.CourseEnrollment)
@@ -529,6 +1249,11 @@ def _create_admin_course_enrollment(
         assignment.cycle_id,
         reason="Inscripcion academica administrativa",
     )
+    _validate_assignment_group_for_enrollment(
+        student_enrollment=student_enrollment,
+        assignment=assignment,
+        attempt_type=attempt_type,
+    )
 
     existing = (
         db.query(models.CourseEnrollment)
@@ -572,7 +1297,7 @@ def _apply_grade_payload(
     if grade_update.score is not None:
         grade.score = grade_update.score
         grade.status = (
-            models.GradeStatus.APROBADA if grade_update.score >= 6
+            models.GradeStatus.APROBADA if _is_passing_score(grade_update.score)
             else models.GradeStatus.REPROBADA
         )
         grade.recorded_at = datetime.utcnow()
@@ -608,6 +1333,69 @@ def _get_teacher_name_from_assignment(assignment: Optional[models.SubjectAssignm
     return None
 
 
+def _attempt_type_sort_key(attempt_type: Optional[Union[models.AttemptType, str]]) -> int:
+    normalized = str(attempt_type or "")
+    if normalized == models.AttemptType.EXTEMPORANEO.value:
+        return 3
+    if normalized == models.AttemptType.RECURSA.value:
+        return 2
+    if normalized == models.AttemptType.REGULAR.value:
+        return 1
+    return 0
+
+
+def _status_sort_key(status_value: Optional[Union[models.GradeStatus, str]]) -> int:
+    normalized = str(status_value or "")
+    if normalized == models.GradeStatus.APROBADA.value:
+        return 4
+    if normalized == models.GradeStatus.CURSANDO.value:
+        return 3
+    if normalized == models.GradeStatus.REPROBADA.value:
+        return 2
+    if normalized == models.GradeStatus.PROXIMAMENTE.value:
+        return 1
+    return 0
+
+
+def _effective_student_grade_rows(rows: list[dict]) -> list[dict]:
+    grouped: dict[tuple[object, str], dict] = {}
+    for row in rows:
+        key = (
+            row.get("subject_id") or row.get("description") or row.get("subject_name") or row.get("assignment_id") or row.get("grade_id"),
+            row.get("description") or row.get("subject_name") or "",
+        )
+        current = grouped.get(key)
+        candidate_rank = (
+            _status_sort_key(row.get("status")),
+            _attempt_type_sort_key(row.get("attempt_type")),
+            1 if row.get("course_enrollment_id") else 0,
+            1 if row.get("assignment_id") else 0,
+            row.get("grade_id") or 0,
+        )
+        if not current:
+            grouped[key] = row
+            continue
+        current_rank = (
+            _status_sort_key(current.get("status")),
+            _attempt_type_sort_key(current.get("attempt_type")),
+            1 if current.get("course_enrollment_id") else 0,
+            1 if current.get("assignment_id") else 0,
+            current.get("grade_id") or 0,
+        )
+        if candidate_rank > current_rank:
+            grouped[key] = row
+
+    result = list(grouped.values())
+    result.sort(
+        key=lambda item: (
+            _parse_semester_num(item.get("period") or item.get("semester")),
+            (item.get("description") or item.get("subject_name") or "").lower(),
+            item.get("grade_id") or 0,
+        )
+    )
+    return result
+
+
 def _serialize_grade_row(
     *,
     grade: Optional[models.Grade] = None,
@@ -625,6 +1413,7 @@ def _serialize_grade_row(
         "grade_id": grade.id if grade else None,
         "course_enrollment_id": course_enrollment.id if course_enrollment else (grade.course_enrollment_id if grade else None),
         "assignment_id": assignment.id if assignment else (grade.assignment_id if grade else None),
+        "subject_id": subject.id if subject else None,
         "period": subject.semester if subject else None,
         "description": subject.name if subject else None,
         "credits": subject.credits if subject else None,
@@ -632,6 +1421,7 @@ def _serialize_grade_row(
         "status": status,
         "teacher": teacher_name,
         "attempt_type": attempt_type,
+        "group": assignment.group.name if assignment and assignment.group else None,
     }
 
 
@@ -650,6 +1440,7 @@ def _serialize_course_card(
         "course_enrollment_id": course_enrollment.id,
         "grade_id": grade.id if grade else None,
         "assignment_id": assignment.id if assignment else None,
+        "group_id": assignment.group_id if assignment else None,
         "name": subject.name if subject else None,
         "progress": 100 if status == models.GradeStatus.APROBADA else (40 if status == models.GradeStatus.CURSANDO else 0),
         "score": score,
@@ -658,7 +1449,15 @@ def _serialize_course_card(
         "credits": subject.credits if subject else None,
         "status": status,
         "attempt_type": grade.attempt_type if grade else course_enrollment.attempt_type,
+        "group": assignment.group.name if assignment and assignment.group else None,
     }
+
+
+def _subject_is_virtual_classroom_enabled(subject: Optional[models.Subject]) -> bool:
+    if not subject:
+        return False
+    modality = (subject.modality or "").strip().lower()
+    return bool(subject.moodle_course_id) or modality in {"virtual", "hibrido", "híbrido"}
 
 
 def _serialize_academic_history_item(
@@ -688,7 +1487,21 @@ def _serialize_academic_history_item(
         "final_score": grade.score if grade else None,
         "status": grade.status if grade else (course_enrollment.status if course_enrollment else None),
         "dropped_at": course_enrollment.dropped_at if course_enrollment else None,
+        "group": assignment.group.name if assignment and assignment.group else None,
     }
+
+
+def _should_include_legacy_grade_in_student_view(grade: models.Grade) -> bool:
+    """Oculta del portal del alumno las filas placeholder de currícula no inscrita.
+
+    Se muestran solo si la materia tiene una asignación/carga real o evidencia de
+    evaluación histórica capturada.
+    """
+    if grade.course_enrollment_id or grade.assignment_id:
+        return True
+    if grade.score is not None or grade.recorded_at is not None:
+        return True
+    return False
 
 
 def _get_academic_history_for_student(db: Session, student_id: int) -> list[dict]:
@@ -908,6 +1721,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.on_event("startup")
+def startup_runtime_schema_extensions() -> None:
+    _ensure_runtime_schema_extensions()
+    _ensure_notification_schema()
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 admin_required = auth.require_roles(models.UserRole.ADMIN)
 teacher_or_admin = auth.require_roles(models.UserRole.TEACHER, models.UserRole.ADMIN)
@@ -1115,26 +1934,44 @@ def get_active_school_cycle(current_user: models.User = Depends(admin_required),
 
 @app.post("/admin/school-cycle", response_model=schemas.SchoolCycle, tags=["Configuracion"])
 def save_school_cycle(cycle: schemas.SchoolCycleCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
-    db.query(models.SchoolCycle).update({"is_active": False})
-    new_cycle = models.SchoolCycle(
-        period=cycle.period,
-        start_date=cycle.start_date,
-        end_date=cycle.end_date,
-        monthly_amount=cycle.monthly_amount,
-        is_active=True,
-    )
-    db.add(new_cycle)
-    db.flush()
-    for t in cycle.tuitions:
-        db.add(models.CycleTuition(
-            cycle_id=new_cycle.id,
-            career_id=t.career_id,
-            modality_id=t.modality_id,
-            amount=t.amount,
-        ))
-    db.commit()
-    db.refresh(new_cycle)
-    return new_cycle
+    if not (cycle.period or "").strip():
+        raise HTTPException(status_code=400, detail="El periodo del ciclo es obligatorio")
+    if cycle.start_date >= cycle.end_date:
+        raise HTTPException(status_code=400, detail="La fecha de inicio debe ser anterior a la fecha de fin")
+    if not cycle.tuitions:
+        raise HTTPException(status_code=400, detail="Debes capturar al menos un costo por carrera y modalidad")
+
+    seen_pairs: set[tuple[int, int]] = set()
+    for tuition in cycle.tuitions:
+        key = (tuition.career_id, tuition.modality_id)
+        if key in seen_pairs:
+            raise HTTPException(status_code=400, detail="Hay costos duplicados para la misma carrera y modalidad")
+        seen_pairs.add(key)
+
+    try:
+        db.query(models.SchoolCycle).update({"is_active": False})
+        new_cycle = models.SchoolCycle(
+            period=cycle.period.strip(),
+            start_date=cycle.start_date,
+            end_date=cycle.end_date,
+            monthly_amount=cycle.monthly_amount,
+            is_active=True,
+        )
+        db.add(new_cycle)
+        db.flush()
+        for t in cycle.tuitions:
+            db.add(models.CycleTuition(
+                cycle_id=new_cycle.id,
+                career_id=t.career_id,
+                modality_id=t.modality_id,
+                amount=t.amount,
+            ))
+        db.commit()
+        db.refresh(new_cycle)
+        return new_cycle
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"No se pudo guardar el ciclo escolar: {exc}")
 
 
 @app.post("/admin/school-cycle/generate-payments", response_model=schemas.SchoolCyclePaymentResult, tags=["Configuracion"])
@@ -1223,6 +2060,115 @@ def generate_cycle_payments(current_user: models.User = Depends(admin_required),
     }
 
 
+@app.post("/admin/school-cycles/{cycle_id}/recalculate-charges", tags=["Configuracion"])
+def recalculate_cycle_charges(
+    cycle_id: int,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    import calendar
+
+    cycle = db.query(models.SchoolCycle).filter(models.SchoolCycle.id == cycle_id).first()
+    if not cycle:
+        raise HTTPException(status_code=404, detail="Ciclo escolar no encontrado")
+
+    months = []
+    current = cycle.start_date.replace(day=1)
+    end = cycle.end_date
+    while current <= end:
+        last_day = calendar.monthrange(current.year, current.month)[1]
+        due = current.replace(day=min(15, last_day))
+        month_name = due.strftime("%B %Y").capitalize()
+        months.append({"month": month_name, "due_date": due})
+        if current.month == 12:
+            current = current.replace(year=current.year + 1, month=1)
+        else:
+            current = current.replace(month=current.month + 1)
+
+    tuition_map = {(t.career_id, t.modality_id): t.amount for t in cycle.tuitions}
+    enrollments = (
+        db.query(models.StudentEnrollment)
+        .filter(
+            models.StudentEnrollment.cycle_id == cycle.id,
+            models.StudentEnrollment.enrollment_status == models.EnrollmentStatus.INSCRITO,
+            models.StudentEnrollment.is_active == True,
+        )
+        .all()
+    )
+
+    updated_count = 0
+    created_count = 0
+    students_affected = set()
+
+    for enrollment in enrollments:
+        student = enrollment.student
+        if not student:
+            continue
+        target_amount = tuition_map.get(
+            (enrollment.career_id or student.career_id, enrollment.modality_id or student.modality_id),
+            cycle.monthly_amount or 0,
+        )
+        if target_amount <= 0:
+            continue
+
+        for month_info in months:
+            concept = f"Colegiatura {month_info['month']}"
+            due_date = datetime(
+                month_info["due_date"].year,
+                month_info["due_date"].month,
+                month_info["due_date"].day,
+                23, 59, 59,
+            )
+            existing_charge = (
+                db.query(models.Charge)
+                .filter(
+                    models.Charge.student_enrollment_id == enrollment.id,
+                    models.Charge.concept == concept,
+                    models.Charge.period_label == month_info["month"],
+                    models.Charge.charge_type == models.ChargeType.TUITION,
+                )
+                .first()
+            )
+            if existing_charge:
+                if existing_charge.status != models.PaymentStatus.PAGADO and (
+                    float(existing_charge.amount or 0) != float(target_amount)
+                    or existing_charge.due_date != due_date
+                ):
+                    existing_charge.amount = target_amount
+                    existing_charge.due_date = due_date
+                    _ensure_payment_for_charge(db, existing_charge)
+                    updated_count += 1
+                    students_affected.add(student.id)
+                continue
+
+            charge = models.Charge(
+                student_id=student.id,
+                student_enrollment_id=enrollment.id,
+                charge_type=models.ChargeType.TUITION,
+                concept=concept,
+                period_label=month_info["month"],
+                amount=target_amount,
+                due_date=due_date,
+                status=models.PaymentStatus.PENDIENTE,
+            )
+            db.add(charge)
+            db.flush()
+            _ensure_payment_for_charge(db, charge)
+            created_count += 1
+            students_affected.add(student.id)
+
+    db.commit()
+    return {
+        "ok": True,
+        "cycle_id": cycle.id,
+        "cycle_period": cycle.period,
+        "created_count": created_count,
+        "updated_count": updated_count,
+        "students_affected": len(students_affected),
+        "months": [m["month"] for m in months],
+    }
+
+
 @app.post("/token", response_model=schemas.TokenPair, summary="Iniciar sesion", tags=["Autenticacion"])
 async def login_for_access_token(
     request: Request,
@@ -1276,7 +2222,95 @@ async def refresh_access_token(payload: schemas.RefreshTokenRequest):
 
 @app.get("/users/me", response_model=schemas.User, summary="Perfil del usuario", tags=["Usuario"])
 async def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
-    return current_user
+    valid_service_types = {item.value for item in schemas.ServiceRequestType}
+    filtered_service_requests = [
+        service_request
+        for service_request in (current_user.service_requests or [])
+        if (service_request.type in valid_service_types)
+    ]
+    return {
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "full_name": current_user.full_name,
+        "role": current_user.role,
+        "moodle_id": current_user.moodle_id,
+        "user_status": current_user.user_status,
+        "enrollment_status": current_user.enrollment_status,
+        "career_id": current_user.career_id,
+        "carrera": current_user.carrera,
+        "modality_id": current_user.modality_id,
+        "modalidad": current_user.modalidad,
+        "semestre": current_user.semestre,
+        "grupo": current_user.grupo,
+        "academic_advisor_id": current_user.academic_advisor_id,
+        "payments": current_user.payments or [],
+        "grades": current_user.grades or [],
+        "service_requests": filtered_service_requests,
+    }
+
+
+@app.get("/users/me/profile", response_model=schemas.UserProfileOut, summary="Perfil completo del alumno", tags=["Usuario"])
+def read_user_profile(
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db),
+):
+    # Buscar inscripción activa del alumno en el ciclo vigente
+    active_enrollment = (
+        db.query(models.StudentEnrollment)
+        .filter(
+            models.StudentEnrollment.student_id == current_user.id,
+            models.StudentEnrollment.is_active == True,
+        )
+        .order_by(models.StudentEnrollment.id.desc())
+        .first()
+    )
+
+    career_name = None
+    modality_name = None
+    semester = None
+    group_name = None
+    cycle_period = None
+
+    if active_enrollment:
+        if active_enrollment.career:
+            career_name = active_enrollment.career.name
+        if active_enrollment.modality:
+            modality_name = active_enrollment.modality.name
+        semester = active_enrollment.semester
+        if active_enrollment.group:
+            group_name = active_enrollment.group.name
+        if active_enrollment.cycle:
+            cycle_period = active_enrollment.cycle.period
+
+    # Fallback a campos legacy si la inscripción no tiene relaciones
+    if not career_name:
+        career_name = (
+            current_user.career_rel.name if current_user.career_rel else current_user.carrera
+        )
+    if not modality_name:
+        modality_name = (
+            current_user.modality_rel.name if current_user.modality_rel else current_user.modalidad
+        )
+    if not semester:
+        semester = current_user.semestre
+    if not group_name:
+        group_name = current_user.grupo
+
+    return schemas.UserProfileOut(
+        id=current_user.id,
+        username=current_user.username,
+        email=current_user.email,
+        full_name=current_user.full_name,
+        role=current_user.role,
+        user_status=current_user.user_status,
+        enrollment_status=current_user.enrollment_status,
+        career_name=career_name,
+        modality_name=modality_name,
+        semester=semester,
+        group_name=group_name,
+        cycle_period=cycle_period,
+    )
 
 
 # ----------------------------
@@ -1298,9 +2332,42 @@ def get_admin_stats(current_user: models.User = Depends(admin_required), db: Ses
     }
 
 
-@app.get("/admin/students", response_model=list[schemas.User], summary="Listar alumnos", tags=["Administracion"])
+@app.get("/admin/students", response_model=list[schemas.UserListItem], summary="Listar alumnos", tags=["Administracion"])
 def get_all_students(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
-    return db.query(models.User).filter(models.User.role == models.UserRole.STUDENT).all()
+    from sqlalchemy import func as _func
+    avg_subq = (
+        db.query(
+            models.Grade.student_id,
+            _func.avg(models.Grade.score).label("average_score"),
+        )
+        .filter(models.Grade.score.isnot(None))
+        .group_by(models.Grade.student_id)
+        .subquery()
+    )
+    students = (
+        db.query(
+            models.User.id,
+            models.User.username,
+            models.User.email,
+            models.User.full_name,
+            models.User.role,
+            models.User.moodle_id,
+            models.User.user_status,
+            models.User.enrollment_status,
+            models.User.career_id,
+            models.User.carrera,
+            models.User.modality_id,
+            models.User.modalidad,
+            models.User.semestre,
+            models.User.grupo,
+            avg_subq.c.average_score,
+        )
+        .outerjoin(avg_subq, avg_subq.c.student_id == models.User.id)
+        .filter(models.User.role == models.UserRole.STUDENT)
+        .order_by(models.User.id.asc())
+        .all()
+    )
+    return [row._asdict() for row in students]
 
 
 @app.post("/admin/students", response_model=schemas.User, summary="Crear alumno", tags=["Administracion"])
@@ -1412,13 +2479,47 @@ def update_student(username: str, student_update: schemas.UserUpdate, current_us
     db.commit()
     db.refresh(db_user)
 
-    # Asignar materias de la carrera actualizada
-    if student_update.career_id is not None or (hasattr(student_update, "carrera") and student_update.carrera is not None):
+    # Reforzar la currícula al editar carrera o semestre desde el panel.
+    if db_user.carrera and (
+        student_update.career_id is not None
+        or (hasattr(student_update, "carrera") and student_update.carrera is not None)
+        or student_update.semestre is not None
+    ):
         _assign_curriculum_to_student(db, db_user.id, db_user.carrera)
         db.commit()
 
     db.refresh(db_user)
     return db_user
+
+
+@app.delete("/admin/students/{username}", status_code=204, summary="Eliminar alumno", tags=["Administracion"])
+def delete_student(username: str, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(
+        models.User.username == username,
+        models.User.role == models.UserRole.STUDENT,
+    ).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+
+    enrollment_ids = [
+        enrollment.id
+        for enrollment in db.query(models.StudentEnrollment.id).filter(
+            models.StudentEnrollment.student_id == db_user.id
+        ).all()
+    ]
+
+    if enrollment_ids:
+        db.query(models.CourseEnrollment).filter(
+            models.CourseEnrollment.student_enrollment_id.in_(enrollment_ids)
+        ).delete(synchronize_session=False)
+
+    db.query(models.Payment).filter(models.Payment.student_id == db_user.id).delete(synchronize_session=False)
+    db.query(models.Charge).filter(models.Charge.student_id == db_user.id).delete(synchronize_session=False)
+    db.query(models.ServiceRequest).filter(models.ServiceRequest.student_id == db_user.id).delete(synchronize_session=False)
+    db.query(models.Grade).filter(models.Grade.student_id == db_user.id).delete(synchronize_session=False)
+    db.query(models.StudentEnrollment).filter(models.StudentEnrollment.student_id == db_user.id).delete(synchronize_session=False)
+    db.delete(db_user)
+    db.commit()
 
 
 @app.get("/admin/students/{username}/full", summary="Perfil completo de alumno con docentes", tags=["Administracion"])
@@ -1465,8 +2566,10 @@ def get_student_full_profile(username: str, current_user: models.User = Depends(
         "modality_id": db_user.modality_id,
         "semestre": db_user.semestre,
         "grupo": db_user.grupo,
+        "academic_advisor_id": db_user.academic_advisor_id,
         "grades": grades_data,
         "payments": [{"id": p.id, "concept": p.concept, "amount": p.amount, "status": p.status, "due_date": str(p.due_date)} for p in db_user.payments],
+        "charges": [{"id": c.id, "concept": c.concept, "amount": c.amount, "status": c.status, "due_date": str(c.due_date)} for c in db_user.charges],
         "service_requests": [{"id": r.id, "type": r.type, "status": r.status} for r in db_user.service_requests],
     }
 
@@ -1480,147 +2583,250 @@ def get_student_boleta_pdf(username: str, current_user: models.User = Depends(ad
     if not student:
         raise HTTPException(status_code=404, detail="Alumno no encontrado")
 
-    grades = db.query(models.Grade).filter(models.Grade.student_id == student.id).all()
+    grades = (
+        db.query(models.Grade)
+        .filter(models.Grade.student_id == student.id)
+        .order_by(models.Grade.id.asc())
+        .all()
+    )
 
     def safe(s: object, maxlen: int = 999) -> str:
-        return str(s or "—")[:maxlen]
+        normalized = str(s or "-").replace("—", "-").replace("–", "-")
+        normalized = normalized.encode("latin-1", errors="replace").decode("latin-1")
+        return normalized[:maxlen]
 
-    class BoletaPDF(FPDF):
-        def header(self):
-            self.set_fill_color(26, 61, 182)
-            self.rect(0, 0, 210, 30, "F")
-            self.set_font("Helvetica", "B", 15)
-            self.set_text_color(255, 255, 255)
-            self.set_xy(10, 7)
-            self.cell(190, 9, "Universidad Unives - Legion Axolot", align="C", new_x="LMARGIN", new_y="NEXT")
-            self.set_font("Helvetica", "", 9)
-            self.set_xy(10, 18)
-            self.cell(190, 7, "Boleta Oficial de Calificaciones", align="C", new_x="LMARGIN", new_y="NEXT")
-            self.set_text_color(0, 0, 0)
-            self.set_y(35)
-
-        def footer(self):
-            self.set_y(-13)
-            self.set_font("Helvetica", "I", 7)
-            self.set_text_color(128)
-            self.cell(0, 8, f"Pagina {self.page_no()} | Generado el {datetime.utcnow().strftime('%d/%m/%Y %H:%M')} UTC | Sistema Administrativo Unives", align="C")
-
-    pdf = BoletaPDF()
-    pdf.set_auto_page_break(auto=True, margin=18)
-    pdf.add_page()
-
-    # Folio + fecha
-    folio = f"BOL-{username}-{int(datetime.utcnow().timestamp()) % 1000000:06d}"
-    pdf.set_font("Helvetica", "", 8)
-    pdf.set_text_color(100)
-    pdf.cell(95, 5, f"Folio: {folio}", align="L")
-    pdf.cell(95, 5, f"Fecha: {datetime.utcnow().strftime('%d/%m/%Y')}", align="R", new_x="LMARGIN", new_y="NEXT")
-    pdf.set_text_color(0)
-    pdf.ln(3)
-
-    # Bloque de datos del alumno
-    pdf.set_fill_color(240, 244, 255)
-    pdf.set_draw_color(200, 210, 240)
-    pdf.set_font("Helvetica", "B", 9)
-    pdf.cell(190, 7, "  Datos del Alumno", border=1, fill=True, new_x="LMARGIN", new_y="NEXT")
-    info_rows = [
-        ("Nombre", safe(student.full_name, 40), "Matricula", safe(student.username)),
-        ("Carrera", safe(student.carrera, 35), "Semestre", safe(student.semestre)),
-        ("Correo", safe(student.email, 38), "Grupo", safe(student.grupo)),
-    ]
-    for lbl1, val1, lbl2, val2 in info_rows:
-        pdf.set_font("Helvetica", "B", 8)
-        pdf.cell(22, 6, lbl1 + ":", border="LB", fill=True)
-        pdf.set_font("Helvetica", "", 8)
-        pdf.cell(73, 6, val1, border="RB", fill=True)
-        pdf.set_font("Helvetica", "B", 8)
-        pdf.cell(22, 6, lbl2 + ":", border="LB", fill=True)
-        pdf.set_font("Helvetica", "", 8)
-        pdf.cell(73, 6, val2, border="RB", fill=True, new_x="LMARGIN", new_y="NEXT")
-    pdf.ln(5)
-
-    # Tabla de calificaciones
-    pdf.set_font("Helvetica", "B", 9)
-    pdf.cell(190, 7, "  Historial Academico", new_x="LMARGIN", new_y="NEXT")
-    pdf.ln(1)
-
-    col_w = [60, 18, 45, 20, 16, 18, 13]
-    headers = ["Materia", "Sem.", "Docente", "Ciclo", "Calif.", "Estatus", "Tipo"]
-    pdf.set_fill_color(26, 61, 182)
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 7)
-    for w, h in zip(col_w, headers):
-        pdf.cell(w, 7, h, border=1, fill=True, align="C")
-    pdf.ln()
-
-    pdf.set_text_color(0)
-    pdf.set_font("Helvetica", "", 7)
-    alt = False
-    for g in grades:
-        subject_name = safe(g.subject.name if g.subject else None, 38)
-        subject_sem = safe(g.subject.semester if g.subject else None, 8)
-        teacher_name = "—"
-        cycle_period = "—"
-        if g.assignment:
-            if g.assignment.teacher:
-                teacher_name = safe(g.assignment.teacher.full_name or g.assignment.teacher.username, 28)
-            if g.assignment.cycle:
-                cycle_period = safe(g.assignment.cycle.period, 12)
-        score_txt = str(round(g.score, 1)) if g.score is not None else "—"
-        status_txt = safe(g.status, 14)
-        attempt_txt = "Extemp." if str(g.attempt_type) == "Extemporaneo" else "Regular"
-
-        fill_color = (248, 250, 255) if alt else (255, 255, 255)
-        pdf.set_fill_color(*fill_color)
-        vals = [subject_name, subject_sem, teacher_name, cycle_period, score_txt, status_txt, attempt_txt]
-        for w, v in zip(col_w, vals):
-            pdf.cell(w, 5.5, v, border=1, fill=True, align="C" if w <= 20 else "L")
-        pdf.ln()
-        alt = not alt
-
-    if not grades:
-        pdf.set_fill_color(255, 255, 255)
-        pdf.cell(190, 7, "No hay calificaciones registradas.", border=1, align="C", new_x="LMARGIN", new_y="NEXT")
-
-    # Resumen estadistico
-    pdf.ln(4)
     approved = sum(1 for g in grades if str(g.status) == "Aprobada")
     failed = sum(1 for g in grades if str(g.status) == "Reprobada")
     in_prog = sum(1 for g in grades if str(g.status) == "Cursando")
     scored = [g.score for g in grades if g.score is not None]
     avg = round(sum(scored) / len(scored), 2) if scored else 0.0
-    pdf.set_font("Helvetica", "B", 8)
-    pdf.set_fill_color(240, 244, 255)
-    for lbl, val in [("Aprobadas", approved), ("Reprobadas", failed), ("En curso", in_prog), ("Promedio", avg)]:
-        pdf.cell(47, 6, f"{lbl}: {val}", border=1, fill=True, align="C")
-    pdf.ln()
 
-    # Area de firmas
-    pdf.ln(14)
-    pdf.set_draw_color(100)
-    line_y = pdf.get_y()
-    pdf.set_line_width(0.4)
-    pdf.line(15, line_y, 80, line_y)
-    pdf.line(130, line_y, 195, line_y)
-    pdf.set_font("Helvetica", "", 8)
-    pdf.set_text_color(80)
-    pdf.set_xy(15, line_y + 2)
-    pdf.cell(65, 5, "Director(a) General", align="C")
-    pdf.set_xy(130, line_y + 2)
-    pdf.cell(65, 5, "Secretaria Academica", align="C")
+    folio = f"BOL-{username}-{int(datetime.utcnow().timestamp()) % 1000000:06d}"
+    generated_at = datetime.utcnow()
+
+    class BoletaPDF(FPDF):
+        def header(self):
+            self.set_fill_color(22, 52, 125)
+            self.rect(0, 0, 210, 32, "F")
+            self.set_text_color(255, 255, 255)
+            self.set_font("Helvetica", "B", 17)
+            self.set_xy(12, 8)
+            self.cell(186, 8, safe("Universidad Unives"), align="L")
+            self.set_font("Helvetica", "", 10)
+            self.set_xy(12, 18)
+            self.cell(186, 6, safe("Boleta Oficial de Calificaciones"), align="L")
+            self.set_text_color(35, 35, 35)
+            self.ln(18)
+
+        def footer(self):
+            self.set_y(-12)
+            self.set_draw_color(210, 214, 224)
+            self.line(10, self.get_y(), 200, self.get_y())
+            self.set_y(-9)
+            self.set_font("Helvetica", "", 8)
+            self.set_text_color(110, 118, 135)
+            footer = f"Pagina {self.page_no()} | Generado el {generated_at.strftime('%d/%m/%Y %H:%M')} UTC"
+            self.cell(0, 5, safe(footer), align="C")
+
+    pdf = BoletaPDF(orientation="P", unit="mm", format="A4")
+    pdf.set_auto_page_break(auto=True, margin=18)
+    pdf.add_page()
+
+    pdf.set_fill_color(245, 247, 251)
+    pdf.set_draw_color(223, 228, 238)
+    pdf.rect(10, 36, 190, 30, style="DF")
+    pdf.set_font("Helvetica", "", 9)
+    pdf.set_text_color(97, 107, 127)
+    pdf.set_xy(14, 40)
+    pdf.cell(90, 5, safe(f"Folio: {folio}"), align="L")
+    pdf.cell(82, 5, safe(f"Fecha: {generated_at.strftime('%d/%m/%Y')}"), align="R")
+
+    info_rows = [
+        ("Alumno", safe(student.full_name, 55), "Matricula", safe(student.username, 24)),
+        ("Carrera", safe(student.carrera, 55), "Semestre", safe(student.semestre, 24)),
+        ("Correo", safe(student.email, 55), "Grupo", safe(student.grupo, 24)),
+    ]
+    y = 48
+    for label_left, value_left, label_right, value_right in info_rows:
+        pdf.set_xy(14, y)
+        pdf.set_font("Helvetica", "B", 9)
+        pdf.cell(24, 5, safe(label_left + ":"), align="L")
+        pdf.set_font("Helvetica", "", 9)
+        pdf.cell(70, 5, value_left, align="L")
+        pdf.set_font("Helvetica", "B", 9)
+        pdf.cell(24, 5, safe(label_right + ":"), align="L")
+        pdf.set_font("Helvetica", "", 9)
+        pdf.cell(42, 5, value_right, align="L")
+        y += 6
+
+    summary_y = 72
+    card_w = 45
+    summary_cards = [
+        ("Aprobadas", str(approved), (22, 163, 74)),
+        ("Reprobadas", str(failed), (220, 53, 69)),
+        ("En curso", str(in_prog), (245, 158, 11)),
+        ("Promedio", str(avg), (37, 99, 235)),
+    ]
+    x = 10
+    for label, value, color in summary_cards:
+        pdf.set_fill_color(*color)
+        pdf.rect(x, summary_y, card_w, 18, style="F")
+        pdf.set_xy(x, summary_y + 3)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("Helvetica", "", 8)
+        pdf.cell(card_w, 4, safe(label), align="C")
+        pdf.set_xy(x, summary_y + 8)
+        pdf.set_font("Helvetica", "B", 13)
+        pdf.cell(card_w, 6, safe(value), align="C")
+        x += card_w + 3
+
+    pdf.set_text_color(35, 35, 35)
+    pdf.set_xy(10, 96)
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.cell(190, 7, safe("Boleta por Cuatrimestre"), align="L")
     pdf.ln(10)
 
-    # Nota legal
-    pdf.set_font("Helvetica", "I", 6.5)
-    pdf.set_text_color(140)
-    pdf.multi_cell(190, 3.5,
-        "Documento generado electronicamente por el Sistema Administrativo de Universidad Unives. "
-        "Valido como consulta interna. Para tramites oficiales solicite documento con sello fisico en Secretaria Academica.",
-        align="C")
+    def _subject_for_grade(grade: models.Grade):
+        if grade.subject:
+            return grade.subject
+        if grade.assignment and grade.assignment.subject:
+            return grade.assignment.subject
+        return None
 
-    pdf_bytes = bytes(pdf.output())
+    def _grade_term_number(grade: models.Grade) -> Optional[int]:
+        subject = _subject_for_grade(grade)
+        semester_label = subject.semester if subject else None
+        if not semester_label:
+            return None
+        parsed = _parse_semester_num(semester_label)
+        return parsed if parsed > 0 else None
+
+    def _grade_subject_name(grade: models.Grade) -> str:
+        subject = _subject_for_grade(grade)
+        return safe(subject.name if subject else "-", 60)
+
+    def _grade_subject_id(grade: models.Grade) -> str:
+        subject = _subject_for_grade(grade)
+        return safe(subject.id if subject and subject.id is not None else grade.id, 10)
+
+    def _cuatrimestre_label(number: int) -> str:
+        return f"{number} Cuatrimestre"
+
+    headers = ["ID", "Materia", "Cuatrimestre", "Calificacion"]
+    col_widths = [20, 96, 38, 36]
+    row_height = 7
+    grades_by_term: dict[int, list[models.Grade]] = {term: [] for term in range(1, 10)}
+    for grade in grades:
+        term_number = _grade_term_number(grade)
+        if term_number and term_number in grades_by_term:
+            grades_by_term[term_number].append(grade)
+
+    for term in range(1, 10):
+        if pdf.get_y() > 250:
+            pdf.add_page()
+
+        term_grades = sorted(
+            grades_by_term.get(term, []),
+            key=lambda item: (_grade_subject_name(item).lower(), item.id or 0),
+        )
+        scored = [float(g.score) for g in term_grades if g.score is not None]
+        term_avg = round(sum(scored) / len(scored), 2) if scored else None
+
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.set_text_color(22, 52, 125)
+        pdf.cell(190, 6, safe(_cuatrimestre_label(term)), align="L")
+        pdf.ln(7)
+
+        pdf.set_fill_color(22, 52, 125)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("Helvetica", "B", 8)
+        for header, width in zip(headers, col_widths):
+            pdf.cell(width, 8, safe(header), border=1, align="C", fill=True)
+        pdf.ln()
+
+        pdf.set_font("Helvetica", "", 8)
+        pdf.set_text_color(35, 35, 35)
+
+        if term_grades:
+            alternate = False
+            for grade in term_grades:
+                if pdf.get_y() > 268:
+                    pdf.add_page()
+                    pdf.set_font("Helvetica", "B", 10)
+                    pdf.set_text_color(22, 52, 125)
+                    pdf.cell(190, 6, safe(_cuatrimestre_label(term) + " (continuacion)"), align="L")
+                    pdf.ln(7)
+                    pdf.set_fill_color(22, 52, 125)
+                    pdf.set_text_color(255, 255, 255)
+                    pdf.set_font("Helvetica", "B", 8)
+                    for header, width in zip(headers, col_widths):
+                        pdf.cell(width, 8, safe(header), border=1, align="C", fill=True)
+                    pdf.ln()
+                    pdf.set_font("Helvetica", "", 8)
+                    pdf.set_text_color(35, 35, 35)
+
+                fill = (255, 255, 255) if not alternate else (247, 250, 255)
+                alternate = not alternate
+                pdf.set_fill_color(*fill)
+                values = [
+                    _grade_subject_id(grade),
+                    _grade_subject_name(grade),
+                    safe(_cuatrimestre_label(term), 18),
+                    safe(round(grade.score, 1) if grade.score is not None else "-", 12),
+                ]
+                aligns = ["C", "L", "C", "C"]
+                for value, width, align in zip(values, col_widths, aligns):
+                    pdf.cell(width, row_height, safe(value, 60), border=1, align=align, fill=True)
+                pdf.ln()
+        else:
+            pdf.set_fill_color(248, 250, 252)
+            pdf.set_text_color(90, 98, 112)
+            pdf.cell(sum(col_widths), 8, safe("Sin materias registradas."), border=1, align="C", fill=True)
+            pdf.ln()
+            pdf.set_text_color(35, 35, 35)
+
+        pdf.set_fill_color(236, 242, 255)
+        pdf.set_font("Helvetica", "B", 8)
+        pdf.cell(col_widths[0] + col_widths[1] + col_widths[2], 8, safe("Promedio del cuatrimestre"), border=1, align="R", fill=True)
+        pdf.cell(col_widths[3], 8, safe(term_avg if term_avg is not None else "-", 12), border=1, align="C", fill=True)
+        pdf.ln(12)
+
+    pdf.ln(8)
+    pdf.set_text_color(35, 35, 35)
+    pdf.set_font("Helvetica", "B", 10)
+    pdf.cell(95, 6, safe("Firmas"), align="L")
+    pdf.ln(14)
+    line_y = pdf.get_y()
+    pdf.set_draw_color(140, 148, 165)
+    pdf.line(18, line_y, 82, line_y)
+    pdf.line(128, line_y, 192, line_y)
+    pdf.set_y(line_y + 2)
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_text_color(90, 98, 112)
+    pdf.set_x(18)
+    pdf.cell(64, 5, safe("Director(a) General"), align="C")
+    pdf.set_x(128)
+    pdf.cell(64, 5, safe("Secretaria Academica"), align="C")
+
+    pdf.ln(14)
+    pdf.set_x(10)
+    pdf.set_font("Helvetica", "", 7)
+    pdf.set_text_color(120, 126, 140)
+    pdf.multi_cell(
+        190,
+        4,
+        safe(
+            "Documento generado electronicamente por el Sistema Administrativo de Universidad Unives. "
+            "Valido como consulta interna. Para tramites oficiales solicite documento sellado en Secretaria Academica.",
+            280,
+        ),
+        align="C",
+    )
+
+    raw_pdf = pdf.output(dest="S")
+    pdf_bytes = raw_pdf if isinstance(raw_pdf, (bytes, bytearray)) else str(raw_pdf).encode("latin-1", errors="replace")
     return FastAPIResponse(
-        content=pdf_bytes,
+        content=bytes(pdf_bytes),
         media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename=boleta_{username}.pdf"},
     )
@@ -1815,6 +3021,19 @@ def create_extraordinary_course_enrollment(
     if not assignment:
         raise HTTPException(status_code=404, detail="Asignacion no encontrada")
 
+    failed_attempt = (
+        db.query(models.Grade)
+        .filter(
+            models.Grade.student_id == student.id,
+            models.Grade.assignment_id == assignment.id,
+            models.Grade.attempt_type.in_([models.AttemptType.REGULAR, models.AttemptType.RECURSA]),
+            models.Grade.status == models.GradeStatus.REPROBADA,
+        )
+        .first()
+    )
+    if not failed_attempt:
+        raise HTTPException(status_code=400, detail="El extraordinario requiere un antecedente reprobado en esta misma asignación")
+
     course_enrollment = _create_admin_course_enrollment(
         db,
         student=student,
@@ -1858,11 +3077,23 @@ def create_retake_course_enrollment(
     if not prior_grade:
         raise HTTPException(status_code=400, detail="La recursa requiere un antecedente reprobado de la misma materia")
 
+    approved_grade = (
+        db.query(models.Grade)
+        .filter(
+            models.Grade.student_id == student.id,
+            models.Grade.subject_id == assignment.subject_id,
+            models.Grade.status == models.GradeStatus.APROBADA,
+        )
+        .first()
+    )
+    if approved_grade:
+        raise HTTPException(status_code=400, detail="La materia ya fue aprobada. No corresponde registrar recursa")
+
     course_enrollment = _create_admin_course_enrollment(
         db,
         student=student,
         assignment=assignment,
-        attempt_type=models.AttemptType.REGULAR,
+        attempt_type=models.AttemptType.RECURSA,
         status=body.status,
         create_grade_record=body.create_grade_record,
     )
@@ -1899,30 +3130,35 @@ def drop_course_enrollment(
 def get_groups(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
     from sqlalchemy import func
     active_cycle = _get_active_cycle(db)
-    if not active_cycle:
-        return []
-
     tutor_user = aliased(models.User)
+    enrollment_join = models.StudentEnrollment.group_id == models.Group.id
+    if active_cycle:
+        enrollment_join = enrollment_join & (models.StudentEnrollment.cycle_id == active_cycle.id)
+
+    group_career = aliased(models.Career)
+    enroll_career = aliased(models.Career)
     rows = (
         db.query(
             models.Group.id.label("group_id"),
             models.Group.name.label("grupo"),
-            func.coalesce(func.min(models.Career.name), "Sin carrera").label("carrera"),
+            models.Group.career_id.label("group_career_id"),
+            group_career.name.label("group_career_name"),
+            func.coalesce(func.min(enroll_career.name), "Sin carrera").label("enroll_carrera"),
             models.Group.modality_id.label("modality_id"),
             models.Group.tutor_id.label("tutor_id"),
             tutor_user.full_name.label("tutor_name"),
             func.count(models.StudentEnrollment.id).label("total"),
         )
-        .outerjoin(
-            models.StudentEnrollment,
-            (models.StudentEnrollment.group_id == models.Group.id) & (models.StudentEnrollment.cycle_id == active_cycle.id),
-        )
-        .outerjoin(models.Career, models.Career.id == models.StudentEnrollment.career_id)
+        .outerjoin(models.StudentEnrollment, enrollment_join)
+        .outerjoin(enroll_career, enroll_career.id == models.StudentEnrollment.career_id)
+        .outerjoin(group_career, group_career.id == models.Group.career_id)
         .outerjoin(tutor_user, tutor_user.id == models.Group.tutor_id)
         .filter(models.Group.is_active == True)
         .group_by(
             models.Group.id,
             models.Group.name,
+            models.Group.career_id,
+            group_career.name,
             models.Group.modality_id,
             models.Group.tutor_id,
             tutor_user.full_name,
@@ -1934,11 +3170,12 @@ def get_groups(current_user: models.User = Depends(admin_required), db: Session 
         {
             "group_id": r.group_id,
             "grupo": r.grupo,
-            "carrera": r.carrera or "Sin carrera",
+            "carrera": r.group_career_name or r.enroll_carrera or "Sin carrera",
             "total": r.total,
             "modality_id": r.modality_id,
             "tutor_id": r.tutor_id,
             "tutor_name": r.tutor_name,
+            "career_id": r.group_career_id,
         }
         for r in rows
     ]
@@ -2029,12 +3266,61 @@ def update_group(
                 raise HTTPException(status_code=400, detail="Tutor no encontrado o no es docente")
             group.tutor_id = tutor.id
 
+    if "career_id" in body.model_fields_set:
+        if body.career_id is None:
+            group.career_id = None
+        else:
+            career = db.query(models.Career).filter(models.Career.id == body.career_id).first()
+            if not career:
+                raise HTTPException(status_code=404, detail="Carrera no encontrada")
+            group.career_id = career.id
+
     if "is_active" in body.model_fields_set:
         group.is_active = body.is_active
 
     db.commit()
     db.refresh(group)
     return group
+
+
+@app.delete("/admin/groups/{group_id}", summary="Eliminar grupo", tags=["Administracion"])
+def delete_group(
+    group_id: int,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    group = db.query(models.Group).filter(models.Group.id == group_id).first()
+    if not group:
+        raise HTTPException(status_code=404, detail="Grupo no encontrado")
+
+    affected_enrollments = (
+        db.query(models.StudentEnrollment)
+        .filter(models.StudentEnrollment.group_id == group_id)
+        .all()
+    )
+
+    affected_student_ids = {enrollment.student_id for enrollment in affected_enrollments if enrollment.student_id}
+    for enrollment in affected_enrollments:
+        enrollment.group_id = None
+        enrollment.change_reason = f"Grupo eliminado: {group.name}"
+
+    if affected_student_ids:
+        students = db.query(models.User).filter(models.User.id.in_(affected_student_ids)).all()
+        for student in students:
+            has_other_group = (
+                db.query(models.StudentEnrollment)
+                .filter(
+                    models.StudentEnrollment.student_id == student.id,
+                    models.StudentEnrollment.group_id.isnot(None),
+                )
+                .first()
+            )
+            if not has_other_group and student.grupo == group.name:
+                student.grupo = None
+
+    db.delete(group)
+    db.commit()
+    return {"ok": True, "deleted_group_id": group_id, "released_students": len(affected_student_ids)}
 
 
 @app.get("/admin/groups/{group_id}/students", response_model=list[schemas.StudentEnrollmentWithRelations], summary="Alumnos del grupo", tags=["Administracion"])
@@ -2351,7 +3637,8 @@ def get_grade_outcomes_report(
             assignment.teacher.username if assignment and assignment and assignment.teacher else None
         )
         cycle_period = assignment.cycle.period if assignment and assignment.cycle else None
-        key = (grade.assignment_id, subject_name, teacher_name, cycle_period)
+        group_name_for_assignment = assignment.group.name if assignment and assignment.group else None
+        key = (grade.assignment_id, subject_name, teacher_name, cycle_period, group_name_for_assignment)
         bucket = grouped.setdefault(
             key,
             {
@@ -2359,6 +3646,7 @@ def get_grade_outcomes_report(
                 "subject_name": subject_name,
                 "teacher_name": teacher_name,
                 "cycle_period": cycle_period,
+                "group_name": group_name_for_assignment,
                 "approved_count": 0,
                 "failed_count": 0,
                 "in_progress_count": 0,
@@ -2972,6 +4260,8 @@ def bulk_assign_group_subject(body: dict, current_user: models.User = Depends(ad
     assignment = db.query(models.SubjectAssignment).filter(models.SubjectAssignment.id == assignment_id).first()
     if not assignment:
         raise HTTPException(status_code=404, detail="Asignación no encontrada")
+    if assignment.group and assignment.group.name != grupo:
+        raise HTTPException(status_code=400, detail=f"La asignación pertenece al grupo {assignment.group.name}. Selecciona el mismo grupo para evitar mezclar calificaciones")
 
     enrollments, _ = _get_group_member_enrollments(
         db,
@@ -3042,6 +4332,16 @@ def get_all_school_cycles(current_user: models.User = Depends(admin_required), d
         payment_count = db.query(models.Payment).filter(
             models.Payment.concept.like(f"%{c.period}%") if c.period else False
         ).count() if c.period else 0
+        charges = (
+            db.query(models.Charge)
+            .join(models.StudentEnrollment, models.StudentEnrollment.id == models.Charge.student_enrollment_id)
+            .filter(models.StudentEnrollment.cycle_id == c.id)
+            .all()
+        )
+        total_amount = sum(float(charge.amount or 0) for charge in charges)
+        pending_amount = sum(float(charge.amount or 0) for charge in charges if charge.status == models.PaymentStatus.PENDIENTE)
+        paid_amount = sum(float(charge.amount or 0) for charge in charges if charge.status == models.PaymentStatus.PAGADO)
+        students_affected = len({charge.student_id for charge in charges if charge.student_id})
         result.append({
             "id": c.id,
             "period": c.period,
@@ -3050,13 +4350,165 @@ def get_all_school_cycles(current_user: models.User = Depends(admin_required), d
             "is_active": c.is_active,
             "monthly_amount": c.monthly_amount,
             "payment_count": payment_count,
+            "total_amount": total_amount,
+            "pending_amount": pending_amount,
+            "paid_amount": paid_amount,
+            "students_affected": students_affected,
         })
     return result
 
 
-@app.get("/admin/teachers", response_model=list[schemas.User], summary="Listar docentes", tags=["Administracion"])
+@app.get("/admin/school-cycles/{cycle_id}", response_model=schemas.SchoolCycle, summary="Detalle de ciclo escolar", tags=["Configuracion"])
+def get_school_cycle_detail(cycle_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    cycle = db.query(models.SchoolCycle).filter(models.SchoolCycle.id == cycle_id).first()
+    if not cycle:
+        raise HTTPException(status_code=404, detail="Ciclo escolar no encontrado")
+    return cycle
+
+
+@app.put("/admin/school-cycles/{cycle_id}", response_model=schemas.SchoolCycle, summary="Actualizar ciclo escolar", tags=["Configuracion"])
+def update_school_cycle(
+    cycle_id: int,
+    payload: schemas.SchoolCycleCreate,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    cycle = db.query(models.SchoolCycle).filter(models.SchoolCycle.id == cycle_id).first()
+    if not cycle:
+        raise HTTPException(status_code=404, detail="Ciclo escolar no encontrado")
+    if not (payload.period or "").strip():
+        raise HTTPException(status_code=400, detail="El periodo del ciclo es obligatorio")
+    if payload.start_date >= payload.end_date:
+        raise HTTPException(status_code=400, detail="La fecha de inicio debe ser anterior a la fecha de fin")
+    if not payload.tuitions:
+        raise HTTPException(status_code=400, detail="Debes capturar al menos un costo por carrera y modalidad")
+
+    seen_pairs: set[tuple[int, int]] = set()
+    for tuition in payload.tuitions:
+        key = (tuition.career_id, tuition.modality_id)
+        if key in seen_pairs:
+            raise HTTPException(status_code=400, detail="Hay costos duplicados para la misma carrera y modalidad")
+        seen_pairs.add(key)
+
+    try:
+        cycle.period = payload.period.strip()
+        cycle.start_date = payload.start_date
+        cycle.end_date = payload.end_date
+        cycle.monthly_amount = payload.monthly_amount
+
+        db.query(models.CycleTuition).filter(models.CycleTuition.cycle_id == cycle.id).delete()
+        db.flush()
+        for tuition in payload.tuitions:
+            db.add(models.CycleTuition(
+                cycle_id=cycle.id,
+                career_id=tuition.career_id,
+                modality_id=tuition.modality_id,
+                amount=tuition.amount,
+            ))
+        db.commit()
+        db.refresh(cycle)
+        return cycle
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"No se pudo actualizar el ciclo escolar: {exc}")
+
+
+@app.delete("/admin/school-cycles/{cycle_id}", tags=["Configuracion"], summary="Eliminar ciclo escolar")
+def delete_school_cycle(
+    cycle_id: int,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    cycle = db.query(models.SchoolCycle).filter(models.SchoolCycle.id == cycle_id).first()
+    if not cycle:
+        raise HTTPException(status_code=404, detail="Ciclo escolar no encontrado")
+
+    try:
+        enrollment_ids = [
+            row.id for row in db.query(models.StudentEnrollment.id)
+            .filter(models.StudentEnrollment.cycle_id == cycle.id)
+            .all()
+        ]
+        charge_ids = []
+        if enrollment_ids:
+            charge_ids = [
+                row.id for row in db.query(models.Charge.id)
+                .filter(models.Charge.student_enrollment_id.in_(enrollment_ids))
+                .all()
+            ]
+
+        if charge_ids:
+            db.query(models.Payment).filter(models.Payment.charge_id.in_(charge_ids)).delete(synchronize_session=False)
+            db.query(models.Charge).filter(models.Charge.id.in_(charge_ids)).delete(synchronize_session=False)
+
+        db.query(models.SubjectAssignment).filter(models.SubjectAssignment.cycle_id == cycle.id).update(
+            {"cycle_id": None},
+            synchronize_session=False,
+        )
+        db.query(models.StudentEnrollment).filter(models.StudentEnrollment.cycle_id == cycle.id).delete(synchronize_session=False)
+        db.query(models.CycleTuition).filter(models.CycleTuition.cycle_id == cycle.id).delete(synchronize_session=False)
+        was_active = bool(cycle.is_active)
+        cycle_period = cycle.period
+        db.delete(cycle)
+        db.flush()
+
+        if was_active:
+            replacement_cycle = (
+                db.query(models.SchoolCycle)
+                .filter(models.SchoolCycle.id != cycle_id)
+                .order_by(models.SchoolCycle.id.desc())
+                .first()
+            )
+            if replacement_cycle:
+                replacement_cycle.is_active = True
+
+        db.commit()
+        return {"ok": True, "deleted_cycle_id": cycle_id, "deleted_cycle_period": cycle_period}
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"No se pudo eliminar el ciclo escolar: {exc}")
+
+
+@app.patch("/admin/school-cycles/{cycle_id}/set-active", response_model=schemas.SchoolCycle, summary="Activar ciclo escolar", tags=["Configuracion"])
+def set_active_school_cycle(
+    cycle_id: int,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    cycle = db.query(models.SchoolCycle).filter(models.SchoolCycle.id == cycle_id).first()
+    if not cycle:
+        raise HTTPException(status_code=404, detail="Ciclo escolar no encontrado")
+    db.query(models.SchoolCycle).update({"is_active": False})
+    cycle.is_active = True
+    db.commit()
+    db.refresh(cycle)
+    return cycle
+
+
+@app.get("/admin/teachers", response_model=list[schemas.UserListItem], summary="Listar docentes", tags=["Administracion"])
 def get_all_teachers(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
-    return db.query(models.User).filter(models.User.role == models.UserRole.TEACHER).all()
+    teachers = (
+        db.query(
+            models.User.id,
+            models.User.username,
+            models.User.email,
+            models.User.full_name,
+            models.User.role,
+            models.User.moodle_id,
+            models.User.user_status,
+            models.User.enrollment_status,
+            models.User.career_id,
+            models.User.carrera,
+            models.User.modality_id,
+            models.User.modalidad,
+            models.User.semestre,
+            models.User.grupo,
+        )
+        .filter(models.User.role == models.UserRole.TEACHER)
+        .order_by(models.User.id.asc())
+        .all()
+    )
+    return [row._asdict() for row in teachers]
 
 
 @app.put("/admin/teachers/{username}", response_model=schemas.User, summary="Actualizar docente", tags=["Administracion"])
@@ -3109,21 +4561,27 @@ def get_all_subjects(current_user: models.User = Depends(admin_required), db: Se
 
 
 @app.post("/admin/subjects", response_model=schemas.Subject, summary="Crear materia", tags=["Administracion"])
-def create_subject(subject: schemas.SubjectCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+async def create_subject(subject: schemas.SubjectCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
     new_subject = models.Subject(
         name=subject.name,
         credits=subject.credits,
         semester=subject.semester,
         career=subject.career,
+        modality=subject.modality,
     )
     db.add(new_subject)
     db.commit()
     db.refresh(new_subject)
+    
+    if new_subject.modality and new_subject.modality.lower() in ["virtual", "hibrido", "híbrido"]:
+        await _sync_subject_to_moodle_internal(db, subject=new_subject, category_id=1)
+        db.refresh(new_subject)
+
     return new_subject
 
 
 @app.put("/admin/subjects/{subject_id}", response_model=schemas.SubjectWithTeacher, summary="Actualizar materia", tags=["Administracion"])
-def update_subject(subject_id: int, subject_update: schemas.SubjectUpdate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+async def update_subject(subject_id: int, subject_update: schemas.SubjectUpdate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
     db_subject = db.query(models.Subject).filter(models.Subject.id == subject_id).first()
     if not db_subject:
         raise HTTPException(status_code=404, detail="Materia no encontrada")
@@ -3136,6 +4594,13 @@ def update_subject(subject_id: int, subject_update: schemas.SubjectUpdate, curre
         db_subject.semester = subject_update.semester
     if subject_update.career is not None:
         db_subject.career = subject_update.career
+    if subject_update.modality is not None:
+        db_subject.modality = subject_update.modality
+
+    db.commit()
+    
+    if db_subject.modality and db_subject.modality.lower() in ["virtual", "hibrido", "híbrido"] and not db_subject.moodle_course_id:
+        await _sync_subject_to_moodle_internal(db, subject=db_subject, category_id=1)
 
     teacher = None
     assignment = None
@@ -3180,7 +4645,7 @@ def update_subject(subject_id: int, subject_update: schemas.SubjectUpdate, curre
 # Asignaciones de docente a materia por ciclo
 # ----------------------------
 
-@app.get("/admin/subject-assignments", response_model=list[schemas.SubjectAssignment], summary="Listar asignaciones", tags=["Administracion"])
+@app.get("/admin/subject-assignments", summary="Listar asignaciones", tags=["Administracion"])
 def get_subject_assignments(
     cycle_id: Optional[int] = None,
     current_user: models.User = Depends(admin_required),
@@ -3194,7 +4659,20 @@ def get_subject_assignments(
         active_cycle = db.query(models.SchoolCycle).filter(models.SchoolCycle.is_active == True).first()
         if active_cycle:
             query = query.filter(models.SubjectAssignment.cycle_id == active_cycle.id)
-    return query.all()
+    assignments = query.all()
+    from fastapi.encoders import jsonable_encoder as _je
+    result = []
+    for a in assignments:
+        student_count = len({
+            ce.student_enrollment.student_id
+            for ce in a.course_enrollments
+            if ce.student_enrollment and ce.student_enrollment.student_id
+        })
+        item = _je(schemas.SubjectAssignment.model_validate(a))
+        item["student_count"] = student_count
+        item["group_name"] = a.group.name if a.group else None
+        result.append(item)
+    return result
 
 
 @app.post("/admin/subject-assignments", response_model=schemas.SubjectAssignment, summary="Asignar docente a materia", tags=["Administracion"])
@@ -3218,20 +4696,28 @@ def create_subject_assignment(
     if not cycle_id:
         active_cycle = db.query(models.SchoolCycle).filter(models.SchoolCycle.is_active == True).first()
         cycle_id = active_cycle.id if active_cycle else None
+    if data.group_id is None:
+        raise HTTPException(status_code=400, detail="Debes seleccionar un grupo para la asignación")
+
+    group = db.query(models.Group).filter(models.Group.id == data.group_id, models.Group.is_active == True).first()
+    if not group:
+        raise HTTPException(status_code=404, detail="Grupo no encontrado")
 
     # Verificar duplicado
     existing = db.query(models.SubjectAssignment).filter(
         models.SubjectAssignment.subject_id == data.subject_id,
         models.SubjectAssignment.teacher_id == teacher.id,
         models.SubjectAssignment.cycle_id == cycle_id,
+        models.SubjectAssignment.group_id == data.group_id,
     ).first()
     if existing:
-        raise HTTPException(status_code=400, detail="Este docente ya tiene esta materia asignada en el ciclo indicado")
+        raise HTTPException(status_code=400, detail="Este docente ya tiene esta materia asignada para ese grupo en el ciclo indicado")
 
     assignment = models.SubjectAssignment(
         subject_id=data.subject_id,
         teacher_id=teacher.id,
         cycle_id=cycle_id,
+        group_id=group.id,
     )
     db.add(assignment)
     db.flush()  # Obtener el ID sin hacer commit todavía
@@ -3249,6 +4735,10 @@ def create_subject_assignment(
     )
     linked_count = 0
     for grade in unlinked_grades:
+        active_enrollment = _get_active_student_enrollment(db, grade.student_id) if grade.student_id else None
+        if assignment.group_id:
+            if not active_enrollment or active_enrollment.group_id != assignment.group_id:
+                continue
         grade.assignment_id = assignment.id
         if grade.student:
             grade.course_enrollment_id = _get_or_create_course_enrollment(
@@ -3270,6 +4760,55 @@ def create_subject_assignment(
     data = _jsonable_encoder(assignment)
     data["auto_linked"] = linked_count
     return _JSONResponse(content=data)
+
+
+@app.put("/admin/subject-assignments/{assignment_id}", summary="Cambiar docente de asignación", tags=["Administracion"])
+def update_subject_assignment(
+    assignment_id: int,
+    data: schemas.SubjectAssignmentUpdate,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    assignment = db.query(models.SubjectAssignment).filter(models.SubjectAssignment.id == assignment_id).first()
+    if not assignment:
+        raise HTTPException(status_code=404, detail="Asignación no encontrada")
+    if data.teacher_username is not None:
+        teacher = db.query(models.User).filter(
+            models.User.username == data.teacher_username,
+            models.User.role == models.UserRole.TEACHER,
+        ).first()
+        if not teacher:
+            raise HTTPException(status_code=404, detail="Docente no encontrado")
+        existing = db.query(models.SubjectAssignment).filter(
+            models.SubjectAssignment.subject_id == assignment.subject_id,
+            models.SubjectAssignment.teacher_id == teacher.id,
+            models.SubjectAssignment.cycle_id == assignment.cycle_id,
+            models.SubjectAssignment.group_id == (data.group_id if data.group_id is not None else assignment.group_id),
+            models.SubjectAssignment.id != assignment_id,
+        ).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Este docente ya tiene esta materia asignada para ese grupo en el ciclo")
+        db.query(models.Grade).filter(models.Grade.assignment_id == assignment_id).update(
+            {"assignment_id": assignment_id}, synchronize_session=False
+        )
+        assignment.teacher_id = teacher.id
+    if data.group_id is not None:
+        group = db.query(models.Group).filter(models.Group.id == data.group_id, models.Group.is_active == True).first()
+        if not group:
+            raise HTTPException(status_code=404, detail="Grupo no encontrado")
+        duplicate = db.query(models.SubjectAssignment).filter(
+            models.SubjectAssignment.subject_id == assignment.subject_id,
+            models.SubjectAssignment.teacher_id == assignment.teacher_id,
+            models.SubjectAssignment.cycle_id == assignment.cycle_id,
+            models.SubjectAssignment.group_id == group.id,
+            models.SubjectAssignment.id != assignment_id,
+        ).first()
+        if duplicate:
+            raise HTTPException(status_code=400, detail="Ya existe una asignación igual para ese grupo")
+        assignment.group_id = group.id
+    db.commit()
+    db.refresh(assignment)
+    return assignment
 
 
 @app.delete("/admin/subject-assignments/{assignment_id}", summary="Eliminar asignación", tags=["Administracion"])
@@ -3299,14 +4838,94 @@ def update_grade(grade_id: int, grade_update: schemas.GradeUpdate, current_user:
     return db_grade
 
 
-@app.get("/admin/payments", response_model=list[schemas.PaymentWithStudent], summary="Listar pagos", tags=["Administracion"])
+@app.get("/admin/payments", response_model=list[schemas.PaymentListItem], summary="Listar pagos", tags=["Administracion"])
 def get_all_payments(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
-    return db.query(models.Payment).all()
+    payments = (
+        db.query(
+            models.Payment.id,
+            models.Payment.student_id,
+            models.Payment.charge_id,
+            models.Payment.concept,
+            models.Payment.amount,
+            models.Payment.due_date,
+            models.Payment.status,
+            models.User.username.label("student_username"),
+            models.User.full_name.label("student_full_name"),
+        )
+        .join(models.User, models.User.id == models.Payment.student_id)
+        .order_by(models.Payment.id.desc())
+        .all()
+    )
+    return [
+        {
+            "id": row.id,
+            "student_id": row.student_id,
+            "charge_id": row.charge_id,
+            "concept": row.concept,
+            "amount": row.amount,
+            "due_date": row.due_date,
+            "status": row.status,
+            "student": {
+                "username": row.student_username,
+                "full_name": row.student_full_name,
+            },
+        }
+        for row in payments
+    ]
 
 
-@app.get("/admin/charges", response_model=list[schemas.ChargeWithStudent], summary="Listar cargos", tags=["Administracion"])
-def get_all_charges(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
-    return db.query(models.Charge).order_by(models.Charge.id.desc()).all()
+@app.get("/admin/charges", response_model=list[schemas.ChargeListItem], summary="Listar cargos", tags=["Administracion"])
+def get_all_charges(
+    cycle_id: Optional[int] = None,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    charges = (
+        db.query(
+            models.Charge.id,
+            models.Charge.student_id,
+            models.Charge.student_enrollment_id,
+            models.StudentEnrollment.cycle_id.label("cycle_id"),
+            models.SchoolCycle.period.label("cycle_period"),
+            models.Charge.charge_type,
+            models.Charge.concept,
+            models.Charge.period_label,
+            models.Charge.amount,
+            models.Charge.due_date,
+            models.Charge.status,
+            models.Charge.created_at,
+            models.User.username.label("student_username"),
+            models.User.full_name.label("student_full_name"),
+        )
+        .join(models.User, models.User.id == models.Charge.student_id)
+        .outerjoin(models.StudentEnrollment, models.StudentEnrollment.id == models.Charge.student_enrollment_id)
+        .outerjoin(models.SchoolCycle, models.SchoolCycle.id == models.StudentEnrollment.cycle_id)
+        .order_by(models.Charge.id.desc())
+    )
+    if cycle_id:
+        charges = charges.filter(models.StudentEnrollment.cycle_id == cycle_id)
+    charges = charges.all()
+    return [
+        {
+            "id": row.id,
+            "student_id": row.student_id,
+            "student_enrollment_id": row.student_enrollment_id,
+            "cycle_id": row.cycle_id,
+            "cycle_period": row.cycle_period,
+            "charge_type": row.charge_type,
+            "concept": row.concept,
+            "period_label": row.period_label,
+            "amount": row.amount,
+            "due_date": row.due_date,
+            "status": row.status,
+            "created_at": row.created_at,
+            "student": {
+                "username": row.student_username,
+                "full_name": row.student_full_name,
+            },
+        }
+        for row in charges
+    ]
 
 
 @app.post("/admin/charges", response_model=schemas.ChargeWithStudent, summary="Crear cargo", tags=["Administracion"])
@@ -3382,6 +5001,21 @@ def update_charge(charge_id: int, charge_update: schemas.ChargeUpdate, current_u
     return db_charge
 
 
+@app.delete("/admin/charges/{charge_id}", tags=["Administracion"], summary="Eliminar cargo")
+def delete_charge(charge_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    db_charge = db.query(models.Charge).filter(models.Charge.id == charge_id).first()
+    if not db_charge:
+        raise HTTPException(status_code=404, detail="Cargo no encontrado")
+    try:
+        db.query(models.Payment).filter(models.Payment.charge_id == db_charge.id).delete(synchronize_session=False)
+        db.delete(db_charge)
+        db.commit()
+        return {"ok": True, "deleted_charge_id": charge_id}
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"No se pudo eliminar el cargo: {exc}")
+
+
 @app.post("/admin/payments", response_model=schemas.PaymentWithStudent, summary="Crear pago", tags=["Administracion"])
 def create_payment(payment: schemas.PaymentCreate, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
     db_student = db.query(models.User).filter(models.User.username == payment.student_username).first()
@@ -3423,9 +5057,40 @@ def update_payment(payment_id: int, payment_update: schemas.PaymentUpdate, curre
     return db_payment
 
 
-@app.get("/admin/services", response_model=list[schemas.ServiceRequestWithStudent], summary="Listar tramites", tags=["Administracion"])
+@app.get("/admin/services", response_model=list[schemas.ServiceRequestListItem], summary="Listar tramites", tags=["Administracion"])
 def get_all_services(current_user: models.User = Depends(services_or_admin), db: Session = Depends(get_db)):
-    return db.query(models.ServiceRequest).all()
+    services = (
+        db.query(
+            models.ServiceRequest.id,
+            models.ServiceRequest.student_id,
+            models.ServiceRequest.type,
+            models.ServiceRequest.status,
+            models.ServiceRequest.request_date,
+            models.ServiceRequest.attachment_filename,
+            models.ServiceRequest.attachment_path,
+            models.User.username.label("student_username"),
+            models.User.full_name.label("student_full_name"),
+        )
+        .join(models.User, models.User.id == models.ServiceRequest.student_id)
+        .order_by(models.ServiceRequest.id.desc())
+        .all()
+    )
+    return [
+        {
+            "id": row.id,
+            "student_id": row.student_id,
+            "type": row.type,
+            "status": row.status,
+            "request_date": row.request_date,
+            "attachment_filename": row.attachment_filename,
+            "attachment_path": row.attachment_path,
+            "student": {
+                "username": row.student_username,
+                "full_name": row.student_full_name,
+            },
+        }
+        for row in services
+    ]
 
 
 @app.post("/admin/services", response_model=schemas.ServiceRequestWithStudent, summary="Crear tramite", tags=["Administracion"])
@@ -3531,6 +5196,521 @@ def update_service(service_id: int, service_update: schemas.ServiceRequestUpdate
     return db_service
 
 
+@app.delete("/admin/services/{service_id}", status_code=204, summary="Eliminar tramite", tags=["Administracion"])
+def delete_service(service_id: int, current_user: models.User = Depends(services_or_admin), db: Session = Depends(get_db)):
+    db_service = db.query(models.ServiceRequest).filter(models.ServiceRequest.id == service_id).first()
+    if not db_service:
+        raise HTTPException(status_code=404, detail="Tramite no encontrado")
+    db.delete(db_service)
+    db.commit()
+
+
+@app.get("/admin/academic-services", summary="Listar tramites academicos enriquecidos", tags=["Administracion"])
+def read_admin_academic_services(current_user: models.User = Depends(services_or_admin), db: Session = Depends(get_db)):
+    _ensure_portal_extensions(db)
+    rows = db.execute(text("""
+        SELECT
+            sr.id,
+            sr.student_id,
+            u.username AS student_username,
+            u.full_name AS student_name,
+            sr.type,
+            sr.subject,
+            sr.description,
+            sr.status,
+            sr.request_date,
+            sr.attachment_filename,
+            sr.admin_response,
+            sr.updated_at,
+            sr.closed_at,
+            sr.history_json
+        FROM service_requests sr
+        JOIN users u ON u.id = sr.student_id
+        WHERE COALESCE(sr.is_support_ticket, FALSE) = FALSE
+        ORDER BY sr.request_date DESC, sr.id DESC
+    """)).fetchall()
+    return [_serialize_ticket_row(row) for row in rows]
+
+
+@app.get("/admin/support-tickets", summary="Listar tickets de soporte", tags=["Administracion"])
+def read_admin_support_tickets(current_user: models.User = Depends(services_or_admin), db: Session = Depends(get_db)):
+    _ensure_portal_extensions(db)
+    rows = db.execute(text("""
+        SELECT
+            sr.id,
+            sr.student_id,
+            u.username AS student_username,
+            u.full_name AS student_name,
+            sr.type,
+            sr.subject,
+            sr.description,
+            sr.source_system,
+            sr.status,
+            sr.request_date,
+            sr.attachment_filename,
+            sr.admin_response,
+            sr.updated_at,
+            sr.closed_at,
+            sr.history_json
+        FROM service_requests sr
+        JOIN users u ON u.id = sr.student_id
+        WHERE COALESCE(sr.is_support_ticket, FALSE) = TRUE
+        ORDER BY sr.request_date DESC, sr.id DESC
+    """)).fetchall()
+    return [_serialize_ticket_row(row) for row in rows]
+
+
+@app.put("/admin/support-tickets/{ticket_id}", summary="Responder ticket de soporte", tags=["Administracion"])
+def update_admin_support_ticket(ticket_id: int, payload: dict, current_user: models.User = Depends(services_or_admin), db: Session = Depends(get_db)):
+    _ensure_portal_extensions(db)
+    row = db.execute(text("""
+        SELECT id, status, history_json
+        FROM service_requests
+        WHERE id = :ticket_id AND COALESCE(is_support_ticket, FALSE) = TRUE
+    """), {"ticket_id": ticket_id}).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Ticket no encontrado")
+
+    status_value = payload.get("status") or row._mapping.get("status") or models.ServiceRequestStatus.EN_PROCESO.value
+    admin_response = payload.get("admin_response")
+    close_ticket = bool(payload.get("close_ticket"))
+    closed_at = datetime.utcnow() if close_ticket else None
+    if close_ticket:
+        status_value = models.ServiceRequestStatus.ENTREGADO.value
+
+    history_json = row._mapping.get("history_json")
+    if admin_response:
+        history_json = _append_ticket_history(
+            history_json,
+            actor=current_user.username,
+            action="admin_response",
+            message=admin_response,
+            status_value=status_value,
+        )
+    if close_ticket:
+        history_json = _append_ticket_history(
+            history_json,
+            actor=current_user.username,
+            action="close_ticket",
+            message="Ticket cerrado por administracion",
+            status_value=status_value,
+        )
+
+    db.execute(text("""
+        UPDATE service_requests
+        SET status = :status,
+            admin_response = COALESCE(:admin_response, admin_response),
+            closed_at = COALESCE(:closed_at, closed_at),
+            updated_at = :updated_at,
+            history_json = :history_json
+        WHERE id = :ticket_id
+    """), {
+        "ticket_id": ticket_id,
+        "status": status_value,
+        "admin_response": admin_response,
+        "closed_at": closed_at,
+        "updated_at": datetime.utcnow(),
+        "history_json": history_json,
+    })
+    db.commit()
+
+    updated = db.execute(text("""
+        SELECT
+            sr.id,
+            sr.student_id,
+            u.username AS student_username,
+            u.full_name AS student_name,
+            sr.type,
+            sr.subject,
+            sr.description,
+            sr.source_system,
+            sr.status,
+            sr.request_date,
+            sr.attachment_filename,
+            sr.admin_response,
+            sr.updated_at,
+            sr.closed_at,
+            sr.history_json
+        FROM service_requests sr
+        JOIN users u ON u.id = sr.student_id
+        WHERE sr.id = :ticket_id
+    """), {"ticket_id": ticket_id}).fetchone()
+    return _serialize_ticket_row(updated)
+
+
+@app.get("/admin/notifications", summary="Notificaciones del administrador", tags=["Administracion"])
+def read_admin_notifications(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    _ensure_portal_extensions(db)
+    _ensure_notification_schema(db)
+    notifications: list[dict] = []
+
+    pending_services = db.query(models.ServiceRequest).filter(models.ServiceRequest.status == models.ServiceRequestStatus.EN_PROCESO).count()
+    if pending_services:
+        _push_notification(
+            notifications,
+            notif_type="services",
+            title="Tramites pendientes",
+            message=f"Hay {pending_services} tramite(s) en proceso.",
+            level="warning",
+            source="Servicios Escolares",
+        )
+
+    overdue_charges = db.query(models.Charge).filter(models.Charge.status == models.PaymentStatus.VENCIDO).count()
+    if overdue_charges:
+        _push_notification(
+            notifications,
+            notif_type="finance",
+            title="Cartera vencida",
+            message=f"Existen {overdue_charges} cargo(s) vencido(s) por revisar.",
+            level="danger",
+            source="Tesoreria",
+        )
+
+    support_open = db.execute(text("""
+        SELECT COUNT(*) AS total
+        FROM service_requests
+        WHERE COALESCE(is_support_ticket, FALSE) = TRUE
+          AND status != :closed_status
+    """), {"closed_status": models.ServiceRequestStatus.ENTREGADO.value}).fetchone()
+    support_total = int((support_open._mapping.get("total") if support_open else 0) or 0)
+    if support_total:
+        _push_notification(
+            notifications,
+            notif_type="support",
+            title="Tickets de soporte abiertos",
+            message=f"Hay {support_total} ticket(s) de soporte activos.",
+            level="warning",
+            source="Soporte",
+        )
+
+    recent_admin_messages = (
+        db.query(models.NotificationMessage)
+        .order_by(models.NotificationMessage.created_at.desc(), models.NotificationMessage.id.desc())
+        .limit(10)
+        .all()
+    )
+    for item in recent_admin_messages:
+        if item.recipient_user:
+            target = item.recipient_user.username
+        elif item.recipient_group:
+            target = f"Grupo {item.recipient_group.name}"
+        else:
+            target = "Todos los alumnos" if item.recipient_role == models.UserRole.STUDENT else "Todos los docentes"
+        _push_notification(
+            notifications,
+            notif_type="admin_message",
+            title=item.title,
+            message=f"{item.message} · Destino: {target}",
+            level=item.level or "info",
+            source="Administracion",
+            action_url=item.action_url,
+            created_at=item.created_at,
+        )
+
+    notifications.sort(key=lambda item: item.get("created_at") or "", reverse=True)
+    return {"count": len(notifications), "items": notifications[:20]}
+
+
+@app.get("/admin/notifications/messages", response_model=list[schemas.NotificationMessageOut], summary="Mensajes de notificacion enviados", tags=["Administracion"])
+def list_admin_notification_messages(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    _ensure_notification_schema(db)
+    rows = (
+        db.query(models.NotificationMessage)
+        .order_by(models.NotificationMessage.created_at.desc(), models.NotificationMessage.id.desc())
+        .limit(100)
+        .all()
+    )
+    return [
+        {
+            "id": row.id,
+            "recipient_role": row.recipient_role,
+            "recipient_user_id": row.recipient_user_id,
+            "recipient_username": row.recipient_user.username if row.recipient_user else None,
+            "recipient_group_id": row.recipient_group_id,
+            "recipient_group_name": row.recipient_group.name if row.recipient_group else None,
+            "target_scope": row.target_scope or "role",
+            "category": row.category or "general",
+            "title": row.title,
+            "message": row.message,
+            "level": row.level,
+            "source": row.created_by_user.full_name if row.created_by_user and row.created_by_user.full_name else "Administracion",
+            "action_url": row.action_url,
+            "is_active": row.is_active,
+            "created_at": row.created_at,
+        }
+        for row in rows
+    ]
+
+
+@app.post("/admin/notifications/messages", response_model=schemas.NotificationMessageOut, summary="Enviar notificacion a alumnos o docentes", tags=["Administracion"])
+def create_admin_notification_message(
+    payload: schemas.NotificationMessageCreate,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    _ensure_notification_schema(db)
+    recipient_user = None
+    recipient_group = None
+    if payload.target_scope == "user":
+        if not payload.recipient_username:
+            raise HTTPException(status_code=400, detail="Debes indicar un usuario destinatario")
+        recipient_user = (
+            db.query(models.User)
+            .filter(
+                models.User.username == payload.recipient_username,
+                models.User.role == payload.recipient_role,
+            )
+            .first()
+        )
+        if not recipient_user:
+            raise HTTPException(status_code=404, detail="Usuario destinatario no encontrado para el rol indicado")
+    elif payload.target_scope == "group":
+        if payload.recipient_role != models.UserRole.STUDENT:
+            raise HTTPException(status_code=400, detail="Las notificaciones por grupo solo aplican para alumnos")
+        if not payload.recipient_group_id:
+            raise HTTPException(status_code=400, detail="Debes indicar el grupo destinatario")
+        recipient_group = db.query(models.Group).filter(models.Group.id == payload.recipient_group_id).first()
+        if not recipient_group:
+            raise HTTPException(status_code=404, detail="Grupo destinatario no encontrado")
+
+    notification = models.NotificationMessage(
+        recipient_role=payload.recipient_role,
+        recipient_user_id=recipient_user.id if recipient_user else None,
+        recipient_group_id=recipient_group.id if recipient_group else None,
+        created_by_user_id=current_user.id,
+        target_scope=payload.target_scope,
+        category=payload.category or "general",
+        title=payload.title.strip(),
+        message=payload.message.strip(),
+        level=(payload.level or "info").strip().lower()[:20] or "info",
+        action_url=(payload.action_url or "").strip() or None,
+        is_active=True,
+    )
+    db.add(notification)
+    db.commit()
+    db.refresh(notification)
+    return {
+        "id": notification.id,
+        "recipient_role": notification.recipient_role,
+        "recipient_user_id": notification.recipient_user_id,
+        "recipient_username": recipient_user.username if recipient_user else None,
+        "recipient_group_id": notification.recipient_group_id,
+        "recipient_group_name": recipient_group.name if recipient_group else None,
+        "target_scope": notification.target_scope or "role",
+        "category": notification.category or "general",
+        "title": notification.title,
+        "message": notification.message,
+        "level": notification.level,
+        "source": current_user.full_name or current_user.username,
+        "action_url": notification.action_url,
+        "is_active": notification.is_active,
+        "created_at": notification.created_at,
+    }
+
+
+@app.put("/admin/students/{username}/advisor", summary="Asignar asesor academico directo a un alumno", tags=["Administracion"])
+def assign_student_advisor(
+    username: str,
+    payload: schemas.StudentAdvisorAssign,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    student = (
+        db.query(models.User)
+        .filter(models.User.username == username, models.User.role == models.UserRole.STUDENT)
+        .first()
+    )
+    if not student:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+
+    advisor = None
+    if payload.teacher_id is not None:
+        advisor = (
+            db.query(models.User)
+            .filter(models.User.id == payload.teacher_id, models.User.role == models.UserRole.TEACHER)
+            .first()
+        )
+        if not advisor:
+            raise HTTPException(status_code=404, detail="Docente asesor no encontrado")
+
+    student.academic_advisor_id = advisor.id if advisor else None
+    db.commit()
+    db.refresh(student)
+
+    if advisor:
+        _ensure_notification_schema(db)
+        db.add(models.NotificationMessage(
+            recipient_role=models.UserRole.STUDENT,
+            recipient_user_id=student.id,
+            created_by_user_id=current_user.id,
+            target_scope="user",
+            category="advisor",
+            title="Asesor académico asignado",
+            message=f"Tu asesor académico actual es {advisor.full_name or advisor.username}.",
+            level="info",
+            is_active=True,
+        ))
+        db.commit()
+
+    return {
+        "ok": True,
+        "student_username": student.username,
+        "academic_advisor_id": student.academic_advisor_id,
+        "advisor_name": advisor.full_name if advisor else None,
+    }
+
+
+@app.get("/admin/moodle/health", summary="Estado de conectividad con Moodle", tags=["Administracion"])
+async def read_admin_moodle_health(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    site_info = await moodle_client.get_site_info() if settings.MOODLE_REST_TOKEN else None
+    students_total = db.query(models.User).filter(models.User.role == models.UserRole.STUDENT).count()
+    teachers_total = db.query(models.User).filter(models.User.role == models.UserRole.TEACHER).count()
+    subjects_total = db.query(models.Subject).count()
+    linked_students = db.query(models.User).filter(models.User.role == models.UserRole.STUDENT, models.User.moodle_id.isnot(None)).count()
+    linked_teachers = db.query(models.User).filter(models.User.role == models.UserRole.TEACHER, models.User.moodle_id.isnot(None)).count()
+    linked_subjects = db.query(models.Subject).filter(models.Subject.moodle_course_id.isnot(None)).count()
+    enabled = bool(settings.MOODLE_REST_TOKEN and settings.MOODLE_BASE_URL)
+    connected = bool(site_info)
+    return {
+        "enabled": enabled,
+        "connected": connected,
+        "base_url": settings.MOODLE_BASE_URL if settings.MOODLE_BASE_URL else "",
+        "public_url": settings.MOODLE_PUBLIC_URL if settings.MOODLE_PUBLIC_URL else "",
+        "auto_login_enabled": bool(settings.MOODLE_AUTO_LOGIN_ENABLED),
+        "students_total": students_total,
+        "teachers_total": teachers_total,
+        "subjects_total": subjects_total,
+        "students_linked": linked_students,
+        "teachers_linked": linked_teachers,
+        "subjects_linked": linked_subjects,
+        "site_name": site_info.get("sitename") if isinstance(site_info, dict) else None,
+        "site_url": site_info.get("siteurl") if isinstance(site_info, dict) else None,
+        "functions_count": len(site_info.get("functions", [])) if isinstance(site_info, dict) else 0,
+        "last_error": _latest_moodle_error(),
+        "message": "Conexion Moodle activa." if connected else (_latest_moodle_error() or "Moodle configurado localmente, sin respuesta remota."),
+    }
+
+
+@app.get("/admin/moodle/reconciliation", summary="Resumen local para Moodle", tags=["Administracion"])
+async def read_admin_moodle_reconciliation(current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    students_without_link = db.query(models.User).filter(
+        models.User.role == models.UserRole.STUDENT,
+        models.User.moodle_id.is_(None),
+    ).order_by(models.User.id.asc()).limit(25).all()
+    teachers_without_link = db.query(models.User).filter(
+        models.User.role == models.UserRole.TEACHER,
+        models.User.moodle_id.is_(None),
+    ).order_by(models.User.id.asc()).limit(25).all()
+    subjects_without_link = db.query(models.Subject).filter(
+        models.Subject.moodle_course_id.is_(None),
+    ).order_by(models.Subject.id.asc()).limit(25).all()
+
+    linked_subjects = db.query(models.Subject).filter(models.Subject.moodle_course_id.isnot(None)).order_by(models.Subject.id.asc()).limit(25).all()
+    remote_checks = []
+    for subject in linked_subjects:
+        remote_exists = await moodle_client.check_course_exists(int(subject.moodle_course_id)) if subject.moodle_course_id and settings.MOODLE_REST_TOKEN else False
+        remote_checks.append(
+            {
+                "subject_id": subject.id,
+                "subject_name": subject.name,
+                "moodle_course_id": subject.moodle_course_id,
+                "remote_exists": remote_exists if settings.MOODLE_REST_TOKEN else None,
+            }
+        )
+
+    return {
+        "enabled": bool(settings.MOODLE_REST_TOKEN),
+        "summary": {
+            "students_without_moodle_id": db.query(models.User).filter(models.User.role == models.UserRole.STUDENT, models.User.moodle_id.is_(None)).count(),
+            "teachers_without_moodle_id": db.query(models.User).filter(models.User.role == models.UserRole.TEACHER, models.User.moodle_id.is_(None)).count(),
+            "subjects_without_moodle_course_id": db.query(models.Subject).filter(models.Subject.moodle_course_id.is_(None)).count(),
+        },
+        "students": [
+            {"id": user.id, "username": user.username, "full_name": user.full_name, "email": user.email}
+            for user in students_without_link
+        ],
+        "teachers": [
+            {"id": user.id, "username": user.username, "full_name": user.full_name, "email": user.email}
+            for user in teachers_without_link
+        ],
+        "subjects": [
+            {"id": subject.id, "name": subject.name, "career": subject.career, "semester": subject.semester}
+            for subject in subjects_without_link
+        ],
+        "linked_subjects": remote_checks,
+        "message": "Tablero de reconciliacion listo.",
+    }
+
+
+@app.post("/admin/students/{username}/moodle-sync", summary="Sincronizar alumno con Moodle", tags=["Administracion"])
+async def sync_student_moodle(username: str, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.username == username, models.User.role == models.UserRole.STUDENT).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    evidence = await _sync_student_to_moodle(db, user=db_user)
+    if not evidence.get("success"):
+        raise HTTPException(status_code=502, detail={"message": "No fue posible sincronizar el alumno con Moodle", "moodle_error": _latest_moodle_error(), "evidence": evidence})
+    return {"message": "Alumno sincronizado exitosamente con Moodle", "moodle_id": db_user.moodle_id, "evidence": evidence}
+
+
+@app.post("/admin/teachers/{username}/moodle-sync", summary="Sincronizar docente con Moodle", tags=["Administracion"])
+async def sync_teacher_moodle(username: str, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.username == username, models.User.role == models.UserRole.TEACHER).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Docente no encontrado")
+    evidence = await _sync_teacher_to_moodle(db, user=db_user)
+    if not evidence.get("success"):
+        raise HTTPException(status_code=502, detail={"message": "No fue posible sincronizar el docente con Moodle", "moodle_error": _latest_moodle_error(), "evidence": evidence})
+    return {"message": "Docente sincronizado exitosamente con Moodle", "moodle_id": db_user.moodle_id, "evidence": evidence}
+
+
+@app.post("/admin/subjects/{subject_id}/moodle-sync", summary="Sincronizar materia con Moodle", tags=["Administracion"])
+async def sync_subject_moodle(subject_id: int, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    db_subject = db.query(models.Subject).filter(models.Subject.id == subject_id).first()
+    if not db_subject:
+        raise HTTPException(status_code=404, detail="Materia no encontrada")
+    result = await _sync_subject_to_moodle_internal(db, subject=db_subject, category_id=1)
+    if not result.get("success"):
+        raise HTTPException(status_code=502, detail={"message": result.get("message") or "No fue posible sincronizar la materia con Moodle", "moodle_error": result.get("moodle_error") or _latest_moodle_error(), "evidence": result.get("evidence")})
+    return result
+
+
+@app.get("/admin/moodle/users", summary="Buscar usuarios en Moodle", tags=["Administracion"])
+async def admin_moodle_users(q: str = "", limit: int = 25, current_user: models.User = Depends(admin_required)):
+    users = await moodle_client.get_users(q, max(1, min(limit, 100)))
+    if users is None:
+        raise HTTPException(status_code=502, detail={"message": "No fue posible consultar usuarios en Moodle", "moodle_error": _latest_moodle_error()})
+    return {
+        "query": q,
+        "count": len(users),
+        "users": [
+            {
+                "id": user.get("id"),
+                "username": user.get("username"),
+                "fullname": user.get("fullname") or f"{user.get('firstname', '')} {user.get('lastname', '')}".strip(),
+                "email": user.get("email"),
+            }
+            for user in users
+        ],
+    }
+
+
+@app.get("/admin/moodle/courses", summary="Buscar cursos en Moodle", tags=["Administracion"])
+async def admin_moodle_courses(q: str = "", current_user: models.User = Depends(admin_required)):
+    courses = await moodle_client.search_courses(q)
+    if courses is None:
+        raise HTTPException(status_code=502, detail={"message": "No fue posible consultar cursos en Moodle", "moodle_error": _latest_moodle_error()})
+    return {"query": q, "count": len(courses), "courses": [_serialize_moodle_course(course) for course in courses]}
+
+
+@app.get("/admin/moodle/courses/{course_id}/contents", summary="Contenidos de curso Moodle", tags=["Administracion"])
+async def admin_moodle_course_contents(course_id: int, current_user: models.User = Depends(admin_required)):
+    contents = await moodle_client.get_course_contents(course_id)
+    if contents is None:
+        raise HTTPException(status_code=502, detail={"message": "No fue posible consultar contenidos del curso en Moodle", "moodle_error": _latest_moodle_error()})
+    return {"course_id": course_id, "sections": contents}
+
+
 @app.get("/admin/services/{service_id}/attachment", summary="Descargar adjunto de tramite", tags=["Administracion"])
 def download_admin_service_attachment(
     service_id: int,
@@ -3552,6 +5732,10 @@ def download_admin_service_attachment(
 
 @app.get("/users/me/grades", summary="Mis calificaciones", tags=["Usuario"])
 def read_user_grades(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    if current_user.carrera:
+        _assign_curriculum_to_student(db, current_user.id, current_user.carrera)
+        db.commit()
+
     result = []
     seen_grade_ids = set()
 
@@ -3573,12 +5757,23 @@ def read_user_grades(current_user: models.User = Depends(auth.get_current_user),
             continue
         result.append(_serialize_grade_row(grade=grade))
 
-    return result
+    result.sort(
+        key=lambda item: (
+            _parse_semester_num(item.get("period")),
+            (item.get("description") or "").lower(),
+            item.get("grade_id") or 0,
+        )
+    )
+    return _effective_student_grade_rows(result)
 
 
 @app.get("/users/me/academic-history", response_model=list[schemas.AcademicHistoryItem], summary="Mi historial academico", tags=["Usuario"])
 def read_user_academic_history(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
-    return _get_academic_history_for_student(db, current_user.id)
+    history = _get_academic_history_for_student(db, current_user.id)
+    return [
+        item for item in history
+        if item["course_enrollment_id"] or item["assignment_id"] or item["final_score"] is not None
+    ]
 
 
 @app.put("/users/me", summary="Actualizar perfil", tags=["Usuario"])
@@ -3627,6 +5822,445 @@ def read_user_services(current_user: models.User = Depends(auth.get_current_user
     return db.query(models.ServiceRequest).filter(models.ServiceRequest.student_id == current_user.id).all()
 
 
+@app.post("/users/me/academic-services", summary="Solicitar tramite academico enriquecido", tags=["Usuario"])
+def create_user_academic_service(payload: dict, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    _ensure_portal_extensions(db)
+    service_type = (payload.get("type") or "").strip()
+    subject = (payload.get("subject") or "").strip()
+    description = (payload.get("description") or "").strip()
+    if not service_type or not subject or not description:
+        raise HTTPException(status_code=400, detail="type, subject y description son requeridos")
+
+    history_json = _append_ticket_history(
+        None,
+        actor=current_user.username,
+        action="create_academic_service",
+        message="Tramite academico creado por el alumno",
+        status_value=models.ServiceRequestStatus.EN_PROCESO.value,
+    )
+    request_date = datetime.utcnow()
+    result = db.execute(text("""
+        INSERT INTO service_requests (
+            student_id, type, status, request_date, subject, description,
+            source_system, admin_response, history_json, is_support_ticket, updated_at
+        )
+        VALUES (
+            :student_id, :type, :status, :request_date, :subject, :description,
+            :source_system, NULL, :history_json, FALSE, :updated_at
+        )
+        RETURNING id, student_id, type, status, request_date, subject, description,
+                  source_system, admin_response, attachment_filename, updated_at, closed_at, history_json
+    """), {
+        "student_id": current_user.id,
+        "type": service_type,
+        "status": models.ServiceRequestStatus.EN_PROCESO.value,
+        "request_date": request_date,
+        "subject": subject,
+        "description": description,
+        "source_system": "Portal del Alumno",
+        "history_json": history_json,
+        "updated_at": request_date,
+    }).fetchone()
+    db.commit()
+    return _serialize_ticket_row(result)
+
+
+@app.post("/users/me/support-tickets", summary="Crear ticket de soporte", tags=["Usuario"])
+def create_user_support_ticket(payload: dict, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    _ensure_portal_extensions(db)
+    category = (payload.get("category") or payload.get("type") or "").strip()
+    subject = (payload.get("subject") or "").strip()
+    description = (payload.get("description") or "").strip()
+    source_system = (payload.get("source_system") or "Plataforma").strip()
+    if not category or not subject or not description:
+        raise HTTPException(status_code=400, detail="category, subject y description son requeridos")
+
+    request_date = datetime.utcnow()
+    history_json = _append_ticket_history(
+        None,
+        actor=current_user.username,
+        action="create_support_ticket",
+        message=f"Ticket levantado desde {source_system}",
+        status_value=models.ServiceRequestStatus.EN_PROCESO.value,
+    )
+    result = db.execute(text("""
+        INSERT INTO service_requests (
+            student_id, type, status, request_date, subject, description,
+            source_system, admin_response, history_json, is_support_ticket, updated_at
+        )
+        VALUES (
+            :student_id, :type, :status, :request_date, :subject, :description,
+            :source_system, NULL, :history_json, TRUE, :updated_at
+        )
+        RETURNING id, student_id, type, status, request_date, subject, description,
+                  source_system, admin_response, attachment_filename, updated_at, closed_at, history_json
+    """), {
+        "student_id": current_user.id,
+        "type": category,
+        "status": models.ServiceRequestStatus.EN_PROCESO.value,
+        "request_date": request_date,
+        "subject": subject,
+        "description": description,
+        "source_system": source_system,
+        "history_json": history_json,
+        "updated_at": request_date,
+    }).fetchone()
+    db.commit()
+    return _serialize_ticket_row(result)
+
+
+@app.get("/users/me/support-tickets", summary="Mis tickets de soporte", tags=["Usuario"])
+def read_user_support_tickets(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    _ensure_portal_extensions(db)
+    rows = db.execute(text("""
+        SELECT
+            id, student_id, type, status, request_date, subject, description,
+            source_system, admin_response, attachment_filename, updated_at, closed_at, history_json
+        FROM service_requests
+        WHERE student_id = :student_id
+          AND COALESCE(is_support_ticket, FALSE) = TRUE
+        ORDER BY request_date DESC, id DESC
+    """), {"student_id": current_user.id}).fetchall()
+    return [_serialize_ticket_row(row) for row in rows]
+
+
+@app.get("/users/me/notifications", summary="Notificaciones del alumno", tags=["Usuario"])
+def read_user_notifications(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    _ensure_portal_extensions(db)
+    notifications: list[dict] = _get_custom_notifications_for_user(db, current_user)
+
+    pending_charges = db.query(models.Charge).filter(
+        models.Charge.student_id == current_user.id,
+        models.Charge.status != models.PaymentStatus.PAGADO,
+    ).count()
+    if pending_charges:
+        _push_notification(
+            notifications,
+            notif_type="charges",
+            title="Pagos pendientes",
+            message=f"Tienes {pending_charges} cargo(s) pendiente(s).",
+            level="warning",
+            source="Tesoreria",
+        )
+
+    pending_services = db.query(models.ServiceRequest).filter(
+        models.ServiceRequest.student_id == current_user.id,
+        models.ServiceRequest.status == models.ServiceRequestStatus.EN_PROCESO,
+    ).count()
+    if pending_services:
+        _push_notification(
+            notifications,
+            notif_type="services",
+            title="Tramites en proceso",
+            message=f"Tienes {pending_services} tramite(s) en seguimiento.",
+            level="info",
+            source="Servicios",
+        )
+
+    support_rows = db.execute(text("""
+        SELECT id, subject, status, updated_at, request_date
+        FROM service_requests
+        WHERE student_id = :student_id
+          AND COALESCE(is_support_ticket, FALSE) = TRUE
+          AND status != :closed_status
+        ORDER BY COALESCE(updated_at, request_date) DESC
+    """), {
+        "student_id": current_user.id,
+        "closed_status": models.ServiceRequestStatus.ENTREGADO.value,
+    }).fetchall()
+    for row in support_rows:
+        row_data = row._mapping
+        _push_notification(
+            notifications,
+            notif_type="support",
+            title=f"Ticket #{row_data.get('id')} activo",
+            message=f"{row_data.get('subject') or 'Soporte tecnico'} · Estatus: {row_data.get('status')}",
+            level="warning",
+            source="Soporte",
+            created_at=row_data.get("updated_at") or row_data.get("request_date") or datetime.utcnow(),
+        )
+
+    if settings.MOODLE_BASE_URL:
+        _push_notification(
+            notifications,
+            notif_type="moodle",
+            title="Aula virtual disponible",
+            message="Tu acceso a Moodle esta listo para abrirse desde el portal.",
+            level="success",
+            source="Moodle",
+            action_url=_build_moodle_url("/my/"),
+        )
+    else:
+        _push_notification(
+            notifications,
+            notif_type="moodle",
+            title="Aula virtual no configurada",
+            message="Moodle aun no esta configurado en este entorno.",
+            level="secondary",
+            source="Moodle",
+        )
+
+    advisor = read_user_advisor(current_user=current_user, db=db)
+    advisor_data = advisor.get("advisor")
+    if advisor_data:
+        advisor_name = advisor_data.get("teacher_full_name") or advisor_data.get("teacher_username") or "Tutor"
+        _push_notification(
+            notifications,
+            notif_type="advisor",
+            title="Asesoria activa",
+            message=f"Tu asesor actual es {advisor_name}.",
+            level="info",
+            source="Asesoria",
+        )
+
+    notifications.sort(key=lambda item: item.get("created_at") or "", reverse=True)
+    return {"count": len(notifications), "items": notifications[:20]}
+
+
+@app.post("/users/me/notifications/{notification_id}/read", summary="Marcar notificacion como leida", tags=["Usuario"])
+def mark_user_notification_read(
+    notification_id: int,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db),
+):
+    notification = _get_user_manageable_notification(db, notification_id=notification_id, user=current_user)
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notificacion no encontrada")
+    notification.is_read = True
+    notification.read_at = datetime.utcnow()
+    db.commit()
+    db.refresh(notification)
+    return {"ok": True, "id": notification.id, "is_read": True, "read_at": notification.read_at.isoformat() if notification.read_at else None}
+
+
+@app.delete("/users/me/notifications/{notification_id}", summary="Ocultar notificacion del alumno", tags=["Usuario"])
+def delete_user_notification(
+    notification_id: int,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db),
+):
+    notification = _get_user_manageable_notification(db, notification_id=notification_id, user=current_user)
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notificacion no encontrada")
+    notification.is_active = False
+    db.commit()
+    return {"ok": True, "id": notification_id}
+
+
+@app.get("/users/me/advisor", summary="Tutor o asesor actual del alumno", tags=["Usuario"])
+def read_user_advisor(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    advisor = _get_effective_student_advisor(db, current_user)
+    active_enrollment = _get_active_student_enrollment(db, current_user.id)
+    if not advisor:
+        return {"advisor": None, "messages": []}
+
+    advisor_messages = (
+        db.query(models.NotificationMessage)
+        .filter(
+            models.NotificationMessage.category == "advisor",
+            models.NotificationMessage.recipient_user_id == current_user.id,
+            models.NotificationMessage.created_by_user_id == advisor.id,
+            models.NotificationMessage.is_active == True,
+        )
+        .order_by(models.NotificationMessage.created_at.desc(), models.NotificationMessage.id.desc())
+        .limit(10)
+        .all()
+    )
+    return {
+        "advisor": {
+            "teacher_id": advisor.id,
+            "teacher_username": advisor.username,
+            "teacher_full_name": advisor.full_name,
+            "teacher_email": advisor.email,
+            "period_label": active_enrollment.cycle.period if active_enrollment.cycle else None,
+            "notes": current_user.academic_advisor_id
+                and "Seguimiento academico directo asignado por administracion."
+                or (f"Seguimiento academico del grupo {active_enrollment.group.name}." if active_enrollment and active_enrollment.group else "Seguimiento academico activo."),
+        },
+        "messages": [
+            {
+                "id": message.id,
+                "title": message.title,
+                "message": message.message,
+                "created_at": message.created_at,
+            }
+            for message in advisor_messages
+        ],
+    }
+
+
+@app.get("/users/me/pasaporte", response_model=schemas.PasaporteOut, summary="Pasaporte digital del alumno", tags=["Usuario"])
+def read_pasaporte(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    active_enrollment = _get_active_student_enrollment(db, current_user.id)
+    career_name = ""
+    if active_enrollment and active_enrollment.career:
+        career_name = active_enrollment.career.name or ""
+    if not career_name:
+        career_name = current_user.carrera or ""
+    is_university = "preparatoria" not in career_name.lower() and "prepa" not in career_name.lower()
+
+    thesis = db.query(models.ThesisRecord).filter(models.ThesisRecord.student_id == current_user.id).first()
+    ss_records = db.query(models.SocialServiceRecord).filter(models.SocialServiceRecord.student_id == current_user.id).all()
+
+    return schemas.PasaporteOut(
+        is_university=is_university,
+        thesis=schemas.ThesisOut.model_validate(thesis) if thesis else None,
+        social_services=[schemas.SocialServiceOut.model_validate(r) for r in ss_records],
+    )
+
+
+@app.get("/admin/students/{username}/pasaporte", response_model=schemas.PasaporteOut, summary="Pasaporte digital de alumno (admin)", tags=["Administracion"])
+def admin_read_student_pasaporte(username: str, current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    student = db.query(models.User).filter(models.User.username == username).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    active_enrollment = _get_active_student_enrollment(db, student.id)
+    career_name = ""
+    if active_enrollment and active_enrollment.career:
+        career_name = active_enrollment.career.name or ""
+    if not career_name:
+        career_name = student.carrera or ""
+    is_university = "preparatoria" not in career_name.lower() and "prepa" not in career_name.lower()
+    thesis = db.query(models.ThesisRecord).filter(models.ThesisRecord.student_id == student.id).first()
+    ss_records = db.query(models.SocialServiceRecord).filter(models.SocialServiceRecord.student_id == student.id).all()
+    return schemas.PasaporteOut(
+        is_university=is_university,
+        thesis=schemas.ThesisOut.model_validate(thesis) if thesis else None,
+        social_services=[schemas.SocialServiceOut.model_validate(r) for r in ss_records],
+    )
+
+
+@app.put("/admin/students/{student_id}/pasaporte/thesis", summary="Actualizar tesis de alumno (admin)", tags=["Admin"])
+def admin_update_thesis(
+    student_id: int,
+    data: schemas.ThesisAdminUpdate,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role not in (models.UserRole.ADMIN, models.UserRole.SERVICES):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Sin permiso")
+    student = db.query(models.User).filter(models.User.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    record = db.query(models.ThesisRecord).filter(models.ThesisRecord.student_id == student_id).first()
+    if not record:
+        record = models.ThesisRecord(student_id=student_id)
+        db.add(record)
+    for field, value in data.model_dump(exclude_none=True).items():
+        setattr(record, field, value)
+    record.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(record)
+    return schemas.ThesisOut.model_validate(record)
+
+
+@app.put("/admin/students/{student_id}/pasaporte/social-service/{service_type}", summary="Actualizar servicio social de alumno (admin)", tags=["Admin"])
+def admin_update_social_service(
+    student_id: int,
+    service_type: str,
+    data: schemas.SocialServiceAdminUpdate,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role not in (models.UserRole.ADMIN, models.UserRole.SERVICES):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Sin permiso")
+    student = db.query(models.User).filter(models.User.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    valid_types = [e.value for e in models.SocialServiceType]
+    if service_type not in valid_types:
+        raise HTTPException(status_code=400, detail=f"Tipo inválido. Use: {valid_types}")
+    record = (
+        db.query(models.SocialServiceRecord)
+        .filter(models.SocialServiceRecord.student_id == student_id, models.SocialServiceRecord.service_type == service_type)
+        .first()
+    )
+    if not record:
+        record = models.SocialServiceRecord(student_id=student_id, service_type=service_type)
+        db.add(record)
+    for field, value in data.model_dump(exclude_none=True).items():
+        setattr(record, field, value)
+    record.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(record)
+    return schemas.SocialServiceOut.model_validate(record)
+
+
+@app.get("/users/me/moodle-url", summary="Estado y URL base de Moodle", tags=["Usuario"])
+async def read_user_moodle_url(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    credentials = _get_moodle_credentials_for_user(db, current_user)
+    remote_courses = await moodle_client.get_user_courses(int(current_user.moodle_id)) if current_user.moodle_id and settings.MOODLE_REST_TOKEN else None
+    serialized_courses = [_serialize_moodle_course(course) for course in (remote_courses or [])]
+    if not serialized_courses:
+        local_courses = await read_user_courses(current_user=current_user, db=db)
+        serialized_courses = [
+            {
+                "id": item.get("id"),
+                "displayname": item.get("name"),
+                "fullname": item.get("name"),
+                "teacher": item.get("teacher"),
+                "view_url": _build_moodle_public_url("/my/"),
+            }
+            for item in local_courses[:6]
+        ]
+    return {
+        "enabled": bool(settings.MOODLE_BASE_URL),
+        "linked": bool(current_user.moodle_id),
+        "moodle_id": current_user.moodle_id,
+        "launch_url": _build_moodle_public_url("/my/"),
+        "login_url": _build_moodle_public_url("/login/index.php"),
+        "courses_url": _build_moodle_public_url("/my/courses.php"),
+        "moodle_username": credentials.get("moodle_username"),
+        "password_configured": bool(credentials.get("moodle_password")),
+        "has_courses": bool(serialized_courses),
+        "courses_count": len(serialized_courses),
+        "courses": serialized_courses,
+    }
+
+
+@app.get("/users/me/moodle-launch", summary="Preparar apertura de Moodle", tags=["Usuario"])
+async def read_user_moodle_launch(target_url: Optional[str] = None, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    credentials = _get_moodle_credentials_for_user(db, current_user)
+    base_target = target_url or _build_moodle_public_url("/my/")
+    can_auto_login = bool(
+        settings.MOODLE_AUTO_LOGIN_ENABLED
+        and current_user.moodle_id
+        and credentials.get("moodle_username")
+        and credentials.get("moodle_password")
+    )
+    return {
+        "enabled": bool(settings.MOODLE_BASE_URL),
+        "can_auto_login": can_auto_login,
+        "reason": None if can_auto_login else "auto_login_not_available",
+        "url": base_target,
+        "target_url": base_target,
+        "login_url": _build_moodle_public_url("/login/index.php"),
+        "moodle_username": credentials.get("moodle_username"),
+        "username": credentials.get("moodle_username"),
+        "password": credentials.get("moodle_password") if can_auto_login else None,
+        "login_post_url": _build_moodle_public_url("/login/index.php"),
+    }
+
+
+@app.get("/users/me/moodle-courses/{course_id}/contents", summary="Contenido de curso Moodle", tags=["Usuario"])
+async def read_user_moodle_course_contents(course_id: int, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    if current_user.moodle_id and settings.MOODLE_REST_TOKEN:
+        user_courses = await moodle_client.get_user_courses(int(current_user.moodle_id))
+        allowed_ids = {int(course.get("id")) for course in (user_courses or []) if course.get("id")}
+        if int(course_id) not in allowed_ids:
+            raise HTTPException(status_code=404, detail="Curso no encontrado para este alumno")
+        contents = await moodle_client.get_course_contents(course_id)
+        if contents is None:
+            raise HTTPException(status_code=502, detail={"message": "No fue posible obtener modulos del curso en Moodle", "moodle_error": _latest_moodle_error()})
+        return {"course_id": course_id, "sections": contents}
+
+    courses = await read_user_courses(current_user=current_user, db=db)
+    course = next((item for item in courses if int(item.get("id") or 0) == int(course_id)), None)
+    if not course:
+        raise HTTPException(status_code=404, detail="Curso no encontrado")
+    return {"course_id": course_id, "sections": [], "modules": [], "message": "Moodle no esta disponible en este entorno.", "course": course}
+
+
 @app.get("/users/me/documents", summary="Mis documentos", tags=["Usuario"])
 async def list_documents(current_user: models.User = Depends(auth.get_current_user)):
     upload_dir = f"{settings.UPLOAD_DIR}/{current_user.username}"
@@ -3650,6 +6284,10 @@ async def list_documents(current_user: models.User = Depends(auth.get_current_us
 
 @app.get("/users/me/courses", summary="Mis cursos", tags=["Usuario"])
 async def read_user_courses(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    if current_user.carrera:
+        _assign_curriculum_to_student(db, current_user.id, current_user.carrera)
+        db.commit()
+
     course_enrollments = (
         db.query(models.CourseEnrollment)
         .join(models.StudentEnrollment)
@@ -3663,11 +6301,18 @@ async def read_user_courses(current_user: models.User = Depends(auth.get_current
         grade = _get_grade_for_course_enrollment(ce)
         if grade:
             seen_grade_ids.add(grade.id)
-        courses.append(_serialize_course_card(ce, grade))
+        subject = ce.assignment.subject if ce.assignment and ce.assignment.subject else (grade.subject if grade else None)
+        if not _subject_is_virtual_classroom_enabled(subject):
+            continue
+        payload = _serialize_course_card(ce, grade)
+        payload["modality"] = subject.modality if subject else None
+        courses.append(payload)
 
     legacy_grades = db.query(models.Grade).filter(models.Grade.student_id == current_user.id).all()
     for g in legacy_grades:
         if g.id in seen_grade_ids:
+            continue
+        if not _subject_is_virtual_classroom_enabled(g.subject):
             continue
         if g.assignment and g.assignment.teacher:
             professor_name = g.assignment.teacher.full_name or g.assignment.teacher.username
@@ -3683,8 +6328,17 @@ async def read_user_courses(current_user: models.User = Depends(auth.get_current
                 "semester": g.subject.semester if g.subject else None,
                 "credits": g.subject.credits if g.subject else None,
                 "status": g.status,
+                "moodle_course_id": g.subject.moodle_course_id if g.subject else None,
+                "modality": g.subject.modality if g.subject else None,
             }
         )
+    courses.sort(
+        key=lambda item: (
+            _parse_semester_num(item.get("semester")),
+            (item.get("name") or "").lower(),
+            item.get("id") or 0,
+        )
+    )
     return courses
 
 
@@ -3714,8 +6368,66 @@ def get_teacher_subjects(current_user: models.User = Depends(teacher_or_admin), 
             "semester": a.subject.semester if a.subject else None,
             "career": a.subject.career if a.subject else None,
             "cycle_id": a.cycle_id,
+            "group_id": a.group_id,
+            "group_name": a.group.name if a.group else None,
         })
     return result
+
+
+@app.get("/teacher/notifications", summary="Notificaciones del docente", tags=["Docente"])
+def read_teacher_notifications(current_user: models.User = Depends(teacher_or_admin), db: Session = Depends(get_db)):
+    notifications: list[dict] = _get_custom_notifications_for_user(db, current_user)
+
+    active_cycle = _get_active_cycle(db)
+    assignments_query = db.query(models.SubjectAssignment).filter(models.SubjectAssignment.teacher_id == current_user.id)
+    if active_cycle:
+        assignments_query = assignments_query.filter(models.SubjectAssignment.cycle_id == active_cycle.id)
+    assignments = assignments_query.all()
+
+    if assignments:
+        _push_notification(
+            notifications,
+            notif_type="assignments",
+            title="Materias asignadas",
+            message=f"Tienes {len(assignments)} materia(s) asignada(s) en el ciclo activo.",
+            level="info",
+            source="Administracion",
+        )
+
+    unlocked_grades = (
+        db.query(models.Grade)
+        .join(models.SubjectAssignment, models.SubjectAssignment.id == models.Grade.assignment_id)
+        .filter(
+            models.SubjectAssignment.teacher_id == current_user.id,
+            models.Grade.teacher_locked == False,
+        )
+    )
+    if active_cycle:
+        unlocked_grades = unlocked_grades.filter(models.SubjectAssignment.cycle_id == active_cycle.id)
+    unlocked_total = unlocked_grades.count()
+    if unlocked_total:
+        _push_notification(
+            notifications,
+            notif_type="grades_pending",
+            title="Calificaciones pendientes",
+            message=f"Aun tienes {unlocked_total} calificacion(es) sin captura final.",
+            level="warning",
+            source="Control Escolar",
+        )
+
+    if settings.MOODLE_BASE_URL:
+        _push_notification(
+            notifications,
+            notif_type="moodle",
+            title="Moodle docente disponible",
+            message="Puedes entrar a Moodle desde tu panel docente.",
+            level="success",
+            source="Moodle",
+            action_url=_build_moodle_url("/my/courses.php"),
+        )
+
+    notifications.sort(key=lambda item: item.get("created_at") or "", reverse=True)
+    return {"count": len(notifications), "items": notifications[:20]}
 
 
 @app.get("/teacher/students/{assignment_id}", summary="Alumnos por asignación", tags=["Docente"])
@@ -3739,6 +6451,8 @@ def get_students_by_assignment(assignment_id: int, current_user: models.User = D
         student = course_enrollment.student_enrollment.student if course_enrollment.student_enrollment else None
         if not student:
             continue
+        active_enrollment = _get_active_student_enrollment(db, student.id)
+        active_group_name = active_enrollment.group.name if active_enrollment and active_enrollment.group else None
         grade = _get_grade_for_course_enrollment(course_enrollment)
         if grade:
             seen_grade_ids.add(grade.id)
@@ -3751,12 +6465,27 @@ def get_students_by_assignment(assignment_id: int, current_user: models.User = D
             "score": grade.score if grade else None,
             "status": grade.status if grade else course_enrollment.status,
             "attempt_type": grade.attempt_type if grade else course_enrollment.attempt_type,
+            "teacher_locked": grade.teacher_locked if grade else False,
+            "document_filename": grade.document_filename if grade else None,
+            "has_document": bool(grade and grade.document_path),
+            "group_name": (
+                active_group_name
+                or (
+                    course_enrollment.student_enrollment.group.name
+                    if course_enrollment.student_enrollment and course_enrollment.student_enrollment.group
+                    else None
+                )
+                or student.grupo
+                or (assignment.group.name if assignment.group else None)
+            ),
         })
 
     grades = db.query(models.Grade).filter(models.Grade.assignment_id == assignment_id).all()
     for grade in grades:
         if grade.id in seen_grade_ids:
             continue
+        active_enrollment = _get_active_student_enrollment(db, grade.student.id) if grade.student else None
+        active_group_name = active_enrollment.group.name if active_enrollment and active_enrollment.group else None
         result.append({
             "grade_id": grade.id,
             "course_enrollment_id": grade.course_enrollment_id,
@@ -3766,9 +6495,13 @@ def get_students_by_assignment(assignment_id: int, current_user: models.User = D
             "score": grade.score,
             "status": grade.status,
             "attempt_type": grade.attempt_type,
+            "teacher_locked": grade.teacher_locked,
+            "document_filename": grade.document_filename,
+            "has_document": bool(grade.document_path),
+            "group_name": active_group_name or grade.student.grupo or (assignment.group.name if assignment.group else None),
         })
 
-    result.sort(key=lambda item: ((item["full_name"] or "").lower(), item["username"]))
+    result.sort(key=lambda item: (((item["group_name"] or "Sin grupo")).lower(), (item["full_name"] or "").lower(), item["username"]))
     return result
 
 
@@ -3789,15 +6522,15 @@ def create_extemporaneo_grade(
     if current_user.role == models.UserRole.TEACHER and assignment.teacher_id != current_user.id:
         raise HTTPException(status_code=403, detail="No tienes permisos sobre esta asignación")
 
-    # Verificar que el alumno tiene una calificación REPROBADA en este assignment
-    regular_grade = db.query(models.Grade).filter(
+    # Verificar que el alumno tiene una calificación reprobada previa en esta misma asignación.
+    failed_grade = db.query(models.Grade).filter(
         models.Grade.assignment_id == assignment_id,
         models.Grade.student_id == student_id,
-        models.Grade.attempt_type == models.AttemptType.REGULAR,
+        models.Grade.attempt_type.in_([models.AttemptType.REGULAR, models.AttemptType.RECURSA]),
         models.Grade.status == models.GradeStatus.REPROBADA,
     ).first()
-    if not regular_grade:
-        raise HTTPException(status_code=400, detail="El alumno debe tener una calificación ordinaria REPROBADA para registrar un extemporáneo")
+    if not failed_grade:
+        raise HTTPException(status_code=400, detail="El alumno debe tener una calificación reprobada previa para registrar un extemporáneo")
 
     # Verificar que no existe ya un extemporáneo
     existing = db.query(models.Grade).filter(
@@ -3873,6 +6606,55 @@ def update_student_grade(grade_id: int, grade_update: schemas.GradeUpdate, curre
     return db_grade
 
 
+@app.post("/teacher/grades/{grade_id}/document", summary="Subir comprobante fisico de calificacion", tags=["Docente"])
+async def upload_grade_document(
+    grade_id: int,
+    file: UploadFile = File(...),
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    db_grade = db.query(models.Grade).filter(models.Grade.id == grade_id).first()
+    if not db_grade:
+        raise HTTPException(status_code=404, detail="Calificacion no encontrada")
+    if current_user.role == models.UserRole.TEACHER:
+        if db_grade.assignment and db_grade.assignment.teacher_id != current_user.id:
+            raise HTTPException(status_code=403, detail="No tienes permiso sobre esta calificacion")
+    _validate_upload_file(
+        file,
+        allowed_types=["image/jpeg", "image/png", "image/webp", "application/pdf"],
+        max_size_bytes=10 * 1024 * 1024,
+    )
+    safe_name = Path(file.filename or "comprobante").name
+    relative_dir = Path("grades") / str(grade_id)
+    absolute_dir = Path(settings.UPLOAD_DIR) / relative_dir
+    absolute_dir.mkdir(parents=True, exist_ok=True)
+    stored_name = f"{uuid4().hex}_{safe_name}"
+    absolute_path = absolute_dir / stored_name
+    with absolute_path.open("wb") as buf:
+        buf.write(await file.read())
+    db_grade.document_filename = safe_name
+    db_grade.document_path = str(relative_dir / stored_name)
+    db.commit()
+    return {"ok": True, "filename": safe_name}
+
+
+@app.get("/teacher/grades/{grade_id}/document", summary="Ver comprobante fisico de calificacion", tags=["Docente"])
+def download_grade_document(
+    grade_id: int,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    from fastapi.responses import FileResponse
+    db_grade = db.query(models.Grade).filter(models.Grade.id == grade_id).first()
+    if not db_grade or not db_grade.document_path:
+        raise HTTPException(status_code=404, detail="Sin comprobante adjunto")
+    if current_user.role == models.UserRole.TEACHER:
+        if db_grade.assignment and db_grade.assignment.teacher_id != current_user.id:
+            raise HTTPException(status_code=403, detail="No tienes permiso sobre esta calificacion")
+    abs_path = (Path(settings.UPLOAD_DIR) / db_grade.document_path).resolve()
+    if not abs_path.exists():
+        raise HTTPException(status_code=404, detail="Archivo no encontrado en servidor")
+    return FileResponse(str(abs_path), filename=db_grade.document_filename or "comprobante")
 
 
 # ── Página Web: endpoints públicos ──────────────────────────────────────────
@@ -4123,6 +6905,288 @@ def admin_delete_community(community_id: int, current_user: models.User = Depend
         raise HTTPException(status_code=404, detail="Comunidad no encontrada")
     db.delete(community)
     db.commit()
+
+
+@app.get("/teacher/advisor/students", summary="Alumnos asignados en asesoria", tags=["Docente"])
+def read_teacher_advisor_students(current_user: models.User = Depends(teacher_or_admin), db: Session = Depends(get_db)):
+    active_cycle = _get_active_cycle(db)
+    rows = []
+    seen_student_ids = set()
+
+    direct_students = (
+        db.query(models.User)
+        .filter(
+            models.User.role == models.UserRole.STUDENT,
+            models.User.academic_advisor_id == current_user.id,
+        )
+        .order_by(models.User.full_name.asc(), models.User.username.asc())
+        .all()
+    )
+    def _grade_stats(student_id):
+        grades = db.query(models.Grade).filter(models.Grade.student_id == student_id).all()
+        approved = sum(1 for g in grades if g.status == models.GradeStatus.APROBADA)
+        risk = sum(1 for g in grades if g.status == models.GradeStatus.REPROBADA)
+        in_progress = sum(1 for g in grades if g.status == models.GradeStatus.CURSANDO)
+        scores = [g.score for g in grades if g.score is not None]
+        avg = round(sum(scores) / len(scores), 1) if scores else None
+        return {"approved": approved, "risk": risk, "in_progress": in_progress, "avg": avg, "total": len(grades)}
+
+    for student in direct_students:
+        enrollment = _get_active_student_enrollment(db, student.id)
+        rows.append({
+            "student_id": student.id,
+            "username": student.username,
+            "full_name": student.full_name,
+            "carrera": enrollment.career.name if enrollment and enrollment.career else student.carrera,
+            "period_label": enrollment.cycle.period if enrollment and enrollment.cycle else "Asignacion directa",
+            "group_name": enrollment.group.name if enrollment and enrollment.group else student.grupo,
+            "source": "direct",
+            **_grade_stats(student.id),
+        })
+        seen_student_ids.add(student.id)
+
+    group_enrollments_query = (
+        db.query(models.StudentEnrollment)
+        .join(models.Group, models.Group.id == models.StudentEnrollment.group_id)
+        .filter(
+            models.StudentEnrollment.is_active == True,
+            models.Group.tutor_id == current_user.id,
+        )
+    )
+    if active_cycle:
+        group_enrollments_query = group_enrollments_query.filter(models.StudentEnrollment.cycle_id == active_cycle.id)
+    for enrollment in group_enrollments_query.all():
+        student = enrollment.student
+        if not student or student.id in seen_student_ids:
+            continue
+        rows.append({
+            "student_id": student.id,
+            "username": student.username,
+            "full_name": student.full_name,
+            "carrera": enrollment.career.name if enrollment.career else student.carrera,
+            "period_label": enrollment.cycle.period if enrollment.cycle else "Ciclo activo",
+            "group_name": enrollment.group.name if enrollment.group else student.grupo,
+            "source": "group",
+            **_grade_stats(student.id),
+        })
+        seen_student_ids.add(student.id)
+
+    def _thesis_data(student_id: int) -> dict:
+        thesis = db.query(models.ThesisRecord).filter(models.ThesisRecord.student_id == student_id).first()
+        if not thesis:
+            return {"status": "Sin Iniciar", "title": None, "director": None}
+        return {
+            "status": thesis.status if isinstance(thesis.status, str) else thesis.status.value,
+            "title": thesis.title,
+            "director": thesis.director,
+        }
+
+    for row in rows:
+        row["pasaporte"] = {"thesis": _thesis_data(row["student_id"])}
+
+    rows.sort(key=lambda item: ((item.get("full_name") or "").lower(), item.get("username") or ""))
+    return {"students": rows}
+
+
+@app.put("/teacher/advisor/students/{username}/thesis-status", summary="Actualizar estado de tesis (director)", tags=["Docente"])
+def teacher_update_thesis_status(
+    username: str,
+    payload: dict,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    student = (
+        db.query(models.User)
+        .filter(models.User.username == username, models.User.role == models.UserRole.STUDENT)
+        .first()
+    )
+    if not student:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    if not _teacher_can_advise_student(db, current_user.id, student):
+        raise HTTPException(status_code=403, detail="No tienes permiso para actualizar este alumno")
+    new_status = (payload.get("status") or "").strip()
+    valid = [e.value for e in models.ThesisStatus]
+    if new_status not in valid:
+        raise HTTPException(status_code=400, detail=f"Estatus inválido. Use: {valid}")
+    record = db.query(models.ThesisRecord).filter(models.ThesisRecord.student_id == student.id).first()
+    if not record:
+        record = models.ThesisRecord(student_id=student.id)
+        db.add(record)
+    record.status = new_status
+    record.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(record)
+    return {"ok": True, "status": record.status if isinstance(record.status, str) else record.status.value}
+
+
+@app.post("/teacher/advisor/messages", summary="Enviar mensaje de asesoria a un alumno", tags=["Docente"])
+def create_teacher_advisor_message(
+    payload: dict,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    student_username = (payload.get("student_username") or "").strip()
+    title = (payload.get("title") or "").strip()
+    message = (payload.get("message") or "").strip()
+    if not student_username or not title or not message:
+        raise HTTPException(status_code=400, detail="Alumno, titulo y mensaje son obligatorios")
+
+    student = (
+        db.query(models.User)
+        .filter(models.User.username == student_username, models.User.role == models.UserRole.STUDENT)
+        .first()
+    )
+    if not student:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    if not _teacher_can_advise_student(db, current_user.id, student):
+        raise HTTPException(status_code=403, detail="No tienes asignada la asesoria de este alumno")
+
+    _ensure_notification_schema(db)
+    notification = models.NotificationMessage(
+        recipient_role=models.UserRole.STUDENT,
+        recipient_user_id=student.id,
+        created_by_user_id=current_user.id,
+        target_scope="user",
+        category="advisor",
+        title=title[:180],
+        message=message[:2000],
+        level="info",
+        is_active=True,
+    )
+    db.add(notification)
+    db.commit()
+    db.refresh(notification)
+    return {"ok": True, "id": notification.id}
+
+
+@app.post("/teacher/advisor/sessions", summary="Agendar sesion de asesoria", tags=["Docente"])
+def create_advisor_session(
+    payload: schemas.AdvisorySessionCreate,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    student = (
+        db.query(models.User)
+        .filter(models.User.username == payload.student_username, models.User.role == models.UserRole.STUDENT)
+        .first()
+    )
+    if not student:
+        raise HTTPException(status_code=404, detail="Alumno no encontrado")
+    if not _teacher_can_advise_student(db, current_user.id, student):
+        raise HTTPException(status_code=403, detail="No tienes asignada la asesoria de este alumno")
+    session = models.AdvisorySession(
+        teacher_id=current_user.id,
+        student_id=student.id,
+        scheduled_at=payload.scheduled_at,
+        duration_minutes=payload.duration_minutes,
+        topic=payload.topic,
+        notes=payload.notes,
+    )
+    db.add(session)
+    _ensure_notification_schema(db)
+    notif = models.NotificationMessage(
+        recipient_role=models.UserRole.STUDENT,
+        recipient_user_id=student.id,
+        created_by_user_id=current_user.id,
+        target_scope="user",
+        category="advisor",
+        title=f"Asesoría programada: {payload.topic[:80]}",
+        message=(
+            f"Tu asesor ha agendado una sesión para el "
+            f"{payload.scheduled_at.strftime('%d/%m/%Y a las %H:%M')} "
+            f"({payload.duration_minutes} min). Tema: {payload.topic}"
+        ),
+        level="info",
+        is_active=True,
+    )
+    db.add(notif)
+    db.commit()
+    db.refresh(session)
+    return {"ok": True, "id": session.id}
+
+
+@app.get("/teacher/advisor/sessions", summary="Sesiones de asesoria del docente", tags=["Docente"])
+def get_teacher_advisor_sessions(
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    sessions = (
+        db.query(models.AdvisorySession)
+        .filter(models.AdvisorySession.teacher_id == current_user.id)
+        .order_by(models.AdvisorySession.scheduled_at.asc())
+        .all()
+    )
+    result = []
+    for s in sessions:
+        student = db.query(models.User).filter(models.User.id == s.student_id).first()
+        result.append({
+            "id": s.id,
+            "student_id": s.student_id,
+            "student_username": student.username if student else "-",
+            "student_name": student.full_name if student else "-",
+            "scheduled_at": s.scheduled_at.isoformat(),
+            "duration_minutes": s.duration_minutes,
+            "topic": s.topic,
+            "notes": s.notes,
+            "status": s.status.value if hasattr(s.status, "value") else s.status,
+            "created_at": s.created_at.isoformat(),
+        })
+    return {"sessions": result}
+
+
+@app.get("/users/me/advisor/sessions", summary="Sesiones de asesoria del alumno", tags=["Usuario"])
+def get_student_advisor_sessions(
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role != models.UserRole.STUDENT:
+        raise HTTPException(status_code=403, detail="Solo alumnos")
+    sessions = (
+        db.query(models.AdvisorySession)
+        .filter(models.AdvisorySession.student_id == current_user.id)
+        .order_by(models.AdvisorySession.scheduled_at.asc())
+        .all()
+    )
+    result = []
+    for s in sessions:
+        teacher = db.query(models.User).filter(models.User.id == s.teacher_id).first()
+        result.append({
+            "id": s.id,
+            "teacher_name": teacher.full_name if teacher else "-",
+            "scheduled_at": s.scheduled_at.isoformat(),
+            "duration_minutes": s.duration_minutes,
+            "topic": s.topic,
+            "notes": s.notes,
+            "status": s.status.value if hasattr(s.status, "value") else s.status,
+        })
+    return {"sessions": result}
+
+
+@app.patch("/teacher/advisor/sessions/{session_id}", summary="Actualizar estado de sesion de asesoria", tags=["Docente"])
+def update_advisor_session(
+    session_id: int,
+    payload: schemas.AdvisorySessionStatusUpdate,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    session = (
+        db.query(models.AdvisorySession)
+        .filter(
+            models.AdvisorySession.id == session_id,
+            models.AdvisorySession.teacher_id == current_user.id,
+        )
+        .first()
+    )
+    if not session:
+        raise HTTPException(status_code=404, detail="Sesión no encontrada")
+    try:
+        session.status = models.AdvisorySessionStatus(payload.status)
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Estado inválido: {payload.status}")
+    if payload.notes is not None:
+        session.notes = payload.notes.strip() or None
+    db.commit()
+    return {"ok": True}
 
 
 @app.get("/")

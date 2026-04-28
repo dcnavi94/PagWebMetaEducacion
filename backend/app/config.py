@@ -71,6 +71,16 @@ class Settings:
     LOGIN_RATE_MAX_ATTEMPTS: int = _get_int("LOGIN_RATE_MAX_ATTEMPTS", 5)
     LOGIN_RATE_WINDOW_SECONDS: int = _get_int("LOGIN_RATE_WINDOW_SECONDS", 900)  # 15 minutos
 
+    # Moodle / Aula virtual
+    MOODLE_BASE_URL: str = os.getenv("MOODLE_BASE_URL", "http://localhost:8080").rstrip("/")
+    MOODLE_PUBLIC_URL: str = os.getenv("MOODLE_PUBLIC_URL", MOODLE_BASE_URL).rstrip("/")
+    MOODLE_REST_TOKEN: str = os.getenv("MOODLE_REST_TOKEN", "").strip()
+    MOODLE_AUTO_LOGIN_ENABLED: bool = _get_bool("MOODLE_AUTO_LOGIN_ENABLED", False)
+    MOODLE_ROLE_CONTEXT_LEVEL: str = os.getenv("MOODLE_ROLE_CONTEXT_LEVEL", "system").strip()
+    MOODLE_ROLE_INSTANCE_ID: int = _get_int("MOODLE_ROLE_INSTANCE_ID", 0)
+    MOODLE_STUDENT_ROLE_ID: int = _get_int("MOODLE_STUDENT_ROLE_ID", 5)
+    MOODLE_TEACHER_ROLE_ID: int = _get_int("MOODLE_TEACHER_ROLE_ID", 3)
+
     @property
     def is_production(self) -> bool:
         return self.ENVIRONMENT == "production"

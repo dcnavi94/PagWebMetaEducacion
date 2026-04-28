@@ -1,10 +1,14 @@
-﻿// Global API config & helpers
+// Global API config & helpers
 (() => {
   const saved = localStorage.getItem('apiBaseUrl');
-  const defaultBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:8000'
+  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const defaultBase = isLocalHost
+    ? `${window.location.protocol}//${window.location.hostname}:8000`
     : `${window.location.protocol}//${window.location.hostname}:8000`;
-  const API_BASE = window.API_BASE_URL || saved || defaultBase;
+  if (isLocalHost && saved && saved !== defaultBase) {
+    localStorage.removeItem('apiBaseUrl');
+  }
+  const API_BASE = isLocalHost ? defaultBase : (window.API_BASE_URL || saved || defaultBase);
 
   const originalFetch = window.fetch.bind(window);
 
@@ -45,7 +49,11 @@
   }
 
   window.API_BASE = API_BASE;
-  window.setApiBaseUrl = (url) => localStorage.setItem('apiBaseUrl', url);
+  window.rawFetch = originalFetch;
+  window.setApiBaseUrl = (url) => {
+    localStorage.setItem('apiBaseUrl', url);
+    return url;
+  };
   window.apiStatus = { show: showStatus };
 
   window.fetch = async (input, init = {}) => {
@@ -67,7 +75,7 @@
 
     try {
       const response = await originalFetch(input, opts);
-      if (response.status === 401 && token && opts.auth !== false) {
+      if (isApiCall && response.status === 401 && token && opts.auth !== false) {
         localStorage.removeItem('token');
         const redirect = new URL('login.html', window.location.href);
         redirect.searchParams.set('reason', 'expired');
