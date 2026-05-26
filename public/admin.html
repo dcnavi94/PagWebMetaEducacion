@@ -508,37 +508,11 @@
                             <div class="p-4 border-bottom bg-light bg-opacity-50">
                                 <h5 class="fw-bold mb-0">Alertas del Sistema</h5>
                             </div>
-                            <div class="p-4">
-                                <div class="d-flex gap-3 mb-4">
-                                    <div class="bg-danger bg-opacity-10 text-danger p-2 rounded-3 h-100">
-                                        <i class="bi bi-server fs-5"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold mb-1">Mantenimiento Programado</h6>
-                                        <p class="text-muted small mb-0">El servidor se reiniciara el domingo a las 02:00 AM.</p>
-                                    </div>
-                                </div>
-                                <div class="d-flex gap-3 mb-4">
-                                    <div class="bg-warning bg-opacity-10 text-warning p-2 rounded-3 h-100">
-                                        <i class="bi bi-wallet2 fs-5"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold mb-1">Corte de Caja Pendiente</h6>
-                                        <p class="text-muted small mb-0">Falta realizar la conciliacion bancaria del dia de ayer.</p>
-                                    </div>
-                                </div>
-                                <div class="d-flex gap-3">
-                                    <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3 h-100">
-                                        <i class="bi bi-person-plus fs-5"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold mb-1">Nuevas Solicitudes</h6>
-                                        <p class="text-muted small mb-0">Hay 15 prospectos esperando validacion de documentos.</p>
-                                    </div>
-                                </div>
+                            <div class="p-4" id="systemAlertsList">
+                                <div class="small text-muted">Cargando alertas reales del sistema...</div>
                             </div>
                             <div class="p-3 bg-light text-center border-top mt-auto">
-                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-4">Ver Centro de Notificaciones</button>
+                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-4" onclick="loadAdminNotifications(true)">Actualizar Centro de Notificaciones</button>
                             </div>
                         </div>
                     </div>
@@ -3939,6 +3913,65 @@
         function formatDateShort(value) {
             if (!value) return '?';
             return new Date(value).toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function getNotificationUiMeta(item = {}) {
+            const type = item.type || '';
+            const level = item.level || 'info';
+            const byType = {
+                finance: { icon: 'bi-wallet2', tone: 'warning' },
+                services: { icon: 'bi-folder-check', tone: 'warning' },
+                support: { icon: 'bi-headset', tone: 'warning' },
+                admin_message: { icon: 'bi-megaphone', tone: 'primary' }
+            };
+            const fallbackTone = level === 'danger' ? 'danger' : level === 'warning' ? 'warning' : level === 'success' ? 'success' : 'primary';
+            return byType[type] || { icon: level === 'danger' ? 'bi-exclamation-octagon' : 'bi-info-circle', tone: fallbackTone };
+        }
+
+        function renderSystemAlerts(items = []) {
+            const container = document.getElementById('systemAlertsList');
+            if (!container) return;
+            if (!items.length) {
+                container.innerHTML = `
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="bg-success bg-opacity-10 text-success p-2 rounded-3 h-100">
+                            <i class="bi bi-check-circle fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Sin alertas activas</h6>
+                            <p class="text-muted small mb-0">No hay tramites, cartera vencida, tickets o mensajes recientes que requieran atencion.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            container.innerHTML = items.slice(0, 5).map((item, index) => {
+                const meta = getNotificationUiMeta(item);
+                const marginClass = index === Math.min(items.length, 5) - 1 ? '' : 'mb-4';
+                const source = item.source ? `<div class="small text-secondary mt-1">${escapeHtml(item.source)}</div>` : '';
+                return `
+                    <div class="d-flex gap-3 ${marginClass}">
+                        <div class="bg-${meta.tone} bg-opacity-10 text-${meta.tone} p-2 rounded-3 h-100">
+                            <i class="bi ${meta.icon} fs-5"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">${escapeHtml(item.title || 'Alerta del sistema')}</h6>
+                            <p class="text-muted small mb-0">${escapeHtml(item.message || '')}</p>
+                            ${source}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function fixMojibakeString(input) {
@@ -7836,6 +7869,8 @@
             const badge = document.getElementById('adminNoticeCount');
             const list = document.getElementById('adminNotificationList');
             if (list) list.innerHTML = '<div class="small text-muted px-2 py-2">Cargando notificaciones...</div>';
+            const systemAlerts = document.getElementById('systemAlertsList');
+            if (systemAlerts) systemAlerts.innerHTML = '<div class="small text-muted">Cargando alertas reales del sistema...</div>';
             try {
                 const response = await fetch('http://localhost:8000/admin/notifications', {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -7844,6 +7879,7 @@
                 const payload = await response.json();
                 adminNotifications = payload.items || [];
                 if (badge) badge.textContent = String(adminNotifications.length);
+                renderSystemAlerts(adminNotifications);
                 if (list) {
                     list.innerHTML = adminNotifications.length
                         ? adminNotifications.map(item => {
@@ -7851,9 +7887,9 @@
                             const levelClass = level === 'danger' ? 'text-danger' : level === 'warning' ? 'text-warning' : level === 'success' ? 'text-success' : 'text-primary';
                             return `
                                 <div class="px-2 py-2 border-bottom">
-                                    <div class="fw-semibold ${levelClass}">${item.title || 'Notificación'}</div>
-                                    <div class="small text-muted">${item.message || ''}</div>
-                                    <div class="small text-secondary">${item.source || 'Sistema'}</div>
+                                    <div class="fw-semibold ${levelClass}">${escapeHtml(item.title || 'Notificacion')}</div>
+                                    <div class="small text-muted">${escapeHtml(item.message || '')}</div>
+                                    <div class="small text-secondary">${escapeHtml(item.source || 'Sistema')}</div>
                                 </div>
                             `;
                         }).join('')
@@ -7864,6 +7900,19 @@
                 console.error(error);
                 if (badge) badge.textContent = '0';
                 if (list) list.innerHTML = '<div class="small text-danger px-2 py-2">Error al cargar notificaciones.</div>';
+                if (systemAlerts) {
+                    systemAlerts.innerHTML = `
+                        <div class="d-flex gap-3 align-items-start">
+                            <div class="bg-danger bg-opacity-10 text-danger p-2 rounded-3 h-100">
+                                <i class="bi bi-wifi-off fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">No se pudieron cargar las alertas</h6>
+                                <p class="text-muted small mb-0">Revisa la conexion con el servidor e intenta actualizar de nuevo.</p>
+                            </div>
+                        </div>
+                    `;
+                }
             }
         }
 
