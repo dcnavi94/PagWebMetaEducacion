@@ -1,0 +1,103 @@
+
+/* ========================================================= */
+/* PREMIUM AESTHETICS OVERRIDES (Glassmorphism & Shadows)      */
+/* ========================================================= */
+
+:root {
+    --shadow-premium: 0 10px 30px rgba(20, 48, 156, 0.1);
+    --shadow-premium-hover: 0 20px 40px rgba(255, 87, 34, 0.2);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-blur: blur(12px);
+    --transition-bouncy: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Glassmorphism for Navbar */
+.navbar {
+    background-color: rgba(26, 61, 182, 0.85) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card Enhancements */
+.card, .career-card, .modality-card-front, .contact-form-container, .portfolio-card {
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--shadow-premium) !important;
+    transition: transform var(--transition-bouncy), box-shadow var(--transition-bouncy) !important;
+    border-radius: 20px !important;
+}
+
+.card:hover, .career-card:hover, .modality-card-inner:hover .modality-card-front, .portfolio-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-premium-hover) !important;
+}
+
+/* Premium Buttons */
+.btn {
+    border-radius: 12px !important;
+    transition: all var(--transition-smooth), transform var(--transition-bouncy) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-pink {
+    background: linear-gradient(135deg, var(--accent-pink) 0%, #d84315 100%) !important;
+    box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+    border: none;
+}
+
+.btn-pink:hover {
+    box-shadow: 0 8px 25px rgba(255, 87, 34, 0.6);
+    transform: translateY(-3px);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    border: none;
+    color: #000 !important;
+}
+
+.btn-warning:hover {
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.6);
+    transform: translateY(-3px);
+}
+
+/* Hero Carousel Overlay Refinement */
+.carousel-overlay {
+    background: linear-gradient(135deg, rgba(20, 48, 156, 0.85) 0%, rgba(156, 39, 176, 0.4) 100%) !important;
+}
+
+/* Enrollment Banner Premium */
+.enrollment-banner {
+    background: linear-gradient(90deg, #1a3db6, var(--meta-purple), var(--accent-pink)) !important;
+    background-size: 200% auto !important;
+    animation: gradientShift 5s ease infinite !important;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Image improvements */
+img {
+    border-radius: inherit;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+    background: var(--accent-pink);
+    color: white;
+}

@@ -12,7 +12,7 @@
 
 
 
-        const apiUrl = (path = '') => `${API_BASE}${path.startsWith(`/') ? path : `/${path}`}`;
+        const apiUrl = (path = '') => `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
 
 
 
@@ -327,14 +327,14 @@
 
 
 
-            { name: 'Ingeniería en Software' },
+            { name: 'IngenierÃ­a en Software' },
 
 
 
 
 
 
-            { name: 'Ingeniería en Telemática' },
+            { name: 'IngenierÃ­a en TelemÃ¡tica' },
 
 
 
@@ -670,7 +670,7 @@
 
 
 
-            // Solo usa defaults como fallback si el API aún no devolvió datos
+            // Solo usa defaults como fallback si el API aÃºn no devolviÃ³ datos
 
 
 
@@ -957,14 +957,14 @@
 
 
 
-            populateSelect('newMajor', careerOptions, { includeEmpty: true, emptyLabel: 'Seleccionar...', valueGetter: (c) => c.id ?? c.name, labelGetter: (c) => c.name });
+            populateSelect('newMajor', careerOptions, { includeEmpty: true, emptyLabel: 'Seleccionar...', valueGetter: (c) => c.id ? c.name, labelGetter: (c) => c.name });
 
 
 
 
 
 
-            populateSelect('editMajor', careerOptions, { includeEmpty: true, emptyLabel: 'Seleccionar...', valueGetter: (c) => c.id ?? c.name, labelGetter: (c) => c.name });
+            populateSelect('editMajor', careerOptions, { includeEmpty: true, emptyLabel: 'Seleccionar...', valueGetter: (c) => c.id ? c.name, labelGetter: (c) => c.name });
 
 
 
@@ -1020,14 +1020,14 @@
 
 
 
-            populateSelect('newModalidad', modalityOptions, { includeEmpty: true, emptyLabel: 'Seleccionar...', valueGetter: (m) => m.id ?? m.name, labelGetter: (m) => m.name });
+            populateSelect('newModalidad', modalityOptions, { includeEmpty: true, emptyLabel: 'Seleccionar...', valueGetter: (m) => m.id ? m.name, labelGetter: (m) => m.name });
 
 
 
 
 
 
-            populateSelect('editModalidad', modalityOptions, { includeEmpty: true, emptyLabel: 'Seleccionar...', valueGetter: (m) => m.id ?? m.name, labelGetter: (m) => m.name });
+            populateSelect('editModalidad', modalityOptions, { includeEmpty: true, emptyLabel: 'Seleccionar...', valueGetter: (m) => m.id ? m.name, labelGetter: (m) => m.name });
 
 
 
@@ -1755,7 +1755,7 @@
 
 
 
-                text: 'Asignar grupo evita errores en carga académica y reportes.',
+                text: 'Asignar grupo evita errores en carga acadÃ©mica y reportes.',
 
 
 
@@ -1895,7 +1895,7 @@
 
 
 
-                text: 'Completar asignaciones antes de iniciar operación académica.',
+                text: 'Completar asignaciones antes de iniciar operaciÃ³n acadÃ©mica.',
 
 
 
@@ -1965,7 +1965,7 @@
 
 
 
-                text: 'Revisar disponibilidad o Asignación del ciclo activo.',
+                text: 'Revisar disponibilidad o AsignaciÃ³n del ciclo activo.',
 
 
 
@@ -2035,7 +2035,7 @@
 
 
 
-                text: 'Validar carga académica por grupo o materia.',
+                text: 'Validar carga acadÃ©mica por grupo o materia.',
 
 
 
@@ -2112,7 +2112,7 @@
 
 
 
-                action: 'Ir a tesorería',
+                action: 'Ir a tesorerÃ­a',
 
 
 
@@ -2168,7 +2168,7 @@
 
 
 
-                title: `${openServices} Trámites abiertos`,
+                title: `${openServices} TrÃ¡mites abiertos`,
 
 
 
@@ -2315,7 +2315,7 @@
 
 
 
-                text: 'Atender incidencias de soporte técnico.',
+                text: 'Atender incidencias de soporte tÃ©cnico.',
 
 
 
@@ -2385,7 +2385,7 @@
 
 
 
-                            <div class="fw-semibold text-success"><i class="bi bi-check-circle-fill me-2"></i>Operación sin bloqueos críticos</div>
+                            <div class="fw-semibold text-success"><i class="bi bi-check-circle-fill me-2"></i>OperaciÃ³n sin bloqueos crÃ­ticos</div>
 
 
 
@@ -2735,7 +2735,7 @@
 
 
 
-                    meta: `${student.username || '-'} A‚· ${student.carrera || '-'} A‚· Grupo ${student.grupo || '-'}`,
+                    meta: `${student.username || '-'} Aâ€šÂ· ${student.carrera || '-'} Aâ€šÂ· Grupo ${student.grupo || '-'}`,
 
 
 
@@ -2861,7 +2861,7 @@
 
 
 
-                    meta: `${teacher.username || '-'} A‚· ${teacher.email || '-'}`,
+                    meta: `${teacher.username || '-'} Aâ€šÂ· ${teacher.email || '-'}`,
 
 
 
@@ -2987,7 +2987,7 @@
 
 
 
-                    meta: `${subject.career || '-'} A‚· Semestre ${subject.semester || '-'} A‚· ${subject.credits || 0} créditos`,
+                    meta: `${subject.career || '-'} Aâ€šÂ· Semestre ${subject.semester || '-'} Aâ€šÂ· ${subject.credits || 0} crÃ©ditos`,
 
 
 
@@ -3099,7 +3099,7 @@
 
 
 
-                    type: 'Asignación',
+                    type: 'AsignaciÃ³n',
 
 
 
@@ -3120,14 +3120,14 @@
 
 
 
-                    title: subject.name || 'Asignación académica',
+                    title: subject.name || 'AsignaciÃ³n acadÃ©mica',
 
 
 
 
 
 
-                    meta: `${teacher.full_name || teacher.username || 'Sin docente'} A‚· Grupo ${group.name || assignment.group_name || '-'}`,
+                    meta: `${teacher.full_name || teacher.username || 'Sin docente'} Aâ€šÂ· Grupo ${group.name || assignment.group_name || '-'}`,
 
 
 
@@ -3246,7 +3246,7 @@
 
 
 
-                    meta: `${group.carrera || group.career || '-'} A‚· ${group.student_count || 0} alumnos`,
+                    meta: `${group.carrera || group.career || '-'} Aâ€šÂ· ${group.student_count || 0} alumnos`,
 
 
 
@@ -3358,7 +3358,7 @@
 
 
 
-                    type: 'Trámite',
+                    type: 'TrÃ¡mite',
 
 
 
@@ -3379,14 +3379,14 @@
 
 
 
-                    title: service.type || service.service_type || `Trámite #${service.id}`,
+                    title: service.type || service.service_type || `TrÃ¡mite #${service.id}`,
 
 
 
 
 
 
-                    meta: `${service.student_name || service.student_username || 'Alumno'} A‚· ${service.status || 'En proceso'}`,
+                    meta: `${service.student_name || service.student_username || 'Alumno'} Aâ€šÂ· ${service.status || 'En proceso'}`,
 
 
 
@@ -3505,14 +3505,14 @@
 
 
 
-                    meta: `${payment.student_name || payment.student_username || 'Alumno'} A‚· ${payment.status || '-'} A‚· ${formatMoney(payment.amount)}`,
+                    meta: `${payment.student_name || payment.student_username || 'Alumno'} Aâ€šÂ· ${payment.status || '-'} Aâ€šÂ· ${formatMoney(payment.amount)}`,
 
 
 
 
 
 
-                    actionLabel: 'Ir a tesorería',
+                    actionLabel: 'Ir a tesorerÃ­a',
 
 
 
@@ -3624,7 +3624,7 @@
 
 
 
-                    meta: `${ticket.student_name || ticket.student_username || 'Usuario'} A‚· ${ticket.status || '-'}`,
+                    meta: `${ticket.student_name || ticket.student_username || 'Usuario'} Aâ€šÂ· ${ticket.status || '-'}`,
 
 
 
@@ -3806,7 +3806,7 @@
 
 
 
-                box.innerHTML = '<div class="p-3 text-muted small">Sin resultados. Prueba con matrícula, nombre, folio, materia o grupo.</div>';
+                box.innerHTML = '<div class="p-3 text-muted small">Sin resultados. Prueba con matrÃ­cula, nombre, folio, materia o grupo.</div>';
 
 
 
@@ -4534,7 +4534,7 @@
 
 
 
-                    option.textContent = `${group.grupo} A¢â‚¬" ${group.carrera || 'Sin carrera'} (${group.total || 0} alumnos)`;
+                    option.textContent = `${group.grupo} - ${group.carrera || 'Sin carrera'} (${group.total || 0} alumnos)`;
 
 
 
@@ -4758,7 +4758,7 @@
 
 
 
-            if (!value) return '—';
+            if (!value) return 'â€”Â';
 
 
 
@@ -4849,7 +4849,7 @@
 
 
 
-            if (normalized === 'hibrido' || normalized === 'híbrido') return '<span class="badge bg-info text-dark">Hibrido</span>';
+            if (normalized === 'hibrido' || normalized === 'hÃ­brido') return '<span class="badge bg-info text-dark">Hibrido</span>';
 
 
 
@@ -5073,7 +5073,7 @@
 
 
 
-                career_id: activeEnrollment.career_id ?? student.career_id,
+                career_id: activeEnrollment.career_id ? student.career_id,
 
 
 
@@ -5087,7 +5087,7 @@
 
 
 
-                modality_id: activeEnrollment.modality_id ?? student.modality_id,
+                modality_id: activeEnrollment.modality_id ? student.modality_id,
 
 
 
@@ -6102,7 +6102,7 @@
 
 
 
-                    if (t) t.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Error al cargar Trámites. Recarga la página.</td></tr>';
+                    if (t) t.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Error al cargar TrÃ¡mites. Recarga la pÃ¡gina.</td></tr>';
 
 
 
@@ -7376,7 +7376,7 @@
 
 
 
-                    ? `${student.full_name || 'Sin nombre'} Á€šA‚· ${student.carrera || 'Sin carrera'}`
+                    ? `${student.full_name || 'Sin nombre'} Ãâ‚¬Å¡Aâ€šÂ· ${student.carrera || 'Sin carrera'}`
 
 
 

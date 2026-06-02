@@ -12,10 +12,22 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+backend_logs*.txt
+build_log*.txt
+fetches*.txt
+gets*.txt
+*.log
 
 # OS files
 tmp/
 temp/
+scratch/
+tmp_portal_virtual_*/
+tmp_remote_*
+teacher_check.js
+force_truncate.py
+fix_encoding.py
+credenciales.md
 
 # Python
 __pycache__/
@@ -43,4 +55,12 @@ backend/.pytest_work/
 
 # Docker
 .docker/
-*.log
+
+# Local/raw media sources
+*.heic
+*.HEIC
+*.dng
+*.DNG
+
+# Local backup assets
+*_backup_*

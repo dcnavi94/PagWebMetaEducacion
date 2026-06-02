@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://metaeducacion.edu.mx/telematica.html">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -35,9 +35,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MetaEdu">
     <link rel="apple-touch-icon" href="assets/icon-512.png">
+<link rel="preload" href="style.min.css" as="style">
+    <link rel="preload" href="script.min.js" as="script">
 </head>
 
-<body>
+<body class="telematica-layout">
 
     <!-- Social Sidebar -->
     <div class="social-sidebar d-none d-lg-flex">
@@ -417,7 +419,7 @@
                 <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Horarios definidos</h5><p class="text-muted small mb-0">Opciones claras para entre semana o sábados, sin ambigüedad para el alumno y su familia.</p></div></div></div>
                 <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Acompañamiento</h5><p class="text-muted small mb-0">Atención comercial, seguimiento académico y orientación desde la inscripción.</p></div></div></div>
             </div>
-            <div class="text-center mt-4">
+            <div class="comparador-cta text-center mt-4">
                 <a href="#lead-telematica" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero información de Telemática</a>
             </div>
         </div>
@@ -454,7 +456,7 @@
                     </div>
                 </div>
             </div>
-            <div class="text-center mt-4">
+            <div class="fit-cta text-center mt-4">
                 <a href="#lead-telematica" class="btn btn-outline-pink fw-bold rounded-pill px-4">Quiero saber si Telemática es para mí</a>
             </div>
         </div>
@@ -608,10 +610,10 @@
                 <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=900&q=80&fit=crop" alt="Docente orientando a estudiantes" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Acompanamiento tecnico</h5><p class="text-muted small mb-0">Sustituyelo luego por fotos de asesoria, revision de practicas o solucion de fallas con docente.</p></div></div></div>
                 <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=900&q=80&fit=crop" alt="Presentacion de proyecto tecnico" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Presentacion de resultados</h5><p class="text-muted small mb-0">Tambien conviene mostrar demos, pitch de proyecto o exposicion de solucion tecnica.</p></div></div></div>
             </div>
-            <div class="row g-3">
-                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Proyecto visible</h6><p class="text-muted small mb-0">Mini video o foto de la solucion montada: IoT, red, diagnostico o monitoreo funcionando.</p></div></div></div>
-                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Momento de clase</h6><p class="text-muted small mb-0">Fotos de laboratorio, herramientas, docentes resolviendo dudas y alumnos trabajando.</p></div></div></div>
-                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Historia corta</h6><p class="text-muted small mb-0">Antes y despues del alumno: que le preocupaba y que ya es capaz de configurar o resolver.</p></div></div></div>
+            <div class="row g-4 evidence-mini-row">
+                <div class="col-md-4"><div class="evidence-mini border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Proyecto visible</h6><p class="text-muted small mb-0">Mini video o foto de la solucion montada: IoT, red, diagnostico o monitoreo funcionando.</p></div></div>
+                <div class="col-md-4"><div class="evidence-mini border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Momento de clase</h6><p class="text-muted small mb-0">Fotos de laboratorio, herramientas, docentes resolviendo dudas y alumnos trabajando.</p></div></div>
+                <div class="col-md-4"><div class="evidence-mini border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Historia corta</h6><p class="text-muted small mb-0">Antes y despues del alumno: que le preocupaba y que ya es capaz de configurar o resolver.</p></div></div>
             </div>
         </div>
     </section>
@@ -916,7 +918,7 @@
                                             class="badge bg-light text-dark ms-1 border">RE</span></div>
                                 </li>
                                 <li class="mb-2 d-flex"><i class="bi bi-dot text-blue fs-5 me-1 mt-n1"></i>
-                                    <div>Servicio Social <span class="badge bg-light text-dark ms-1 border">ES</span>
+                                    <div>Prácticas Profesionales <span class="badge bg-light text-dark ms-1 border">ES</span>
                                     </div>
                                 </li>
                                 <li class="mb-2 d-flex"><i class="bi bi-dot text-blue fs-5 me-1 mt-n1"></i>
@@ -1078,7 +1080,7 @@
     </a>
 
     <script src="assets/api.js"></script>
-    <script src="script.js"></script>
+    <script src="script.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -1299,7 +1301,7 @@
             });
         });
 
-        // â”€â”€ Navbar: desliza desde arriba â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Navbar: desliza desde arriba ------------------------------
         gsap.from('nav', {
             y: -80,
             opacity: 0,
@@ -1307,7 +1309,7 @@
             ease: 'power3.out'
         });
 
-        // â”€â”€ Social sidebar: desliza desde la izquierda â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Social sidebar: desliza desde la izquierda ---------------
         gsap.from('.social-sidebar', {
             x: -60,
             opacity: 0,
@@ -1316,7 +1318,7 @@
             ease: 'power3.out'
         });
 
-        // â”€â”€ Hero: cascada de elementos al cargar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Hero: cascada de elementos al cargar ----------------------
         const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
         heroTl
             .from('#hero .bi-cpu', {
@@ -1348,7 +1350,7 @@
                 ease: 'back.out(1.5)'
             }, '-=0.2');
 
-        // â”€â”€ RVOE Banner: entra desde la izquierda â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- RVOE Banner: entra desde la izquierda --------------------
         gsap.from('.bg-light.border-bottom.border-top .badge', {
             scrollTrigger: {
                 trigger: '.bg-light.border-bottom.border-top',
@@ -1360,7 +1362,7 @@
             ease: 'power3.out'
         });
 
-        ScrollTrigger.batch('#costos-beca .card, #modalidades-inicio .card, #comparador-telematica .card, #fit-telematica .card, #direccion-academica-telematica .card, #evidencias-telematica .card, #reels-telematica .card, #dudas-telematica .card, #lead-telematica .card, #lead-telematica .rounded-4', {
+        ScrollTrigger.batch('#costos-beca .card, #modalidades-inicio .card, #direccion-academica-telematica .card, #reels-telematica .card, #dudas-telematica .card, #lead-telematica .card, #lead-telematica .rounded-4', {
             start: 'top 88%',
             onEnter: (elements) => {
                 gsap.from(elements, {
@@ -1374,7 +1376,7 @@
             once: true
         });
 
-        // â”€â”€ Info Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Info Section ----------------------------------------------
         // Título principal
         gsap.from('#info-section h2', {
             scrollTrigger: { trigger: '#info-section h2', start: 'top 82%' },
@@ -1458,7 +1460,7 @@
             ease: 'elastic.out(1, 0.5)'
         });
 
-        // â”€â”€ Curriculum Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Curriculum Section ----------------------------------------
         gsap.from('#curriculum-section .text-center h2', {
             scrollTrigger: { trigger: '#curriculum-section .text-center', start: 'top 82%' },
             y: 40,
@@ -1500,7 +1502,7 @@
             ease: 'power2.out'
         });
 
-        // â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Footer ----------------------------------------------------
         gsap.from('footer', {
             scrollTrigger: { trigger: 'footer', start: 'top 95%' },
             y: 40,
@@ -1509,7 +1511,7 @@
             ease: 'power2.out'
         });
 
-        // â”€â”€ WhatsApp float: pop de entrada â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- WhatsApp float: pop de entrada ----------------------------
         gsap.from('.whatsapp-float', {
             scale: 0,
             opacity: 0,

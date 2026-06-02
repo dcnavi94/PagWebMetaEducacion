@@ -495,6 +495,8 @@
       }
     }
   </style>
+<link rel="preload" href="style.min.css" as="style">
+    <link rel="preload" href="script.min.js" as="script">
 </head>
 <body>
   <div class="overlay" id="overlay" onclick="toggleSidebar(false)"></div>
@@ -991,7 +993,7 @@
           <!-- Aviso preparatoria -->
           <div id="ppPrepaNotice" class="pp-prepa-badge mb-4 d-none">
             <i class="bi bi-info-circle-fill me-2 text-primary"></i>
-            Los requisitos de <strong>Tesis</strong> y <strong>Servicio Social</strong> aplican exclusivamente para alumnos de nivel universitario.
+            Los requisitos de <strong>Prácticas Profesionales</strong> aplican exclusivamente para alumnos de nivel universitario.
             Consulta con servicios escolares si tu programa tiene requerimientos específicos.
           </div>
 
@@ -1000,8 +1002,8 @@
             <div class="d-flex align-items-center gap-3 mb-3">
               <div class="pp-track-icon pp-track-icon-blue"><i class="bi bi-mortarboard-fill"></i></div>
               <div class="flex-grow-1">
-                <div class="fw-bold fs-6 mb-0">Tesis de Titulación</div>
-                <div class="small text-secondary">Seguimiento del proceso de elaboración y defensa de tesis</div>
+                <div class="fw-bold fs-6 mb-0">Prácticas Profesionales</div>
+                <div class="small text-secondary">Seguimiento del proceso de prácticas profesionales</div>
               </div>
               <div class="d-flex flex-column align-items-end gap-1">
                 <span class="pp-status-badge" id="ppThesisStatusBadge">Pendiente</span>
@@ -1042,7 +1044,7 @@
             <div class="d-flex align-items-center gap-3 mb-3">
               <div class="pp-track-icon pp-track-icon-teal"><i class="bi bi-building-fill-check"></i></div>
               <div class="flex-grow-1">
-                <div class="fw-bold fs-6 mb-0">Servicio Social Universitario</div>
+                <div class="fw-bold fs-6 mb-0">Prácticas Profesionales (Nivel Universitario)</div>
                 <div class="small text-secondary">Requisito de 480 horas ante institución receptora</div>
               </div>
               <span class="pp-status-badge" id="ppSSUniStatusBadge">Pendiente</span>
@@ -1083,8 +1085,8 @@
             <div class="d-flex align-items-center gap-3 mb-3">
               <div class="pp-track-icon pp-track-icon-purple"><i class="bi bi-shield-fill-check"></i></div>
               <div class="flex-grow-1">
-                <div class="fw-bold fs-6 mb-0">Servicio Social — Seguro Social</div>
-                <div class="small text-secondary">Registro y seguimiento ante el IMSS / Seguro Social</div>
+                <div class="fw-bold fs-6 mb-0">Prácticas Profesionales</div>
+                <div class="small text-secondary">Registro y seguimiento de prácticas profesionales</div>
               </div>
               <span class="pp-status-badge" id="ppSSSegStatusBadge">Pendiente</span>
             </div>
@@ -1591,7 +1593,7 @@
 
     function formatDate(v) { return v ? new Date(v).toLocaleDateString('es-MX') : '-'; }
     function escapeHtml(value) {
-      return String(value ?? '')
+      return String(value ? '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -1771,7 +1773,7 @@
           semester: localMatch?.semester || '-',
           progress: Number(course.progress || localMatch?.progress || 0),
           status: localMatch?.status || 'Cursando',
-          score: localMatch?.score ?? null,
+          score: localMatch?.score ? null,
           moodle_course_id: moodleCourseId,
           url: course.view_url || localMatch?.moodle_view_url || currentMoodle?.url || currentMoodle?.launch_url || ''
         };
@@ -2081,7 +2083,7 @@
 
       document.getElementById('paymentsTable').innerHTML = rows.length ? rows.map(item => `
         <tr>
-          <td>${item.id ?? '-'}</td>
+          <td>${item.id ? '-'}</td>
           <td>${item.concept || '-'}</td>
           <td>${item.period_label || '-'}</td>
           <td>${formatDate(item.due_date)}</td>
@@ -2093,7 +2095,7 @@
 
     function renderCoursesAndGrades() {
       const courses = normalizeCourses();
-      const chtml = courses.length ? courses.map(c => `<div class="col-md-6 col-xl-4"><div class="card-soft"><div class="d-flex justify-content-between align-items-start gap-2 mb-2"><div><div class="fw-bold">${c.name}</div><div class="small text-secondary">${c.professor}</div></div>${statusBadge(c.status)}</div><div class="small text-secondary mb-2">Semestre ${c.semester}</div><div class="progress-track mb-2"><span style="width:${Math.max(5,Math.min(100,c.progress || 0))}%"></span></div><div class="d-flex justify-content-between small text-secondary"><span>Avance</span><span>${Math.max(0,Math.min(100,c.progress || 0))}%</span></div><div class="d-flex justify-content-between align-items-center mt-3"><span class="small">Calificación: <b>${c.score ?? '-'}</b></span><button class="btn btn-sm btn-primary pill" onclick="openCourse('${c.url}')">Entrar</button></div></div></div>`).join('') : '<div class="col-12"><div class="empty">No hay materias visibles.</div></div>';
+      const chtml = courses.length ? courses.map(c => `<div class="col-md-6 col-xl-4"><div class="card-soft"><div class="d-flex justify-content-between align-items-start gap-2 mb-2"><div><div class="fw-bold">${c.name}</div><div class="small text-secondary">${c.professor}</div></div>${statusBadge(c.status)}</div><div class="small text-secondary mb-2">Semestre ${c.semester}</div><div class="progress-track mb-2"><span style="width:${Math.max(5,Math.min(100,c.progress || 0))}%"></span></div><div class="d-flex justify-content-between small text-secondary"><span>Avance</span><span>${Math.max(0,Math.min(100,c.progress || 0))}%</span></div><div class="d-flex justify-content-between align-items-center mt-3"><span class="small">Calificación: <b>${c.score ? '-'}</b></span><button class="btn btn-sm btn-primary pill" onclick="openCourse('${c.url}')">Entrar</button></div></div></div>`).join('') : '<div class="col-12"><div class="empty">No hay materias visibles.</div></div>';
       document.getElementById('dashCourses').innerHTML = chtml;
       document.getElementById('coursesGrid').innerHTML = chtml;
       document.getElementById('coursesCount').textContent = `${courses.length} materia${courses.length === 1 ? '' : 's'}`;
@@ -2498,7 +2500,7 @@
           const input = document.createElement('input');
           input.type = 'hidden';
           input.name = key;
-          input.value = String(value ?? '');
+          input.value = String(value ? '');
           form.appendChild(input);
         });
         document.body.appendChild(form);
@@ -2593,7 +2595,7 @@
       const sem = e?.semester || currentUser?.semestre || '—';
       if (ppCareerSem) ppCareerSem.textContent = `${career} · ${sem}`;
 
-      const isUniversity = pp?.is_university ?? true;
+      const isUniversity = pp?.is_university ? true;
       if (ppLevelBadge) {
         ppLevelBadge.textContent = isUniversity ? 'Universidad' : 'Preparatoria';
         ppLevelBadge.className = `badge ${isUniversity ? 'bg-light text-primary' : 'bg-warning text-dark'}`;
@@ -2716,8 +2718,8 @@
         const badge = document.getElementById(statusBadgeId);
         if (badge) { badge.textContent = ssStatus; badge.className = statusBadgeClass(ssStatus); }
         renderSteps(stepContId, SS_STEPS, ssStatus);
-        const hrsComp = ss.hours_completed ?? 0;
-        const hrsReq = ss.hours_required ?? 480;
+        const hrsComp = ss.hours_completed ? 0;
+        const hrsReq = ss.hours_required ? 480;
         const pct = hrsReq > 0 ? Math.min(100, Math.round((hrsComp / hrsReq) * 100)) : 0;
         const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
         setT(hrsCompId, hrsComp);

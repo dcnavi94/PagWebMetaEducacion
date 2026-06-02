@@ -607,6 +607,8 @@
         .pp-step.active .pp-step-label { color: var(--primary-blue); font-weight: 800; }
         .pp-divider { border: 0; border-top: 1px dashed rgba(17,65,184,.15); margin: 15px 0; }
 </style>
+<link rel="preload" href="style.min.css" as="style">
+    <link rel="preload" href="script.min.js" as="script">
 </head>
 <body>
 
@@ -2067,7 +2069,7 @@
                     const input = document.createElement('input');
                     input.type = 'hidden';
                     input.name = key;
-                    input.value = String(value ?? '');
+                    input.value = String(value ? '');
                     form.appendChild(input);
                 });
                 document.body.appendChild(form);
@@ -2109,7 +2111,7 @@
                     </td>
                     <td>${course.subject_name || '-'}</td>
                     <td>${course.semester || '-'}</td>
-                    <td>${course.participants_count ?? '-'}</td>
+                    <td>${course.participants_count ? '-'}</td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="loadTeacherMoodleCourseDetail(${course.moodle_course_id}, '${(course.subject_name || '').replace(/'/g, "\\'")}')">
                             Ver detalles
@@ -2652,7 +2654,9 @@
                 .sig-sub { font-size: 7.5pt; color: #555; }
                 .footer { margin-top: 20px; border-top: 1px solid #c7d7f5; padding-top: 8px; font-size: 7.5pt; color: #888; display: flex; justify-content: space-between; }
                 @media print { .no-print { display: none !important; } }
-            </style></head><body>
+            </style><link rel="preload" href="style.min.css" as="style">
+    <link rel="preload" href="script.min.js" as="script">
+</head><body>
 
             <div class="no-print" style="padding:12px;background:#1141b8;color:white;text-align:center;cursor:pointer;font-weight:700" onclick="window.print()">
                 🖨️ Haz clic aquí para imprimir o guardar como PDF

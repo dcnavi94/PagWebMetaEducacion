@@ -67,6 +67,12 @@ class Settings:
     MAX_UPLOAD_SIZE_MB: int = _get_int("MAX_UPLOAD_SIZE_MB", 5)
     MAX_CSV_SIZE_MB: int = _get_int("MAX_CSV_SIZE_MB", 5)
 
+    # Assets publicos (para gestion web)
+    PUBLIC_ASSETS_DIR: str = os.getenv(
+        "PUBLIC_ASSETS_DIR",
+        str(Path(__file__).resolve().parent.parent.parent / "public" / "assets")
+    )
+
     # Rate limiting
     LOGIN_RATE_MAX_ATTEMPTS: int = _get_int("LOGIN_RATE_MAX_ATTEMPTS", 5)
     LOGIN_RATE_WINDOW_SECONDS: int = _get_int("LOGIN_RATE_WINDOW_SECONDS", 900)  # 15 minutos

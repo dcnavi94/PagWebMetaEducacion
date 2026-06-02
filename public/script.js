@@ -25,16 +25,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Simple observer for reveal animations
-    const observer = new IntersectionObserver((entries) => {
+    // Lazy-load background images declared via data-bg attribute
+    const bgObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('reveal-active');
+                entry.target.style.background = entry.target.dataset.bg;
+                bgObserver.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.1 });
+    }, { rootMargin: '200px 0px' });
 
-    document.querySelectorAll('.card, .hero img').forEach(el => observer.observe(el));
+    document.querySelectorAll('[data-bg]').forEach(el => bgObserver.observe(el));
+
+    // Load hidden carousel slides on demand (slide 2 & 3 start without background)
+    const heroCarousel = document.getElementById('heroCarousel');
+    if (heroCarousel) {
+        heroCarousel.addEventListener('slide.bs.carousel', (e) => {
+            const item = e.relatedTarget;
+            if (item.dataset.bg) {
+                item.style.background = item.dataset.bg;
+            }
+        });
+    }
+
 
     // ============================================
     // AXO CHATBOT

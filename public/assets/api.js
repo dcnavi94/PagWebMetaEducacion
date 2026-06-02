@@ -49,6 +49,11 @@
   }
 
   window.API_BASE = API_BASE;
+  window.apiUrl = (path = '') => {
+    if (!path) return API_BASE;
+    if (/^https?:\/\//i.test(path)) return path;
+    return `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+  };
   window.rawFetch = originalFetch;
   window.setApiBaseUrl = (url) => {
     localStorage.setItem('apiBaseUrl', url);
@@ -60,9 +65,12 @@
     let url = typeof input === 'string' ? input : input.url;
     const opts = { ...init, headers: { ...(init.headers || {}) } };
 
-    const isApiCall = typeof url === 'string' && url.startsWith('http://localhost:8000');
+    const apiPathPattern = /^\/(admin|users|teacher|catalogs|token|public)(\/|\?|$)/;
+    const isLocalApiCall = typeof url === 'string' && url.startsWith('http://localhost:8000');
+    const isRelativeApiCall = typeof url === 'string' && apiPathPattern.test(url);
+    const isApiCall = isLocalApiCall || isRelativeApiCall;
     if (isApiCall) {
-      url = url.replace('http://localhost:8000', API_BASE);
+      url = isLocalApiCall ? url.replace('http://localhost:8000', API_BASE) : window.apiUrl(url);
       input = url;
     }
 

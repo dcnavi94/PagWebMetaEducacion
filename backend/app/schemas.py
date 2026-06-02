@@ -69,6 +69,8 @@ class UserBase(BaseModel):
     username: str
     email: Optional[EmailStr] = None
     full_name: Optional[str] = None
+    curp: Optional[str] = None
+    seg_unique_key: Optional[str] = None
     role: UserRole
     moodle_id: Optional[int] = None
     user_status: UserStatus = UserStatus.ACTIVO
@@ -142,6 +144,8 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     email: Optional[EmailStr] = None
+    curp: Optional[str] = None
+    seg_unique_key: Optional[str] = None
     password: Optional[str] = None
     user_status: Optional[UserStatus] = None
     enrollment_status: Optional[EnrollmentStatus] = None

@@ -5,7 +5,7 @@
     --accent-pink-hover: #e64a19;
     --light-blue: #f0f7ff;
     --meta-purple: #9c27b0;
-    --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: 0.22s ease;
     --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
     --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
 }
@@ -623,7 +623,7 @@ body {
 }
 
 .card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-4px);
     box-shadow: var(--shadow-card-hover) !important;
 }
 
@@ -663,7 +663,7 @@ body {
 }
 
 .portfolio-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-4px);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -681,7 +681,7 @@ body {
 }
 
 .portfolio-card:hover .portfolio-img-wrapper img {
-    transform: scale(1.1);
+    transform: scale(1.04);
 }
 
 .portfolio-overlay {
@@ -738,12 +738,12 @@ body {
 
 /* Oferta Educativa Styles */
 .career-card {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
     border: none;
 }
 
 .career-card:hover {
-    transform: translateY(-15px) scale(1.02);
+    transform: translateY(-4px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
 }
 
@@ -1712,3 +1712,450 @@ body {
 .bg-soft-orange  { background: #ffedd5; }
 .text-success    { color: #059669 !important; }
 .text-warning    { color: #b45309 !important; }
+
+/* Index - animaciones mas fluidas */
+.index-layout .enrollment-banner {
+    animation: none;
+}
+
+.index-layout .card:hover,
+.index-layout .career-card:hover,
+.index-layout .portfolio-card:hover,
+.index-layout .gallery-card:hover,
+.index-layout .taller-card:hover,
+.index-layout .company-logo-card:hover {
+    transform: translateY(-3px);
+}
+
+.index-layout .career-card:hover .card-header i,
+.index-layout .portfolio-card:hover .portfolio-img-wrapper img,
+.index-layout .gallery-card:hover,
+.index-layout .reel-poster:hover .reel-play-btn i,
+.index-layout .taller-card:hover .taller-img {
+    transform: none;
+}
+
+.index-layout .modality-card-inner {
+    transition: transform 0.38s ease;
+}
+
+.index-layout .modality-card-inner:hover:not(.flipped) {
+    transform: translateY(-3px);
+}
+
+.index-layout .portfolio-card,
+.index-layout .gallery-card,
+.index-layout .taller-card,
+.index-layout .company-logo-card,
+.index-layout .career-card,
+.index-layout .card {
+    transition-duration: 0.22s;
+}
+
+.index-layout #oferta .career-card {
+    opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .index-layout *,
+    .index-layout *::before,
+    .index-layout *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Software - biomimesis del ajolote */
+.software-biomimic {
+    --sw-water: #dff8f4;
+    --sw-deep-water: #0e6f80;
+    --sw-lake: #15616d;
+    --sw-humedal: #6a994e;
+    --sw-axo: #ff8aa5;
+    --sw-coral: #ff6b35;
+    background: #f7fbfa;
+}
+
+.software-biomimic .nav-dropdown {
+    background:
+        linear-gradient(135deg, rgba(223, 248, 244, 0.98), rgba(255, 255, 255, 0.98));
+    border-radius: 8px !important;
+    overflow: hidden;
+}
+
+.software-biomimic .nav-drop-item {
+    position: relative;
+    border-radius: 8px !important;
+}
+
+.software-biomimic .nav-drop-item::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 18px;
+    height: 1px;
+    background: rgba(14, 111, 128, 0.22);
+    transform: translateY(-50%);
+}
+
+.software-eco-hero {
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 560px;
+    background:
+        linear-gradient(135deg, rgba(21, 97, 109, 0.88) 0%, rgba(26, 61, 182, 0.78) 52%, rgba(216, 27, 96, 0.68) 100%),
+        url("assets/axolotl_bg.png") center bottom / cover no-repeat;
+}
+
+.software-eco-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        linear-gradient(120deg, rgba(223, 248, 244, 0.16) 0 18%, transparent 18% 100%),
+        linear-gradient(300deg, rgba(255, 138, 165, 0.16) 0 16%, transparent 16% 100%),
+        linear-gradient(180deg, rgba(4, 32, 44, 0.12), rgba(4, 20, 35, 0.68));
+}
+
+.software-biomimic #costos-beca,
+.software-biomimic #comparador-software,
+.software-biomimic #dudas-software,
+.software-biomimic #lead-software,
+.software-biomimic #curriculum-section {
+    background-color: #f2faf7 !important;
+}
+
+.software-biomimic .card,
+.software-biomimic .rounded-4 {
+    border-radius: 8px !important;
+}
+
+.software-biomimic .underline {
+    background: linear-gradient(90deg, var(--sw-axo), var(--sw-humedal), var(--sw-deep-water));
+}
+
+.software-biomimic #comparador-software .row {
+    align-items: stretch;
+}
+
+.software-biomimic #comparador-software .card {
+    min-height: 168px;
+}
+
+.software-biomimic #comparador-software .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.software-biomimic #comparador-software .text-center.mt-4 {
+    margin-top: 3rem !important;
+}
+
+.software-biomimic #comparador-software .btn {
+    min-width: 260px;
+    white-space: normal;
+}
+
+.software-biomimic #fit-software .fit-cta {
+    margin-top: 3rem !important;
+}
+
+.software-biomimic #fit-software .btn {
+    max-width: 100%;
+    white-space: normal;
+}
+
+.software-biomimic #evidencias-software .card {
+    min-height: 100%;
+}
+
+.software-biomimic #evidencias-software .card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.software-biomimic #evidencias-software .evidence-mini-row {
+    margin-top: 3rem;
+}
+
+.software-biomimic #evidencias-software .evidence-mini {
+    min-height: 116px;
+    padding: 1.25rem !important;
+}
+
+@media (max-width: 767.98px) {
+    .software-eco-hero {
+        min-height: 520px;
+    }
+
+    .software-biomimic #comparador-software .card {
+        min-height: auto;
+    }
+
+    .software-biomimic #comparador-software .btn {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .software-biomimic #fit-software .fit-cta {
+        margin-top: 2rem !important;
+    }
+
+    .software-biomimic #fit-software .btn {
+        width: 100%;
+    }
+
+    .software-biomimic #evidencias-software .evidence-mini {
+        min-height: auto;
+    }
+
+    .software-biomimic #evidencias-software .evidence-mini-row {
+        margin-top: 2rem;
+    }
+}
+
+/* Telematica - ajustes de grilla y espaciado */
+.telematica-layout #comparador-telematica .row,
+.telematica-layout #evidencias-telematica .row {
+    align-items: stretch;
+}
+
+.telematica-layout #comparador-telematica .card {
+    min-height: 168px;
+}
+
+.telematica-layout #comparador-telematica .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.telematica-layout #comparador-telematica .comparador-cta,
+.telematica-layout #fit-telematica .fit-cta {
+    margin-top: 3rem !important;
+}
+
+.telematica-layout #comparador-telematica .btn,
+.telematica-layout #fit-telematica .btn {
+    max-width: 100%;
+    white-space: normal;
+}
+
+.telematica-layout #comparador-telematica .btn {
+    min-width: 260px;
+}
+
+.telematica-layout #evidencias-telematica .card {
+    min-height: 100%;
+}
+
+.telematica-layout #evidencias-telematica .card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.telematica-layout #evidencias-telematica .evidence-mini-row {
+    margin-top: 3rem;
+}
+
+.telematica-layout #evidencias-telematica .evidence-mini {
+    min-height: 116px;
+    padding: 1.25rem !important;
+}
+
+@media (max-width: 767.98px) {
+    .telematica-layout #comparador-telematica .card,
+    .telematica-layout #evidencias-telematica .evidence-mini {
+        min-height: auto;
+    }
+
+    .telematica-layout #comparador-telematica .btn,
+    .telematica-layout #fit-telematica .btn {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .telematica-layout #comparador-telematica .comparador-cta,
+    .telematica-layout #fit-telematica .fit-cta,
+    .telematica-layout #evidencias-telematica .evidence-mini-row {
+        margin-top: 2rem !important;
+    }
+}
+
+/* Preparatoria - ajustes de grilla y espaciado */
+.preparatoria-layout #comparador-preparatoria .row,
+.preparatoria-layout #evidencias-preparatoria .row {
+    align-items: stretch;
+}
+
+.preparatoria-layout #comparador-preparatoria .card {
+    min-height: 168px;
+}
+
+.preparatoria-layout #comparador-preparatoria .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.preparatoria-layout #comparador-preparatoria .comparador-cta,
+.preparatoria-layout #fit-preparatoria .fit-cta {
+    margin-top: 3rem !important;
+}
+
+.preparatoria-layout #comparador-preparatoria .btn,
+.preparatoria-layout #fit-preparatoria .btn {
+    max-width: 100%;
+    white-space: normal;
+}
+
+.preparatoria-layout #comparador-preparatoria .btn {
+    min-width: 260px;
+}
+
+.preparatoria-layout #evidencias-preparatoria .card {
+    min-height: 100%;
+}
+
+.preparatoria-layout #evidencias-preparatoria .card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.preparatoria-layout #evidencias-preparatoria .evidence-mini-row {
+    margin-top: 3rem;
+}
+
+.preparatoria-layout #evidencias-preparatoria .evidence-mini {
+    min-height: 116px;
+    padding: 1.25rem !important;
+}
+
+@media (max-width: 767.98px) {
+    .preparatoria-layout #comparador-preparatoria .card,
+    .preparatoria-layout #evidencias-preparatoria .evidence-mini {
+        min-height: auto;
+    }
+
+    .preparatoria-layout #comparador-preparatoria .btn,
+    .preparatoria-layout #fit-preparatoria .btn {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .preparatoria-layout #comparador-preparatoria .comparador-cta,
+    .preparatoria-layout #fit-preparatoria .fit-cta,
+    .preparatoria-layout #evidencias-preparatoria .evidence-mini-row {
+        margin-top: 2rem !important;
+    }
+}
+
+/* ========================================================= */
+/* PREMIUM AESTHETICS OVERRIDES (Glassmorphism & Shadows)      */
+/* ========================================================= */
+
+:root {
+    --shadow-premium: 0 10px 30px rgba(20, 48, 156, 0.1);
+    --shadow-premium-hover: 0 20px 40px rgba(255, 87, 34, 0.2);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-blur: blur(12px);
+    --transition-bouncy: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Glassmorphism for Navbar */
+.navbar {
+    background-color: rgba(26, 61, 182, 0.85) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card Enhancements */
+.card, .career-card, .modality-card-front, .contact-form-container, .portfolio-card {
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--shadow-premium) !important;
+    transition: transform var(--transition-bouncy), box-shadow var(--transition-bouncy) !important;
+    border-radius: 20px !important;
+}
+
+.card:hover, .career-card:hover, .modality-card-inner:hover .modality-card-front, .portfolio-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-premium-hover) !important;
+}
+
+/* Premium Buttons */
+.btn {
+    border-radius: 12px !important;
+    transition: all var(--transition-smooth), transform var(--transition-bouncy) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-pink {
+    background: linear-gradient(135deg, var(--accent-pink) 0%, #d84315 100%) !important;
+    box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+    border: none;
+}
+
+.btn-pink:hover {
+    box-shadow: 0 8px 25px rgba(255, 87, 34, 0.6);
+    transform: translateY(-3px);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    border: none;
+    color: #000 !important;
+}
+
+.btn-warning:hover {
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.6);
+    transform: translateY(-3px);
+}
+
+/* Hero Carousel Overlay Refinement */
+.carousel-overlay {
+    background: linear-gradient(135deg, rgba(20, 48, 156, 0.85) 0%, rgba(156, 39, 176, 0.4) 100%) !important;
+}
+
+/* Enrollment Banner Premium */
+.enrollment-banner {
+    background: linear-gradient(90deg, #1a3db6, var(--meta-purple), var(--accent-pink)) !important;
+    background-size: 200% auto !important;
+    animation: gradientShift 5s ease infinite !important;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Image improvements */
+img {
+    border-radius: inherit;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+    background: var(--accent-pink);
+    color: white;
+}

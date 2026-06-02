@@ -145,7 +145,7 @@ Tareas:
 - [x] Mantener todos los `data-target`, IDs y funciones existentes.
 - [x] Revisar responsive en móvil y tablet.
 - [x] Reducir paddings excesivos en tablas densas.
-- [x] Normalizar textos mojibake visibles si aparecen como `Ã³`, `Ã©`, etc.
+- [x] Normalizar textos mojibake visibles si aparecen como `ó`, `é`, etc.
 
 Entregable:
 

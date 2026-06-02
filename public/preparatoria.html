@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://metaeducacion.edu.mx/preparatoria.html">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -35,9 +35,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MetaEdu">
     <link rel="apple-touch-icon" href="assets/icon-512.png">
+<link rel="preload" href="style.min.css" as="style">
+    <link rel="preload" href="script.min.js" as="script">
 </head>
 
-<body>
+<body class="preparatoria-layout">
 
     <!-- Social Sidebar -->
     <div class="social-sidebar d-none d-lg-flex">
@@ -417,7 +419,7 @@
                 <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Horarios definidos</h5><p class="text-muted small mb-0">Opciones claras para entre semana o sábados, útiles para familias que planean tiempos y traslados.</p></div></div></div>
                 <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold text-blue">Acompañamiento</h5><p class="text-muted small mb-0">Atención escolar y orientación para que alumno y familia sigan el proceso con más certeza.</p></div></div></div>
             </div>
-            <div class="text-center mt-4">
+            <div class="comparador-cta text-center mt-4">
                 <a href="#lead-preparatoria" class="btn btn-pink text-white fw-bold rounded-pill px-4">Quiero información de Preparatoria</a>
             </div>
         </div>
@@ -454,7 +456,7 @@
                     </div>
                 </div>
             </div>
-            <div class="text-center mt-4">
+            <div class="fit-cta text-center mt-4">
                 <a href="#lead-preparatoria" class="btn btn-outline-pink fw-bold rounded-pill px-4">Quiero saber si Preparatoria es para mí</a>
             </div>
         </div>
@@ -627,10 +629,10 @@
                 <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=900&q=80&fit=crop" alt="Docente acompanando a estudiantes" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Acompanamiento real</h5><p class="text-muted small mb-0">Sustituyelo luego por tutoria, revision de avances, reuniones o apoyo durante el proceso escolar.</p></div></div></div>
                 <div class="col-md-6 col-xl-3"><div class="card h-100 border-0 shadow-sm rounded-4"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=900&q=80&fit=crop" alt="Exposicion escolar de alumnos" class="img-fluid rounded-top-4" style="height:220px; object-fit:cover;"><div class="card-body p-4"><h5 class="fw-bold text-blue">Talleres y exposiciones</h5><p class="text-muted small mb-0">Tambien sirve para mostrar ferias, presentaciones, robotica o momentos que den confianza a la familia.</p></div></div></div>
             </div>
-            <div class="row g-3">
-                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Cambio visible</h6><p class="text-muted small mb-0">Antes y despues del alumno: disciplina, seguridad, asistencia o continuidad academica.</p></div></div></div>
-                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Momento de aula</h6><p class="text-muted small mb-0">Fotos de actividades, exposiciones, talleres y acompanamiento docente con sentido humano.</p></div></div></div>
-                <div class="col-md-4"><div class="border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Historia corta</h6><p class="text-muted small mb-0">Micro testimonio de alumno o familia sobre lo que cambio en su proceso y confianza.</p></div></div></div>
+            <div class="row g-4 evidence-mini-row">
+                <div class="col-md-4"><div class="evidence-mini border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Cambio visible</h6><p class="text-muted small mb-0">Antes y despues del alumno: disciplina, seguridad, asistencia o continuidad academica.</p></div></div>
+                <div class="col-md-4"><div class="evidence-mini border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Momento de aula</h6><p class="text-muted small mb-0">Fotos de actividades, exposiciones, talleres y acompanamiento docente con sentido humano.</p></div></div>
+                <div class="col-md-4"><div class="evidence-mini border rounded-4 p-3 h-100 bg-light"><h6 class="fw-bold text-blue">Historia corta</h6><p class="text-muted small mb-0">Micro testimonio de alumno o familia sobre lo que cambio en su proceso y confianza.</p></div></div>
             </div>
         </div>
     </section>
@@ -1036,7 +1038,7 @@
     </a>
 
     <script src="assets/api.js"></script>
-    <script src="script.js"></script>
+    <script src="script.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -1257,17 +1259,17 @@
             });
         });
 
-        // â”€â”€ Navbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Navbar ----------------------------------------------------
         gsap.from('nav', {
             y: -80, opacity: 0, duration: 0.7, ease: 'power3.out'
         });
 
-        // â”€â”€ Social sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Social sidebar --------------------------------------------
         gsap.from('.social-sidebar', {
             x: -60, opacity: 0, duration: 0.9, delay: 0.8, ease: 'power3.out'
         });
 
-        // â”€â”€ Hero: cascada al cargar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Hero: cascada al cargar -----------------------------------
         const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
         heroTl
             .from('#hero .bi-mortarboard', {
@@ -1282,13 +1284,13 @@
                 scale: 0.7, opacity: 0, duration: 0.6, ease: 'back.out(1.5)'
             }, '-=0.2');
 
-        // â”€â”€ RVOE Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- RVOE Banner -----------------------------------------------
         gsap.from('.bg-light.border-bottom.border-top .badge', {
             scrollTrigger: { trigger: '.bg-light.border-bottom.border-top', start: 'top 88%' },
             x: -50, opacity: 0, duration: 0.7, ease: 'power3.out'
         });
 
-        ScrollTrigger.batch('#costos-beca .card, #modalidades-inicio .card, #comparador-preparatoria .card, #fit-preparatoria .card, #direccion-academica-preparatoria .card, #evidencias-preparatoria .card, #reels-preparatoria .card, #dudas-preparatoria .card, #lead-preparatoria .card, #lead-preparatoria .rounded-4', {
+        ScrollTrigger.batch('#costos-beca .card, #modalidades-inicio .card, #direccion-academica-preparatoria .card, #reels-preparatoria .card, #dudas-preparatoria .card, #lead-preparatoria .card, #lead-preparatoria .rounded-4', {
             start: 'top 88%',
             onEnter: (elements) => {
                 gsap.from(elements, {
@@ -1298,7 +1300,7 @@
             once: true
         });
 
-        // â”€â”€ Info Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Info Section ----------------------------------------------
         gsap.from('#info-section h2', {
             scrollTrigger: { trigger: '#info-section h2', start: 'top 82%' },
             x: -60, opacity: 0, duration: 0.8, ease: 'power3.out'
@@ -1345,7 +1347,7 @@
             scale: 0.5, opacity: 0, rotation: -10, duration: 1.1, ease: 'elastic.out(1, 0.5)'
         });
 
-        // â”€â”€ Curriculum Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Curriculum Section ----------------------------------------
         gsap.from('#curriculum-section .text-center h2', {
             scrollTrigger: { trigger: '#curriculum-section .text-center', start: 'top 82%' },
             y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
@@ -1371,13 +1373,13 @@
             y: 30, opacity: 0, duration: 0.7, ease: 'power2.out'
         });
 
-        // â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Footer ----------------------------------------------------
         gsap.from('footer', {
             scrollTrigger: { trigger: 'footer', start: 'top 95%' },
             y: 40, opacity: 0, duration: 0.7, ease: 'power2.out'
         });
 
-        // â”€â”€ WhatsApp float â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- WhatsApp float --------------------------------------------
         gsap.from('.whatsapp-float', {
             scale: 0, opacity: 0, duration: 0.6, delay: 1.5, ease: 'back.out(2)'
         });

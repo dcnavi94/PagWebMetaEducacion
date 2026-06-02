@@ -77,6 +77,8 @@ class User(Base):
     username = Column(String, unique=True, index=True)  # Matrícula
     email = Column(String, unique=True, index=True)
     full_name = Column(String)
+    curp = Column(String, nullable=True, index=True)
+    seg_unique_key = Column(String, nullable=True, index=True)
     hashed_password = Column(String)
     moodle_id = Column(Integer, unique=True, nullable=True, index=True)
     role = Column(
@@ -113,6 +115,7 @@ class User(Base):
     charges = relationship("Charge", back_populates="student", passive_deletes=True)
     grades = relationship("Grade", back_populates="student", passive_deletes=True)
     service_requests = relationship("ServiceRequest", back_populates="student", passive_deletes=True)
+    student_documents = relationship("StudentDocument", back_populates="student", passive_deletes=True)
     student_enrollments = relationship("StudentEnrollment", back_populates="student", passive_deletes=True)
     # Asignaciones del docente (qué materias imparte en qué ciclos)
     assignments = relationship("SubjectAssignment", back_populates="teacher", passive_deletes=True)
@@ -129,6 +132,19 @@ class User(Base):
         foreign_keys="NotificationMessage.created_by_user_id",
     )
     academic_advisor = relationship("User", remote_side=[id], foreign_keys=[academic_advisor_id])
+
+class StudentDocument(Base):
+    __tablename__ = "student_documents"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    document_type = Column(String, nullable=False)
+    filename = Column(String, nullable=False)
+    file_path = Column(String, nullable=False)
+    content_type = Column(String, nullable=True)
+    uploaded_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    student = relationship("User", back_populates="student_documents")
 
 class Charge(Base):
     __tablename__ = "charges"

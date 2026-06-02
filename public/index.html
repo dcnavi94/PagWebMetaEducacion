@@ -17,7 +17,7 @@
     <link rel="canonical" href="https://metaeducacion.edu.mx">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -36,14 +36,17 @@
 
     <!-- PWA Meta Tags -->
     <link rel="manifest" href="manifest.json">
+    <link rel="preload" as="image" href="assets/robotics.png" fetchpriority="high">
     <meta name="theme-color" content="#14309c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="MetaEdu">
     <link rel="apple-touch-icon" href="assets/icon-512.png">
+<link rel="preload" href="style.min.css" as="style">
+    <link rel="preload" href="script.min.js" as="script">
 </head>
 
-<body>
+<body class="index-layout">
 
     <!-- Banner de Inscripciones Urgente -->
     <div class="enrollment-banner" id="enrollmentBanner">
@@ -77,7 +80,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: #1a3db6;">
         <div class="container py-1">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <img src="assets/logo_white.png" alt="MetaEducación Logo" height="40" class="me-2">
+                <img src="assets/logo_white.png" alt="MetaEducación Logo" height="40" class="me-2" fetchpriority="high">
                 <span class="fw-bolder fs-4 italic">MetaEducación</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Abrir menú de navegación" title="Abrir menú">
@@ -91,7 +94,7 @@
                         <a class="nav-link fw-semibold active" href="#inicio">Inicio</a>
                     </li>
 
-                    <!-- Programas â–¾ -->
+                    <!-- Programas ? -->
                     <li class="nav-item dropdown">
                         <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">Programas</a>
@@ -161,7 +164,7 @@
                         </ul>
                     </li>
 
-                    <!-- Admisiones â–¾ -->
+                    <!-- Admisiones ? -->
                     <li class="nav-item dropdown">
                         <a class="nav-link fw-semibold dropdown-toggle" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">Admisiones</a>
@@ -245,7 +248,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="carousel-item" style="background: url('assets/events.png') center 30%/cover;">
+                <div class="carousel-item" data-bg="url('assets/events.png') center 30%/cover">
                     <div class="carousel-overlay"></div>
                     <div class="carousel-caption text-center mb-5 h-75 d-flex flex-column justify-content-center">
                         <h1 class="display-2 fw-bold italic">Crea el <span class="text-pink">Futuro</span></h1>
@@ -257,7 +260,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="carousel-item" style="background: url('assets/travel.png') center 30%/cover;">
+                <div class="carousel-item" data-bg="url('assets/travel.png') center 30%/cover">
                     <div class="carousel-overlay"></div>
                     <div class="carousel-caption text-end mb-5 h-75 d-flex flex-column justify-content-center">
                         <h1 class="display-2 fw-bold italic">Preparatoria <span class="text-pink">2 años</span></h1>
@@ -296,7 +299,7 @@
                         <div
                             class="card-header bg-blue text-white py-5 text-center position-relative overflow-hidden border-0">
                             <div class="position-absolute w-100 h-100 start-0 top-0"
-                                style="background: url('assets/telematica.png') center/cover; opacity: 0.3; mix-blend-mode: luminosity;">
+                                data-bg="url('assets/telematica.png') center/cover" style="opacity: 0.3; mix-blend-mode: luminosity;">
                             </div>
                             <div class="position-relative" style="z-index: 1;">
                                 <i class="bi bi-cpu fs-1 mb-2 d-block fw-bold"
@@ -332,7 +335,7 @@
                         <div
                             class="card-header bg-pink text-white py-5 text-center position-relative overflow-hidden border-0">
                             <div class="position-absolute w-100 h-100 start-0 top-0"
-                                style="background: url('assets/software.png') center/cover; opacity: 0.3; mix-blend-mode: luminosity;">
+                                data-bg="url('assets/software.png') center/cover" style="opacity: 0.3; mix-blend-mode: luminosity;">
                             </div>
                             <div class="position-relative" style="z-index: 1;">
                                 <i class="bi bi-code-slash fs-1 mb-2 d-block fw-bold"
@@ -369,7 +372,7 @@
                         <div
                             class="card-header bg-purple text-white py-5 text-center position-relative overflow-hidden border-0">
                             <div class="position-absolute w-100 h-100 start-0 top-0"
-                                style="background: url('assets/preparatoria.png') center 60%/cover; opacity: 0.3; mix-blend-mode: luminosity;">
+                                data-bg="url('assets/preparatoria.png') center 60%/cover" style="opacity: 0.3; mix-blend-mode: luminosity;">
                             </div>
                             <div class="position-relative" style="z-index: 1;">
                                 <i class="bi bi-mortarboard fs-1 mb-2 d-block fw-bold"
@@ -429,7 +432,7 @@
                                 </div>
                             </div>
                             <div class="modality-card-back">
-                                <img src="assets/axo-polo-waving.png" alt="Axo Waving">
+                                <img src="assets/axo-polo-waving.png" alt="Axo Waving" loading="lazy" decoding="async">
                                 <h4>¡Hola! Soy Axo</h4>
                                 <p>En esta modalidad vienes de <b>lunes a viernes</b>. ¡Es la ruta más rápida para
                                     evolucionar y convertirte en un experto!</p>
@@ -454,7 +457,7 @@
                             </div>
                             <div class="modality-card-back"
                                 style="background: linear-gradient(135deg, var(--accent-pink) 0%, #d84315 100%);">
-                                <img src="assets/axolotl-waving.png" alt="Axo Hero">
+                                <img src="assets/axolotl-waving.png" alt="Axo Hero" loading="lazy" decoding="async">
                                 <h4>Flexibilidad Sabatina</h4>
                                 <p>¿Trabajas? ¡No hay problema! Evoluciona solo los <b>sábados</b> con la misma calidad
                                     y validez oficial. ¡A tu ritmo!</p>
@@ -478,7 +481,7 @@
                             </div>
                             <div class="modality-card-back"
                                 style="background: linear-gradient(135deg, var(--meta-purple) 0%, #6a1b9a 100%);">
-                                <img src="assets/axo-polo-laptop.png" alt="Axo Laptop">
+                                <img src="assets/axo-polo-laptop.png" alt="Axo Laptop" loading="lazy" decoding="async">
                                 <h4>Sin Fronteras</h4>
                                 <p>No importa dónde estés, la <b>Legión Axolot</b> llega a ti. Estudia 100% online en
                                     nuestra plataforma de vanguardia.</p>
@@ -504,67 +507,67 @@
             <div class="row g-3" id="comunidad-gallery">
                 <div class="col-12 col-md-8">
                     <div class="gallery-card gallery-card-tall rounded-4 overflow-hidden position-relative">
-                        <img src="assets/FOTOSMETA/MVIMG_20260420_115740.jpg" alt="Equipo Axolot" class="w-100 h-100 gallery-img">
+                        <img src="assets/FOTOSMETA/MVIMG_20260420_115740.jpg" alt="Alumnos MetaEducación" loading="lazy" decoding="async" class="w-100 h-100 gallery-img">
                         <div class="gallery-overlay gallery-overlay-blue position-absolute d-flex flex-column justify-content-end p-4">
                             <span class="text-white fw-bold fs-5">Comunidad Axolot</span>
-                            <span class="text-white-50 small">Campus MetaEducación</span>
+                            <span class="text-white-50 small">Nuestros alumnos trabajando en equipo</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="gallery-card gallery-card-tall rounded-4 overflow-hidden position-relative">
-                        <img src="assets/FOTOSMETA/IMG_20240308_131615.jpg" alt="Estudio en equipo" class="w-100 h-100 gallery-img">
+                        <img src="assets/FOTOSMETA/IMG_20191031_115515.jpg" alt="Estudiantes en Hackathon" loading="lazy" decoding="async" class="w-100 h-100 gallery-img">
                         <div class="gallery-overlay gallery-overlay-pink position-absolute d-flex flex-column justify-content-end p-4">
-                            <span class="text-white fw-bold">Estudio en Equipo</span>
-                            <span class="text-white-50 small">Biblioteca</span>
+                            <span class="text-white fw-bold">Hackathon Axolot</span>
+                            <span class="text-white-50 small">Innovación y competencia estudiantil</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4">
                     <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
-                        <img src="assets/FOTOSMETA/IMG_20230915_083450.jpg" alt="Laboratorio" class="w-100 h-100 gallery-img">
+                        <img src="assets/FOTOSMETA/IMG_20230915_083450.jpg" alt="Práctica en laboratorio" loading="lazy" decoding="async" class="w-100 h-100 gallery-img">
                         <div class="gallery-overlay gallery-overlay-blue position-absolute d-flex flex-column justify-content-end p-3">
-                            <span class="text-white fw-bold small">Laboratorio Tech</span>
+                            <span class="text-white fw-bold small">Práctica Real</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4">
                     <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
-                        <img src="assets/FOTOSMETA/IMG_20231128_124321.jpg" alt="Evento campus" class="w-100 h-100 gallery-img">
+                        <img src="assets/FOTOSMETA/IMG_20200306_123540.jpg" alt="Alumnos en proyectos" loading="lazy" decoding="async" class="w-100 h-100 gallery-img">
                         <div class="gallery-overlay gallery-overlay-pink position-absolute d-flex flex-column justify-content-end p-3">
-                            <span class="text-white fw-bold small">Eventos Campus</span>
+                            <span class="text-white fw-bold small">Proyectos Axolot</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4">
                     <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
-                        <img src="assets/FOTOSMETA/IMG_20221202_111114.jpg" alt="Presentaciones" class="w-100 h-100 gallery-img">
+                        <img src="assets/FOTOSMETA/IMG_20230428_133135.jpg" alt="Presentación de alumnos" loading="lazy" decoding="async" class="w-100 h-100 gallery-img">
                         <div class="gallery-overlay gallery-overlay-blue position-absolute d-flex flex-column justify-content-end p-3">
-                            <span class="text-white fw-bold small">Presentaciones</span>
+                            <span class="text-white fw-bold small">Liderazgo Estudiantil</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4">
                     <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
-                        <img src="assets/FOTOSMETA/IMG_20191031_115515.jpg" alt="Hackathon" class="w-100 h-100 gallery-img">
+                        <img src="assets/FOTOSMETA/IMG_20240315_091918.jpg" alt="Clase interactiva" loading="lazy" decoding="async" class="w-100 h-100 gallery-img">
                         <div class="gallery-overlay gallery-overlay-pink position-absolute d-flex flex-column justify-content-end p-3">
-                            <span class="text-white fw-bold small">Hackathon</span>
+                            <span class="text-white fw-bold small">Clases Dinámicas</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4">
                     <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
-                        <img src="assets/FOTOSMETA/IMG_20190815_110158.jpg" alt="Campus MetaEducación" class="w-100 h-100 gallery-img">
+                        <img src="assets/FOTOSMETA/IMG_20231101_112545.jpg" alt="Alumnos en campus" loading="lazy" decoding="async" class="w-100 h-100 gallery-img">
                         <div class="gallery-overlay gallery-overlay-blue position-absolute d-flex flex-column justify-content-end p-3">
-                            <span class="text-white fw-bold small">Campus MetaEducación</span>
+                            <span class="text-white fw-bold small">Vida en el Campus</span>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4">
                     <div class="gallery-card gallery-card-sm rounded-4 overflow-hidden position-relative">
-                        <img src="assets/FOTOSMETA/IMG_20200306_123540.jpg" alt="Proyectos" class="w-100 h-100 gallery-img">
+                        <img src="assets/FOTOSMETA/IMG_20190916_103252.jpg" alt="Alumnos colaborando" loading="lazy" decoding="async" class="w-100 h-100 gallery-img">
                         <div class="gallery-overlay gallery-overlay-pink position-absolute d-flex flex-column justify-content-end p-3">
-                            <span class="text-white fw-bold small">Proyectos Finales</span>
+                            <span class="text-white fw-bold small">Trabajo en Equipo</span>
                         </div>
                     </div>
                 </div>
@@ -680,7 +683,7 @@
                             </div>
                             <div class="modality-card-back">
                                 <img src="assets/axo_labs_working.png" alt="Axo Labs"
-                                    style="border-radius: 15px; margin-bottom: 15px;">
+                                    loading="lazy" decoding="async" style="border-radius: 15px; margin-bottom: 15px;">
                                 <h4>¡Manos a la obra!</h4>
                                 <p>Nuestros laboratorios están equipados para que tu evolución sea 100% práctica desde
                                     el día uno.</p>
@@ -701,7 +704,7 @@
                             </div>
                             <div class="modality-card-back"
                                 style="background: linear-gradient(135deg, var(--accent-pink) 0%, #d84315 100%);">
-                                <img src="assets/axo-polo-success.png" alt="Axo Time">
+                                <img src="assets/axo-polo-success.png" alt="Axo Time" loading="lazy" decoding="async">
                                 <h4>¡Acelera tu Éxito!</h4>
                                 <p>Maximizamos tu tiempo. En la <b>Legión Axolot</b>, cada hora cuenta para que llegues
                                     más rápido a tus metas.</p>
@@ -721,7 +724,7 @@
                             </div>
                             <div class="modality-card-back"
                                 style="background: linear-gradient(135deg, #f7b42c 0%, #e67e22 100%);">
-                                <img src="assets/axo-polo-laptop.png" alt="Axo Work">
+                                <img src="assets/axo-polo-laptop.png" alt="Axo Work" loading="lazy" decoding="async">
                                 <h4>Proyectos Reales</h4>
                                 <p>Aquí no solo estudias, ¡trabajas en lo que amas! Creamos soluciones tecnológicas que
                                     el mundo real demanda.</p>
@@ -985,7 +988,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4 text-center mt-5 mt-lg-0">
-                    <img src="assets/axo-polo-success.png" alt="Axolotl on laptop" class="img-fluid" style="max-height: 400px;">
+                    <img src="assets/axo-polo-success.png" alt="Axolotl on laptop" loading="lazy" decoding="async" class="img-fluid" style="max-height: 400px;">
                 </div>
             </div>
         </div>
@@ -1003,7 +1006,7 @@
                     <p class="lead text-muted">¿Tienes dudas? Axo te las resuelve. Si no encuentras tu respuesta,
                         escríbenos por WhatsApp.</p>
                     <img src="assets/axo-polo-laptop.png" alt="Axo resolviendo dudas"
-                        class="img-fluid floating d-none d-lg-block mt-4" style="max-height: 280px;">
+                        loading="lazy" decoding="async" class="img-fluid floating d-none d-lg-block mt-4" style="max-height: 280px;">
                 </div>
                 <div class="col-lg-7">
                     <div class="accordion" id="faqAccordion">
@@ -1122,7 +1125,7 @@
                 <div class="col-lg-6">
                     <div class="contact-form-container" id="cf-wrapper">
 
-                        <!-- â”€â”€ Formulario â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+                        <!-- -- Formulario -------------------------- -->
                         <form id="contactForm" novalidate autocomplete="off">
                             <h3 class="h4 fw-bold text-blue mb-1">Mándanos un Mensaje</h3>
                             <p class="text-muted small mb-4">Respondemos en menos de 2 h en horario escolar.</p>
@@ -1217,7 +1220,7 @@
                             </button>
                         </div>
 
-                        <!-- â”€â”€ Estado: Error â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+                        <!-- -- Estado: Error ------------------------ -->
                         <div id="cf-error" class="cf-feedback-state d-none">
                             <div class="alert alert-warning d-flex align-items-start gap-3 rounded-4 mb-4">
                                 <i class="bi bi-exclamation-triangle-fill fs-4 flex-shrink-0 mt-1"></i>
@@ -1551,10 +1554,10 @@
                 container.innerHTML = html;
 
                 // Registrar en ScrollTrigger si GSAP ya está cargado
-                if (window.ScrollTrigger) {
+                if (window.ScrollTrigger && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                     ScrollTrigger.batch('#comunidades .taller-card, #comunidades .taller-cta-card', {
                         start: 'top 88%',
-                        onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.1, duration: 0.65, ease: 'power3.out' }),
+                        onEnter: els => gsap.from(els, { y: 18, opacity: 0, stagger: 0.04, duration: 0.42, ease: 'power2.out' }),
                         once: true
                     });
                 }
@@ -1619,10 +1622,10 @@
                     </div>`;
                 }).join('');
 
-                if (window.ScrollTrigger) {
+                if (window.ScrollTrigger && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                     ScrollTrigger.batch('#cursos .taller-card', {
                         start: 'top 88%',
-                        onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.1, duration: 0.65, ease: 'back.out(1.4)' }),
+                        onEnter: els => gsap.from(els, { y: 18, opacity: 0, stagger: 0.04, duration: 0.42, ease: 'power2.out' }),
                         once: true
                     });
                 }
@@ -1714,9 +1717,9 @@
 
         document.addEventListener('DOMContentLoaded', () => { loadContent(); loadComunidades(); loadCursos(); loadSuccessStories(); loadReels(); });
     </script>
-    <script src="script.js"></script>
+    <script src="script.min.js"></script>
 
-    <!-- â”€â”€ Formulario de Contacto â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <!-- -- Formulario de Contacto -------------------------------- -->
     <script>
     (function () {
         const form      = document.getElementById('contactForm');
@@ -1731,7 +1734,7 @@
         const charCount = document.getElementById('cf-chars');
         const textarea  = document.getElementById('cf-mensaje');
 
-        // â”€â”€ Contador de caracteres â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Contador de caracteres ------------------------------
         textarea?.addEventListener('input', () => {
             charCount.textContent = `${textarea.value.length}/500`;
         });
@@ -1748,7 +1751,7 @@
             );
         }
 
-        // â”€â”€ Construye URL de WhatsApp con los datos del form â”€â”€â”€â”€
+        // -- Construye URL de WhatsApp con los datos del form ----
         function buildWaUrl(data) {
             const msg = [
                 `Hola, vengo del sitio web de MetaEducación.`,
@@ -1774,14 +1777,14 @@
                     );
                     if (panel === success) {
                         gsap.from('#cf-check-icon i', {
-                            scale: 0, duration: 0.5, delay: 0.1, ease: 'back.out(1.7)'
+                            y: 8, opacity: 0, duration: 0.3, delay: 0.08, ease: 'power2.out'
                         });
                     }
                 }
             });
         }
 
-        // â”€â”€ Estado: loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Estado: loading -------------------------------------
         function setLoading(on) {
             submit.disabled = on;
             btnText.textContent = on ? 'Enviando…' : 'Enviar Mensaje';
@@ -1803,7 +1806,7 @@
         resetBtn?.addEventListener('click', resetForm);
         retryBtn?.addEventListener('click', resetForm);
 
-        // â”€â”€ Submit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // -- Submit ----------------------------------------------
         form?.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1853,6 +1856,31 @@
     <!-- GSAP Animations -->
     <script>
         gsap.registerPlugin(ScrollTrigger);
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        ScrollTrigger.config({ ignoreMobileResize: true });
+        gsap.defaults({ ease: 'power2.out', duration: 0.42 });
+
+        function fromIfMotion(targets, vars) {
+            if (reduceMotion) return;
+            gsap.from(targets, vars);
+        }
+
+        function revealBatch(targets, options = {}) {
+            if (reduceMotion) return;
+            ScrollTrigger.batch(targets, {
+                start: options.start || 'top 90%',
+                batchMax: options.batchMax || 6,
+                onEnter: els => gsap.from(els, {
+                    y: options.y ? 18,
+                    x: options.x ? 0,
+                    opacity: 0,
+                    stagger: options.stagger ? 0.04,
+                    duration: options.duration ? 0.42,
+                    ease: options.ease || 'power2.out'
+                }),
+                once: true
+            });
+        }
 
         // â”€â”€ Dropdown: animación de apertura con GSAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         document.querySelectorAll('.dropdown').forEach(dropdown => {
@@ -1860,6 +1888,7 @@
             if (!menu) return;
 
             dropdown.addEventListener('show.bs.dropdown', () => {
+                if (reduceMotion) return;
                 gsap.fromTo(menu,
                     { opacity: 0, y: -8, scale: 0.96 },
                     { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: 'power2.out' }
@@ -1868,6 +1897,7 @@
 
             // Animar items en cascada al abrir
             dropdown.addEventListener('shown.bs.dropdown', () => {
+                if (reduceMotion) return;
                 gsap.from(menu.querySelectorAll('.nav-drop-item'), {
                     x: -10, opacity: 0, stagger: 0.04, duration: 0.2, ease: 'power2.out'
                 });
@@ -1894,156 +1924,107 @@
             });
         });
 
-        // â”€â”€ Navbar & elementos fijos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        gsap.from('nav', { y: -80, opacity: 0, duration: 0.7, ease: 'power3.out' });
-        gsap.from('.social-sidebar', { x: -60, opacity: 0, duration: 0.9, delay: 1, ease: 'power3.out' });
-        gsap.from('.whatsapp-float', { scale: 0, opacity: 0, duration: 0.6, delay: 1.8, ease: 'back.out(2)' });
-        gsap.from('.enrollment-banner', { y: -40, opacity: 0, duration: 0.6, ease: 'power2.out' });
+        // -- Navbar & elementos fijos ----------------------------------
+        fromIfMotion('nav', { y: -24, opacity: 0, duration: 0.35 });
+        fromIfMotion('.social-sidebar', { x: -20, opacity: 0, duration: 0.35, delay: 0.25 });
+        fromIfMotion('.whatsapp-float', { y: 12, opacity: 0, duration: 0.35, delay: 0.35 });
+        fromIfMotion('.enrollment-banner', { y: -16, opacity: 0, duration: 0.3 });
 
-        // â”€â”€ Hero carousel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        gsap.from('.carousel-caption h1', { y: 70, opacity: 0, duration: 0.9, ease: 'power3.out', delay: 0.3 });
-        gsap.from('.carousel-caption p', { y: 40, opacity: 0, duration: 0.7, ease: 'power2.out', delay: 0.6 });
-        gsap.from('.carousel-caption .btn', { scale: 0.8, opacity: 0, duration: 0.6, ease: 'back.out(1.5)', delay: 0.9 });
+        // -- Hero carousel ---------------------------------------------
+        fromIfMotion('.carousel-caption h1', { y: 24, opacity: 0, duration: 0.5, delay: 0.15 });
+        fromIfMotion('.carousel-caption p', { y: 16, opacity: 0, duration: 0.42, delay: 0.25 });
+        fromIfMotion('.carousel-caption .btn', { y: 10, opacity: 0, stagger: 0.04, duration: 0.35, delay: 0.35 });
         // â”€â”€ Secciones con ScrollTrigger — helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function revealSection(trigger, targets, options = {}) {
-            gsap.from(targets, {
-                scrollTrigger: { trigger, start: options.start || 'top 82%' },
-                y: options.y ?? 50,
-                x: options.x ?? 0,
+            fromIfMotion(targets, {
+                scrollTrigger: { trigger, start: options.start || 'top 86%' },
+                y: options.y ? 18,
+                x: options.x ? 0,
                 opacity: 0,
-                stagger: options.stagger ?? 0,
-                duration: options.duration ?? 0.75,
-                ease: options.ease || 'power3.out',
-                delay: options.delay ?? 0
+                stagger: options.stagger ? 0.04,
+                duration: options.duration ? 0.42,
+                ease: options.ease || 'power2.out',
+                delay: options.delay ? 0
             });
         }
 
         // Oferta educativa
-        revealSection('#oferta', '#oferta h2', { y: 40 });
-        ScrollTrigger.batch('#oferta .card', {
-            start: 'top 88%',
-            onEnter: els => gsap.from(els, { y: 60, opacity: 0, stagger: 0.1, duration: 0.65, ease: 'power3.out' }),
-            once: true
-        });
+        revealSection('#oferta', '#oferta h2');
 
         // Modalidades
-        revealSection('#modalidades', '#modalidades h2', { y: 40 });
-        ScrollTrigger.batch('#modalidades .col-lg-4', {
-            start: 'top 88%',
-            onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
-            once: true
-        });
+        revealSection('#modalidades', '#modalidades h2');
+        revealBatch('#modalidades .modality-card-container');
 
         // Portafolio
-        revealSection('#portafolio', '#portafolio h2', { x: -50, y: 0 });
-        ScrollTrigger.batch('#portafolio .card', {
-            start: 'top 88%',
-            onEnter: els => gsap.from(els, { y: 60, opacity: 0, stagger: 0.1, duration: 0.65, ease: 'power3.out' }),
-            once: true
-        });
+        revealSection('#portafolio', '#portafolio h2');
+        revealBatch('#portafolio .card');
 
         // ¿Por qué nosotros?
-        revealSection('#porque', '#porque h2', { y: 40 });
-        ScrollTrigger.batch('#porque .col-lg-4', {
-            start: 'top 85%',
-            onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
-            once: true
-        });
+        revealSection('#porque', '#porque h2');
+        revealBatch('#porque .col-lg-4');
 
         // Calculadora
-        revealSection('#calculadora', '#calculadora h2', { y: 40 });
-        gsap.from('#calculadora .card', {
+        revealSection('#calculadora', '#calculadora h2');
+        fromIfMotion('#calculadora .card', {
             scrollTrigger: { trigger: '#calculadora .card', start: 'top 85%' },
-            y: 50, opacity: 0, duration: 0.8, ease: 'power3.out'
+            y: 18, opacity: 0, duration: 0.45
         });
 
         // Admisiones
 
         // Campo laboral
-        revealSection('#campo-laboral', '#campo-laboral h2', { x: -50, y: 0 });
-        ScrollTrigger.batch('#campo-laboral .list-group-item', {
-            start: 'top 90%',
-            onEnter: els => gsap.from(els, { x: -30, opacity: 0, stagger: 0.08, duration: 0.5, ease: 'power2.out' }),
-            once: true
-        });
+        revealSection('#campo-laboral', '#campo-laboral h2');
+        revealBatch('#campo-laboral .list-group-item', { y: 10 });
 
         // Convenios
-        revealSection('#convenios', '#convenios h2', { y: 40 });
-        ScrollTrigger.batch('#convenios img', {
-            start: 'top 88%',
-            onEnter: els => gsap.from(els, { scale: 0.7, opacity: 0, stagger: 0.1, duration: 0.6, ease: 'back.out(1.4)' }),
-            once: true
-        });
+        revealSection('#convenios', '#convenios h2');
+        revealBatch('#convenios img', { y: 10 });
 
         // Egresados
-        revealSection('#egresados', '#egresados h2', { y: 40 });
-        ScrollTrigger.batch('#egresados .col-lg-4', {
-            start: 'top 85%',
-            onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
-            once: true
-        });
+        revealSection('#egresados', '#egresados h2');
+        revealBatch('#egresados .col-lg-4');
 
         // â”€â”€ Comunidad Axolot — Galería â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        gsap.from('#comunidad .text-center h2', {
+        fromIfMotion('#comunidad .text-center h2', {
             scrollTrigger: { trigger: '#comunidad .text-center', start: 'top 82%' },
-            y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+            y: 18, opacity: 0, duration: 0.42
         });
-        gsap.from('#comunidad .comunidad-lead', {
+        fromIfMotion('#comunidad .comunidad-lead', {
             scrollTrigger: { trigger: '#comunidad .text-center', start: 'top 82%' },
-            y: 25, opacity: 0, duration: 0.7, delay: 0.2, ease: 'power2.out'
+            y: 12, opacity: 0, duration: 0.38, delay: 0.08
         });
-        ScrollTrigger.batch('#comunidad-gallery .gallery-card', {
-            start: 'top 88%',
-            onEnter: els => gsap.from(els, { scale: 0.85, opacity: 0, stagger: 0.08, duration: 0.65, ease: 'power3.out' }),
-            once: true
-        });
-        gsap.from('#comunidad .text-center.mt-5 .btn', {
+        revealBatch('#comunidad-gallery .gallery-card', { y: 14 });
+        fromIfMotion('#comunidad .text-center.mt-5 .btn', {
             scrollTrigger: { trigger: '#comunidad .text-center.mt-5', start: 'top 90%' },
-            scale: 0.8, opacity: 0, duration: 0.6, ease: 'back.out(1.5)'
+            y: 10, opacity: 0, duration: 0.35
         });
 
-        // â”€â”€ Talleres â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        gsap.from('#comunidades h2', {
+        // -- Talleres --------------------------------------------------
+        fromIfMotion('#comunidades h2', {
             scrollTrigger: { trigger: '#comunidades h2', start: 'top 82%' },
-            y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+            y: 18, opacity: 0, duration: 0.42
         });
-        ScrollTrigger.batch('#comunidades .taller-card, #comunidades .taller-cta-card', {
-            start: 'top 88%',
-            onEnter: els => gsap.from(els, { y: 70, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
-            once: true
-        });
+        revealBatch('#comunidades .taller-card, #comunidades .taller-cta-card');
 
-        // â”€â”€ Cursos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        gsap.from('#cursos h2', {
+        // -- Cursos ----------------------------------------------------
+        fromIfMotion('#cursos h2', {
             scrollTrigger: { trigger: '#cursos h2', start: 'top 82%' },
-            y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+            y: 18, opacity: 0, duration: 0.42
         });
-        ScrollTrigger.batch('#cursos .taller-card', {
-            start: 'top 88%',
-            onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.1, duration: 0.65, ease: 'back.out(1.4)' }),
-            once: true
-        });
+        revealBatch('#cursos .taller-card');
 
-        // â”€â”€ FAQ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        ScrollTrigger.batch('#reels-testimoniales .card', {
-            start: 'top 88%',
-            onEnter: els => gsap.from(els, { y: 50, opacity: 0, stagger: 0.12, duration: 0.7, ease: 'power3.out' }),
-            once: true
-        });
-        revealSection('#faq', '#faq h2', { x: -50, y: 0 });
-        ScrollTrigger.batch('#faq .accordion-item', {
-            start: 'top 90%',
-            onEnter: els => gsap.from(els, { y: 30, opacity: 0, stagger: 0.08, duration: 0.5, ease: 'power2.out' }),
-            once: true
-        });
+        // -- FAQ -------------------------------------------------------
+        revealBatch('#reels-testimoniales .card');
+        revealSection('#faq', '#faq h2');
+        revealBatch('#faq .accordion-item', { y: 10 });
 
-        // â”€â”€ Nosotros â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        revealSection('#nosotros', '#nosotros h2', { y: 40 });
+        // -- Nosotros --------------------------------------------------
+        revealSection('#nosotros', '#nosotros h2');
 
-        // â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        gsap.from('footer', {
+        // -- Footer ----------------------------------------------------
+        fromIfMotion('footer', {
             scrollTrigger: { trigger: 'footer', start: 'top 95%' },
-            y: 40, opacity: 0, duration: 0.7, ease: 'power2.out'
+            y: 16, opacity: 0, duration: 0.42
         });
     </script>
     <!-- Service Worker Disabled In Development -->
