@@ -8,7 +8,7 @@
                 if (userResponse.ok) {
                     const userData = await userResponse.json();
                     if (userData.role !== 'admin') {
-                        window.location.href = 'campus-virtual.html';
+                        window.location.href = '/campus-virtual';
                         return;
                     }
                     document.getElementById('adminName').textContent = userData.full_name;

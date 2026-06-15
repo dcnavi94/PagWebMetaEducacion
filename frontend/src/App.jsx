@@ -1,34 +1,34 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import Home from './pages/Home'
-import Software from './pages/Software'
-import Preparatoria from './pages/Preparatoria'
-import Telematica from './pages/Telematica'
-import Comunidad from './pages/Comunidad'
-import Institucion from './pages/Institucion'
-import TestVocacional from './pages/TestVocacional'
-import Login from './pages/Login'
-import CampusVirtual from './pages/CampusVirtual'
-import AdminPortal from './pages/AdminPortal'
-import TeacherPortal from './pages/TeacherPortal'
-import LibraryPortal from './pages/LibraryPortal'
-import LaboratoryPortal from './pages/LaboratoryPortal'
-import DocsActas from './pages/DocsActas'
-import DocsGrupos from './pages/DocsGrupos'
-import DocsInscripcion from './pages/DocsInscripcion'
-import DocsLaboratorio from './pages/DocsLaboratorio'
-import DocsPagos from './pages/DocsPagos'
-import DocsReglamento from './pages/DocsReglamento'
-import DocsServicioSocial from './pages/DocsServicioSocial'
-import DocsTesis from './pages/DocsTesis'
-import PortafolioCompleto from './pages/PortafolioCompleto'
-import ProcesoAcademico from './pages/ProcesoAcademico'
-import ProyectoDetalle from './pages/ProyectoDetalle'
-import KardexPortal from './pages/KardexPortal'
-import CalendarioPortal from './pages/CalendarioPortal'
-import PerfilPortal from './pages/PerfilPortal'
-import NotFound, { ErrorCatalog, ErrorPage } from './pages/NotFound'
+import Home from './pages/public/Home'
+import Software from './pages/public/Software'
+import Preparatoria from './pages/public/Preparatoria'
+import Telematica from './pages/public/Telematica'
+import Comunidad from './pages/public/Comunidad'
+import Institucion from './pages/public/Institucion'
+import TestVocacional from './pages/public/TestVocacional'
+import PortafolioCompleto from './pages/public/PortafolioCompleto'
+import ProcesoAcademico from './pages/public/ProcesoAcademico'
+import ProyectoDetalle from './pages/public/ProyectoDetalle'
+import Login from './pages/portals/Login'
+import CampusVirtual from './pages/portals/CampusVirtual'
+import AdminPortal from './pages/portals/AdminPortal'
+import TeacherPortal from './pages/portals/TeacherPortal'
+import LibraryPortal from './pages/portals/LibraryPortal'
+import LaboratoryPortal from './pages/portals/LaboratoryPortal'
+import KardexPortal from './pages/portals/KardexPortal'
+import CalendarioPortal from './pages/portals/CalendarioPortal'
+import PerfilPortal from './pages/portals/PerfilPortal'
+import DocsActas from './pages/docs/DocsActas'
+import DocsGrupos from './pages/docs/DocsGrupos'
+import DocsInscripcion from './pages/docs/DocsInscripcion'
+import DocsLaboratorio from './pages/docs/DocsLaboratorio'
+import DocsPagos from './pages/docs/DocsPagos'
+import DocsReglamento from './pages/docs/DocsReglamento'
+import DocsServicioSocial from './pages/docs/DocsServicioSocial'
+import DocsTesis from './pages/docs/DocsTesis'
+import NotFound, { ErrorCatalog, ErrorPage } from './pages/errors/NotFound'
 
 function App() {
   const location = useLocation();
@@ -52,7 +52,9 @@ function App() {
           <Route path="/campus-virtual" element={<CampusVirtual />} />
           <Route path="/campus-virtual.html" element={<Navigate to="/campus-virtual" replace />} />
           <Route path="/admin" element={<AdminPortal />} />
+          <Route path="/admin.html" element={<Navigate to="/admin" replace />} />
           <Route path="/teacher" element={<TeacherPortal />} />
+          <Route path="/teacher.html" element={<Navigate to="/teacher" replace />} />
           
           <Route path="/biblioteca" element={<LibraryPortal />} />
           <Route path="/kardex" element={<KardexPortal />} />

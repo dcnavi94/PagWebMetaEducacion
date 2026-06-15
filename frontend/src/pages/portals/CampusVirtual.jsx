@@ -1,6 +1,6 @@
 import { Navigate, useNavigate } from 'react-router-dom';
 
-const TeacherPortal = () => {
+const CampusVirtual = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
@@ -15,14 +15,14 @@ const TeacherPortal = () => {
         navigate('/login', { replace: true });
       }
     } catch {
-      // Ignored for cross-origin
+      // Cross-origin Moodle pages cannot be inspected and should remain untouched.
     }
   };
 
   return (
     <iframe
-      title="Aula Virtual Docente"
-      src={`/teacher.html?v=${Date.now()}`}
+      title="Aula Virtual del Alumno"
+      src={`/portals/campus-virtual.html?v=${Date.now()}`}
       onLoad={handleLoad}
       style={{
         position: 'fixed',
@@ -30,11 +30,11 @@ const TeacherPortal = () => {
         width: '100%',
         height: '100%',
         border: 0,
-        background: '#f8fafc',
+        background: '#eef4ff',
         zIndex: 10000,
       }}
     />
   );
 };
 
-export default TeacherPortal;
+export default CampusVirtual;

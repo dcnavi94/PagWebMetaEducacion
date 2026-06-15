@@ -1,6 +1,6 @@
 import { Navigate, useNavigate } from 'react-router-dom';
 
-const AdminPortal = () => {
+const TeacherPortal = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
@@ -21,8 +21,8 @@ const AdminPortal = () => {
 
   return (
     <iframe
-      title="Aula Virtual Admin"
-      src={`/admin.html?v=${Date.now()}`}
+      title="Aula Virtual Docente"
+      src={`/portals/teacher.html?v=${Date.now()}`}
       onLoad={handleLoad}
       style={{
         position: 'fixed',
@@ -37,4 +37,4 @@ const AdminPortal = () => {
   );
 };
 
-export default AdminPortal;
+export default TeacherPortal;

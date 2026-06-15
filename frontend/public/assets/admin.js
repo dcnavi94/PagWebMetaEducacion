@@ -5332,7 +5332,7 @@
 
 
 
-                    window.location.href = 'campus-virtual.html';
+                    window.location.href = '/campus-virtual';
 
 
 

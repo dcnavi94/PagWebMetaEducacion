@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { homeHtml } from './HomeContent';
-import { getApiBase, resolvePublicAsset } from '../utils/publicApi';
+import { getApiBase, resolvePublicAsset } from '../../utils/publicApi';
 
 const renderPortfolioMessage = (container, message) => {
   container.replaceChildren();

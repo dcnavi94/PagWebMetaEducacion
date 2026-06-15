@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ProyectoDetalleHtml } from './ProyectoDetalleContent';
-import { getApiBase, resolvePublicAsset } from '../utils/publicApi';
+import { getApiBase, resolvePublicAsset } from '../../utils/publicApi';
 
 const ProyectoDetalle = () => {
   const navigate = useNavigate();
