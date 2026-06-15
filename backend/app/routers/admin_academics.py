@@ -8,7 +8,7 @@ from app import models, schemas, auth, curriculum, moodle_client, import_csv, cu
 from app.config import settings
 from app.database import get_db
 from app.dependencies import admin_required, teacher_or_admin, services_or_admin, oauth2_scheme
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import aliased, joinedload
 from sqlalchemy import func
 import logging
 import csv

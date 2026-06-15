@@ -1314,6 +1314,17 @@ class TestAdminCourseEnrollments:
             cycle_id=cycle.id,
         )
         db_session.add(assignment)
+        db_session.flush()
+
+        failed_grade = models.Grade(
+            student_id=student_user.id,
+            subject_id=subject.id,
+            assignment_id=assignment.id,
+            attempt_type=models.AttemptType.REGULAR,
+            score=4.0,
+            status=models.GradeStatus.REPROBADA,
+        )
+        db_session.add(failed_grade)
         db_session.commit()
 
         response = client.post(
@@ -1426,7 +1437,7 @@ class TestAdminCourseEnrollments:
         assert response.status_code == 200
         body = response.json()
         assert body["assignment_id"] == new_assignment.id
-        assert body["attempt_type"] == "Regular"
+        assert body["attempt_type"] == "Recursa"
 
 
 class TestAdminGroups:
@@ -2169,6 +2180,7 @@ class TestUserExtras:
             credits=8,
             semester="1",
             career="Ingeniería",
+            modality="virtual",
         )
         db_session.add(subject)
         db_session.flush()
@@ -2196,7 +2208,13 @@ class TestUserExtras:
             monthly_amount=1000,
             is_active=True,
         )
-        subject = models.Subject(name="Bases de Datos II", credits=8, semester="3", career="Ingeniería")
+        subject = models.Subject(
+            name="Bases de Datos II",
+            credits=8,
+            semester="3",
+            career="Ingeniería",
+            modality="virtual",
+        )
         db_session.add_all([cycle, subject])
         db_session.flush()
 

@@ -1,0 +1,52 @@
+.library-page { min-height:100vh; background:#f2f6ff; color:#172033; text-align:left; font-family:'Outfit',sans-serif; }
+.library-topbar { position:sticky; top:0; z-index:20; display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px max(24px,calc((100vw - 1180px)/2)); background:rgba(255,255,255,.94); border-bottom:1px solid #e1e8f5; backdrop-filter:blur(14px); }
+.library-back { border:0; background:transparent; color:#1141b8; font-weight:700; }
+.library-switch { display:flex; padding:4px; background:#edf2fb; border-radius:14px; }
+.library-switch button { border:0; background:transparent; padding:9px 15px; border-radius:11px; color:#667085; font-weight:700; }
+.library-switch button.active { background:#fff; color:#1141b8; box-shadow:0 4px 12px rgba(17,65,184,.12); }
+.library-container { width:min(1180px,calc(100% - 32px)); margin:auto; padding:30px 0 60px; }
+.library-hero { min-height:240px; border-radius:28px; padding:40px; color:white; display:flex; align-items:center; justify-content:space-between; overflow:hidden; box-shadow:0 18px 45px rgba(20,36,78,.16); }
+.library-hero.virtual { background:linear-gradient(135deg,#0b2673,#286ddd); }
+.library-hero.physical { background:linear-gradient(135deg,#b84518,#f39a23); }
+.library-hero span { text-transform:uppercase; letter-spacing:.12em; font-size:.76rem; font-weight:800; opacity:.8; }
+.library-hero h1 { color:white; font-size:clamp(2rem,5vw,3.5rem); font-weight:800; margin:8px 0; }
+.library-hero p { max-width:670px; font-size:1.06rem; opacity:.86; }
+.library-hero>i { font-size:7rem; opacity:.15; }
+.library-search { margin:24px 0; background:#fff; border:1px solid #e1e8f5; border-radius:18px; display:flex; align-items:center; gap:12px; padding:8px 16px; box-shadow:0 8px 24px rgba(20,36,78,.06); }
+.library-search i { color:#1141b8; }
+.library-search input { flex:1; border:0; outline:0; padding:12px 0; color:#172033; background:transparent; }
+.library-search span { color:#667085; font-size:.82rem; }
+.library-message { padding:14px 18px; border-radius:14px; background:#e9f7ef; color:#176b3a; margin-bottom:18px; }
+.library-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.library-card { display:flex; flex-direction:column; padding:22px; background:#fff; border:1px solid #e1e8f5; border-radius:22px; box-shadow:0 10px 28px rgba(20,36,78,.06); }
+.library-card-icon { width:52px; height:52px; display:grid; place-items:center; border-radius:15px; font-size:1.45rem; margin-bottom:18px; }
+.library-card-icon.blue { color:#1141b8; background:#eaf1ff; }
+.library-card-icon.orange { color:#c64d1d; background:#fff0e8; }
+.library-card-body { flex:1; }
+.library-category { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:#1141b8; }
+.library-card h2 { font-size:1.25rem; font-weight:800; margin:7px 0 2px; color:#172033; }
+.library-card p { color:#667085; font-size:.9rem; margin:8px 0; }
+.library-card .library-author { color:#344054; font-weight:600; margin:0; }
+.library-book-meta { display:flex; flex-direction:column; gap:7px; padding:12px 0; font-size:.82rem; color:#667085; }
+.available { color:#16834b; font-weight:700; }
+.unavailable { color:#b42318; font-weight:700; }
+.library-primary { margin-top:16px; display:flex; justify-content:center; align-items:center; gap:8px; width:100%; border:0; border-radius:13px; padding:11px 15px; background:#1141b8; color:#fff; text-decoration:none; font-weight:700; }
+.library-primary:hover { color:#fff; background:#0b3192; }
+.library-primary:disabled { background:#aeb8cc; cursor:not-allowed; }
+.library-empty { padding:60px; text-align:center; color:#667085; background:#fff; border-radius:20px; }
+.library-loans { margin-top:32px; padding:24px; background:#fff; border:1px solid #e1e8f5; border-radius:22px; }
+.library-loans h2 { color:#172033; font-weight:800; }
+.library-loan-row { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:14px 0; border-top:1px solid #edf0f5; }
+.library-loan-row small { display:block; color:#667085; }
+.library-loan-row>span { padding:5px 11px; border-radius:999px; background:#eef2f8; font-size:.78rem; font-weight:800; }
+.loan-prestado { color:#9a5b00; background:#fff4d6!important; }
+.loan-devuelto { color:#167044; background:#e5f8ed!important; }
+.loan-rechazado { color:#b42318; background:#feeceb!important; }
+@media(max-width:900px){.library-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.library-hero>i{display:none;}}
+@media(max-width:620px){.library-topbar{align-items:flex-start;flex-direction:column}.library-switch{width:100%}.library-switch button{flex:1}.library-container{width:min(100% - 20px,1180px)}.library-hero{padding:28px 22px;min-height:210px}.library-grid{grid-template-columns:1fr}.library-search span{display:none;}}
+.lab-modal-backdrop { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:20px; background:rgba(7,18,42,.58); }
+.lab-request-modal { position:relative; width:min(460px,100%); padding:28px; border-radius:22px; background:#fff; box-shadow:0 24px 70px rgba(0,0,0,.25); }
+.lab-request-modal h2 { color:#172033; font-weight:800; margin:0 0 20px; }
+.lab-request-modal label { display:block; color:#344054; font-size:.86rem; font-weight:700; margin:13px 0 6px; }
+.lab-request-modal input { width:100%; padding:11px 13px; border:1px solid #d9e1ef; border-radius:12px; background:#fff; color:#172033; }
+.lab-modal-close { position:absolute; top:16px; right:16px; border:0; background:#eef2f8; border-radius:50%; width:34px; height:34px; }

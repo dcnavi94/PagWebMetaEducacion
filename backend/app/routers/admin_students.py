@@ -264,8 +264,8 @@ def get_student_full_profile(username: str, current_user: models.User = Depends(
         "grupo": db_user.grupo,
         "academic_advisor_id": db_user.academic_advisor_id,
         "grades": grades_data,
-        "payments": [{"id": p.id, "concept": p.concept, "amount": p.amount, "status": p.status, "due_date": str(p.due_date)} for p in db_user.payments],
-        "charges": [{"id": c.id, "concept": c.concept, "amount": c.amount, "status": c.status, "due_date": str(c.due_date)} for c in db_user.charges],
+        "payments": [{"id": p.id, "concept": p.concept, "amount": p.amount, "status": p.status, "due_date": str(p.due_date), "is_conciliated": p.is_conciliated, "receipt_url": p.receipt_url} for p in db_user.payments],
+        "charges": [{"id": c.id, "concept": c.concept, "amount": c.amount, "status": c.status, "due_date": str(c.due_date), "discount_amount": c.discount_amount} for c in db_user.charges],
         "service_requests": [{"id": r.id, "type": r.type, "status": r.status} for r in db_user.service_requests],
         "documents": [
             {
@@ -504,7 +504,7 @@ def get_student_boleta_pdf(username: str, current_user: models.User = Depends(ad
         return None
 
     def _grade_term_number(grade: models.Grade) -> Optional[int]:
-        subject = app.main._subject_for_grade(grade)
+        subject = _subject_for_grade(grade)
         semester_label = subject.semester if subject else None
         if not semester_label:
             return None
@@ -512,11 +512,11 @@ def get_student_boleta_pdf(username: str, current_user: models.User = Depends(ad
         return parsed if parsed > 0 else None
 
     def _grade_subject_name(grade: models.Grade) -> str:
-        subject = app.main._subject_for_grade(grade)
+        subject = _subject_for_grade(grade)
         return safe(subject.name if subject else "-", 60)
 
     def _grade_subject_id(grade: models.Grade) -> str:
-        subject = app.main._subject_for_grade(grade)
+        subject = _subject_for_grade(grade)
         return safe(subject.id if subject and subject.id is not None else grade.id, 10)
 
     def _cuatrimestre_label(number: int) -> str:
@@ -527,7 +527,7 @@ def get_student_boleta_pdf(username: str, current_user: models.User = Depends(ad
     row_height = 7
     grades_by_term: dict[int, list[models.Grade]] = {term: [] for term in range(1, 10)}
     for grade in grades:
-        term_number = app.main._grade_term_number(grade)
+        term_number = _grade_term_number(grade)
         if term_number and term_number in grades_by_term:
             grades_by_term[term_number].append(grade)
 
@@ -537,14 +537,14 @@ def get_student_boleta_pdf(username: str, current_user: models.User = Depends(ad
 
         term_grades = sorted(
             grades_by_term.get(term, []),
-            key=lambda item: (app.main._grade_subject_name(item).lower(), item.id or 0),
+            key=lambda item: (_grade_subject_name(item).lower(), item.id or 0),
         )
         scored = [float(g.score) for g in term_grades if g.score is not None]
         term_avg = round(sum(scored) / len(scored), 2) if scored else None
 
         pdf.set_font("Helvetica", "B", 10)
         pdf.set_text_color(22, 52, 125)
-        pdf.cell(190, 6, safe(app.main._cuatrimestre_label(term)), align="L")
+        pdf.cell(190, 6, safe(_cuatrimestre_label(term)), align="L")
         pdf.ln(7)
 
         pdf.set_fill_color(22, 52, 125)
@@ -564,7 +564,7 @@ def get_student_boleta_pdf(username: str, current_user: models.User = Depends(ad
                     pdf.add_page()
                     pdf.set_font("Helvetica", "B", 10)
                     pdf.set_text_color(22, 52, 125)
-                    pdf.cell(190, 6, safe(app.main._cuatrimestre_label(term) + " (continuacion)"), align="L")
+                    pdf.cell(190, 6, safe(_cuatrimestre_label(term) + " (continuacion)"), align="L")
                     pdf.ln(7)
                     pdf.set_fill_color(22, 52, 125)
                     pdf.set_text_color(255, 255, 255)
@@ -579,9 +579,9 @@ def get_student_boleta_pdf(username: str, current_user: models.User = Depends(ad
                 alternate = not alternate
                 pdf.set_fill_color(*fill)
                 values = [
-                    app.main._grade_subject_id(grade),
-                    app.main._grade_subject_name(grade),
-                    safe(app.main._cuatrimestre_label(term), 18),
+                    _grade_subject_id(grade),
+                    _grade_subject_name(grade),
+                    safe(_cuatrimestre_label(term), 18),
                     safe(round(grade.score, 1) if grade.score is not None else "-", 12),
                 ]
                 aligns = ["C", "L", "C", "C"]

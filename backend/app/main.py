@@ -6,6 +6,8 @@ import json
 import logging
 import os
 import re
+import secrets
+import string
 import time
 from uuid import uuid4
 
@@ -14,7 +16,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import inspect, or_, text
+from sqlalchemy import inspect, or_, and_, text
 
 from . import models, schemas, auth
 from .curriculum import ensure_subjects_for_career, get_public_curriculum
@@ -252,6 +254,8 @@ def _ensure_notification_schema(db: Optional[Session] = None) -> None:
         "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS category VARCHAR(30) DEFAULT 'general'",
         "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT FALSE",
         "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS read_at TIMESTAMP",
+        "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS deleted_by_recipient BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE notification_messages ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP",
     ]
     if db is not None:
         connection = db.connection()
@@ -284,6 +288,8 @@ def _serialize_custom_notification(notification: models.NotificationMessage) -> 
         "category": notification.category or "general",
         "is_read": bool(notification.is_read),
         "read_at": notification.read_at.isoformat() if notification.read_at else None,
+        "deleted_by_recipient": bool(notification.deleted_by_recipient),
+        "deleted_at": notification.deleted_at.isoformat() if notification.deleted_at else None,
         "can_manage": True,
     }
 
@@ -291,6 +297,19 @@ def _serialize_custom_notification(notification: models.NotificationMessage) -> 
 def _get_custom_notifications_for_user(db: Session, user: models.User) -> list[dict]:
     _ensure_notification_schema(db)
     now = datetime.utcnow()
+    
+    # Auto-cleanup: Eliminar notificaciones de alumnos más antiguas a 15 días
+    if user.role == models.UserRole.STUDENT:
+        fifteen_days_ago = now - timedelta(days=15)
+        try:
+            db.query(models.NotificationMessage).filter(
+                models.NotificationMessage.recipient_role == models.UserRole.STUDENT,
+                models.NotificationMessage.created_at < fifteen_days_ago
+            ).delete(synchronize_session=False)
+            db.commit()
+        except Exception:
+            db.rollback()
+
     active_enrollment = _get_active_student_enrollment(db, user.id) if user.role == models.UserRole.STUDENT else None
     active_group_id = active_enrollment.group_id if active_enrollment else None
     rows = (
@@ -300,8 +319,8 @@ def _get_custom_notifications_for_user(db: Session, user: models.User) -> list[d
             models.NotificationMessage.recipient_role == user.role,
             or_(
                 models.NotificationMessage.target_scope == "role",
-                models.NotificationMessage.recipient_user_id == user.id,
-                models.NotificationMessage.recipient_group_id == active_group_id if active_group_id else False,
+                and_(models.NotificationMessage.target_scope == "user", models.NotificationMessage.recipient_user_id == user.id, models.NotificationMessage.deleted_by_recipient == False),
+                and_(models.NotificationMessage.target_scope == "group", models.NotificationMessage.recipient_group_id == active_group_id) if active_group_id else False,
             ),
             or_(
                 models.NotificationMessage.expires_at.is_(None),
@@ -333,8 +352,8 @@ def _get_user_manageable_notification(
             models.NotificationMessage.recipient_role == user.role,
             or_(
                 models.NotificationMessage.target_scope == "role",
-                models.NotificationMessage.recipient_user_id == user.id,
-                models.NotificationMessage.recipient_group_id == active_group_id if active_group_id else False,
+                and_(models.NotificationMessage.target_scope == "user", models.NotificationMessage.recipient_user_id == user.id, models.NotificationMessage.deleted_by_recipient == False),
+                and_(models.NotificationMessage.target_scope == "group", models.NotificationMessage.recipient_group_id == active_group_id) if active_group_id else False,
             ),
             or_(
                 models.NotificationMessage.expires_at.is_(None),
@@ -552,8 +571,16 @@ def _split_full_name(full_name: Optional[str]) -> tuple[str, str]:
 
 
 def _build_temp_moodle_password(username: str) -> str:
-    suffix = "".join(ch for ch in (username or "Alumno").strip() if ch.isalnum())[:6] or "Alumno"
-    return f"Portal#{suffix}2026!"
+    required = [
+        secrets.choice(string.ascii_lowercase),
+        secrets.choice(string.ascii_uppercase),
+        secrets.choice(string.digits),
+        secrets.choice("!@#$%*"),
+    ]
+    alphabet = string.ascii_letters + string.digits + "!@#$%*"
+    password = required + [secrets.choice(alphabet) for _ in range(10)]
+    secrets.SystemRandom().shuffle(password)
+    return "".join(password)
 
 
 def _latest_moodle_error() -> Optional[str]:
@@ -677,16 +704,6 @@ async def _sync_student_to_moodle(db: Session, *, user: models.User, password: O
     db.refresh(user)
     _append_moodle_step(evidence, "persist_local_link", "ok", "moodle_id guardado localmente", moodle_id=user.moodle_id)
 
-    role_assigned = await moodle_client.assign_system_role(
-        user_id=int(user.moodle_id),
-        role_id=settings.MOODLE_STUDENT_ROLE_ID,
-        context_level=settings.MOODLE_ROLE_CONTEXT_LEVEL,
-        instance_id=settings.MOODLE_ROLE_INSTANCE_ID or None,
-    )
-    if not role_assigned:
-        _append_moodle_step(evidence, "assign_role", "error", "No se pudo asignar rol student", moodle_error=_latest_moodle_error())
-        return _finalize_moodle_evidence(evidence, success=False)
-
     _upsert_moodle_credentials(
         db,
         user_id=user.id,
@@ -695,7 +712,13 @@ async def _sync_student_to_moodle(db: Session, *, user: models.User, password: O
         updated_by="system_sync",
         overwrite_password=bool(chosen_password),
     )
-    _append_moodle_step(evidence, "assign_role", "ok", "Rol student asignado", moodle_id=user.moodle_id)
+    _append_moodle_step(
+        evidence,
+        "role_assignment",
+        "ok",
+        "La cuenta se vinculo; el rol student se asignara al matricularla en un curso",
+        moodle_id=user.moodle_id,
+    )
     return _finalize_moodle_evidence(evidence, success=True)
 
 
@@ -742,16 +765,6 @@ async def _sync_teacher_to_moodle(db: Session, *, user: models.User, password: O
     db.add(user)
     db.commit()
     db.refresh(user)
-    role_assigned = await moodle_client.assign_system_role(
-        user_id=int(user.moodle_id),
-        role_id=settings.MOODLE_TEACHER_ROLE_ID,
-        context_level=settings.MOODLE_ROLE_CONTEXT_LEVEL,
-        instance_id=settings.MOODLE_ROLE_INSTANCE_ID or None,
-    )
-    if not role_assigned:
-        _append_moodle_step(evidence, "assign_role", "error", "No se pudo asignar rol teacher", moodle_error=_latest_moodle_error())
-        return _finalize_moodle_evidence(evidence, success=False)
-
     _upsert_moodle_credentials(
         db,
         user_id=user.id,
@@ -760,7 +773,13 @@ async def _sync_teacher_to_moodle(db: Session, *, user: models.User, password: O
         updated_by="system_sync",
         overwrite_password=bool(chosen_password),
     )
-    _append_moodle_step(evidence, "assign_role", "ok", "Rol teacher asignado", moodle_id=user.moodle_id)
+    _append_moodle_step(
+        evidence,
+        "role_assignment",
+        "ok",
+        "La cuenta se vinculo; el rol editingteacher se asignara al matricularla en un curso",
+        moodle_id=user.moodle_id,
+    )
     return _finalize_moodle_evidence(evidence, success=True)
 
 
@@ -1431,7 +1450,7 @@ def _effective_student_grade_rows(rows: list[dict]) -> list[dict]:
         if candidate_rank > current_rank:
             grouped[key] = row
 
-    result = list(grouped.values())
+    result = [r for r in list(grouped.values()) if r.get("status") not in (models.GradeStatus.PROXIMAMENTE, "Proximamente")]
     result.sort(
         key=lambda item: (
             _parse_semester_num(item.get("period") or item.get("semester")),
@@ -1976,6 +1995,12 @@ from app.routers import config
 app.include_router(config.router)
 from app.routers import web_management
 app.include_router(web_management.router)
+from app.routers import schedules
+app.include_router(schedules.router)
+from app.routers import laboratory
+app.include_router(laboratory.router)
+from app.routers import library
+app.include_router(library.router)
 
 
 

@@ -691,3 +691,101 @@ def get_charge_breakdown_report(
     return [dict(row._mapping) for row in rows]
 
 
+@router.get("/admin/reports/aging-balances", response_model=list[schemas.AgingBalanceRow], summary="Antiguedad de saldos", tags=["Administracion"])
+def get_aging_balances_report(
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    now = datetime.utcnow()
+    charges = (
+        db.query(models.Charge)
+        .options(joinedload(models.Charge.student))
+        .options(joinedload(models.Charge.payments))
+        .filter(models.Charge.status != models.PaymentStatus.PAGADO)
+        .all()
+    )
+    
+    student_balances = {}
+    for c in charges:
+        if not c.student:
+            continue
+            
+        sid = c.student_id
+        if sid not in student_balances:
+            student_balances[sid] = {
+                "student_id": sid,
+                "username": c.student.username,
+                "full_name": c.student.full_name,
+                "days_1_30": 0.0,
+                "days_31_60": 0.0,
+                "days_61_90": 0.0,
+                "days_90_plus": 0.0,
+                "total_overdue": 0.0
+            }
+            
+        if not c.due_date:
+            continue
+            
+        days_overdue = (now - c.due_date).days
+        amount_due = c.amount
+        
+        if c.payments:
+            paid = sum(p.amount for p in c.payments if p.status == models.PaymentStatus.PAGADO)
+            amount_due -= paid
+            if amount_due <= 0:
+                continue
+                
+        if days_overdue <= 0:
+            continue
+        elif days_overdue <= 30:
+            student_balances[sid]["days_1_30"] += amount_due
+        elif days_overdue <= 60:
+            student_balances[sid]["days_31_60"] += amount_due
+        elif days_overdue <= 90:
+            student_balances[sid]["days_61_90"] += amount_due
+        else:
+            student_balances[sid]["days_90_plus"] += amount_due
+            
+        student_balances[sid]["total_overdue"] += amount_due
+        
+    result = [b for b in student_balances.values() if b["total_overdue"] > 0]
+    return sorted(result, key=lambda x: x["total_overdue"], reverse=True)
+
+
+@router.get("/admin/reports/income-flow", response_model=list[schemas.IncomeFlowRow], summary="Flujo de ingresos", tags=["Administracion"])
+def get_income_flow_report(
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    current_user: models.User = Depends(admin_required),
+    db: Session = Depends(get_db),
+):
+    query = (
+        db.query(models.Payment)
+        .filter(models.Payment.status == models.PaymentStatus.PAGADO)
+        .filter(models.Payment.payment_date != None)
+    )
+    query = app.main._apply_datetime_range(query, models.Payment.payment_date, date_from, date_to)
+    
+    payments = query.all()
+    
+    grouped = {}
+    for p in payments:
+        if not p.payment_date or not p.payment_method:
+            continue
+            
+        p_date = p.payment_date.strftime("%Y-%m-%d")
+        method = p.payment_method.value if hasattr(p.payment_method, 'value') else p.payment_method
+        
+        key = (p_date, method)
+        if key not in grouped:
+            grouped[key] = {
+                "payment_date": p_date,
+                "payment_method": method,
+                "total_amount": 0.0,
+                "count": 0
+            }
+        grouped[key]["total_amount"] += p.amount
+        grouped[key]["count"] += 1
+        
+    return sorted(grouped.values(), key=lambda x: (x["payment_date"], x["payment_method"]), reverse=True)
+

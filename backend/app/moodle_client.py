@@ -1,5 +1,8 @@
 import httpx
+import hashlib
+import hmac
 import logging
+import time
 from urllib.parse import urlparse
 from typing import Any, Optional
 
@@ -67,6 +70,46 @@ class MoodleClient:
             msg = f"Error inesperado al llamar a Moodle: {exc}"
             logger.error(msg)
             self._set_last_error(msg)
+            return None
+
+    async def badge_action(
+        self,
+        action: str,
+        *,
+        teacher_id: int = 0,
+        user_id: int = 0,
+        course_id: int = 0,
+        badge_id: int = 0,
+    ) -> Optional[dict]:
+        timestamp = int(time.time())
+        payload = f"{timestamp}|{action}|{teacher_id}|{user_id}|{course_id}|{badge_id}"
+        signature = hmac.new(
+            settings.MOODLE_SSO_SECRET.encode("utf-8"),
+            payload.encode("utf-8"),
+            hashlib.sha256,
+        ).hexdigest()
+        parsed = urlparse(self.base_url)
+        endpoint = f"{parsed.scheme}://{parsed.netloc}/local/univessso/badges.php"
+        data = {
+            "action": action,
+            "timestamp": timestamp,
+            "teacherid": teacher_id,
+            "userid": user_id,
+            "courseid": course_id,
+            "badgeid": badge_id,
+            "signature": signature,
+        }
+        headers = {"Host": self.public_host} if self.public_host else {}
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                response = await client.post(endpoint, data=data, headers=headers)
+            result = response.json()
+            if response.is_error or not result.get("ok"):
+                self._set_last_error(result.get("message") or f"Error HTTP {response.status_code}")
+                return None
+            return result
+        except Exception as exc:
+            self._set_last_error(f"Error en integración de insignias Moodle: {exc}")
             return None
 
     async def create_user(self, username: str, password: str, firstname: str, lastname: str, email: str) -> Optional[int]:
@@ -176,6 +219,36 @@ class MoodleClient:
             return result[0]
         return None
 
+    async def update_course_admin(
+        self,
+        *,
+        course_id: int,
+        fullname: Optional[str] = None,
+        shortname: Optional[str] = None,
+        category_id: Optional[int] = None,
+        summary: Optional[str] = None,
+    ) -> bool:
+        params: dict[str, Any] = {"courses[0][id]": int(course_id)}
+        if fullname is not None:
+            params["courses[0][fullname]"] = fullname
+        if shortname is not None:
+            params["courses[0][shortname]"] = shortname
+        if category_id is not None:
+            params["courses[0][categoryid]"] = int(category_id)
+        if summary is not None:
+            params["courses[0][summary]"] = summary
+            params["courses[0][summaryformat]"] = 1
+
+        result = await self._post("core_course_update_courses", params)
+        return self._is_success_without_payload(result)
+
+    async def delete_course_admin(self, course_id: int) -> bool:
+        result = await self._post(
+            "core_course_delete_courses",
+            {"courseids[0]": int(course_id)},
+        )
+        return self._is_success_without_payload(result)
+
     async def enrol_user(self, user_id: int, course_id: int, role_id: int = 5) -> bool:
         result = await self._post(
             "enrol_manual_enrol_users",
@@ -275,9 +348,78 @@ class MoodleClient:
             return result.get("courses") or []
         return None
 
+    async def get_course_categories(self) -> Optional[list]:
+        result = await self._post("core_course_get_categories", {})
+        return result if isinstance(result, list) else None
+
     async def get_enrolled_users(self, course_id: int) -> Optional[list]:
         result = await self._post("core_enrol_get_enrolled_users", {"courseid": course_id})
         return result if isinstance(result, list) else None
+
+    async def get_course_groups(self, course_id: int) -> Optional[list]:
+        result = await self._post("core_group_get_course_groups", {"courseid": int(course_id)})
+        return result if isinstance(result, list) else None
+
+    async def create_group(
+        self,
+        *,
+        course_id: int,
+        name: str,
+        description: str = "",
+        idnumber: Optional[str] = None,
+        enrolment_key: Optional[str] = None,
+    ) -> Optional[dict]:
+        params: dict[str, Any] = {
+            "groups[0][courseid]": int(course_id),
+            "groups[0][name]": name,
+            "groups[0][description]": description,
+            "groups[0][descriptionformat]": 1,
+        }
+        if idnumber:
+            params["groups[0][idnumber]"] = idnumber
+        if enrolment_key:
+            params["groups[0][enrolmentkey]"] = enrolment_key
+        result = await self._post("core_group_create_groups", params)
+        if isinstance(result, list) and result:
+            return result[0]
+        return None
+
+    async def update_group(
+        self,
+        *,
+        group_id: int,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        idnumber: Optional[str] = None,
+    ) -> bool:
+        params: dict[str, Any] = {"groups[0][id]": int(group_id)}
+        if name is not None:
+            params["groups[0][name]"] = name
+        if description is not None:
+            params["groups[0][description]"] = description
+            params["groups[0][descriptionformat]"] = 1
+        if idnumber is not None:
+            params["groups[0][idnumber]"] = idnumber
+        result = await self._post("core_group_update_groups", params)
+        return self._is_success_without_payload(result)
+
+    async def delete_group(self, group_id: int) -> bool:
+        result = await self._post(
+            "core_group_delete_groups",
+            {"groupids[0]": int(group_id)},
+        )
+        return self._is_success_without_payload(result)
+
+    async def add_group_members(self, group_id: int, user_ids: list[int]) -> bool:
+        unique_ids = list(dict.fromkeys(int(user_id) for user_id in user_ids if user_id))
+        if not unique_ids:
+            return True
+        params: dict[str, Any] = {}
+        for index, user_id in enumerate(unique_ids):
+            params[f"members[{index}][groupid]"] = int(group_id)
+            params[f"members[{index}][userid]"] = user_id
+        result = await self._post("core_group_add_group_members", params)
+        return self._is_success_without_payload(result)
 
     async def check_course_exists(self, course_id: int) -> bool:
         result = await self._post(

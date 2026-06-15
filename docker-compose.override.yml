@@ -20,4 +20,4 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./public:/usr/share/nginx/html
+      - ./frontend/dist:/usr/share/nginx/html

@@ -9,7 +9,7 @@ from app.config import settings
 from app.database import get_db
 from app.dependencies import admin_required, teacher_or_admin, services_or_admin, oauth2_scheme
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func
+from sqlalchemy import func, text
 import logging
 import csv
 from io import StringIO
@@ -115,6 +115,10 @@ def list_admin_notification_messages(current_user: models.User = Depends(admin_r
             "source": row.created_by_user.full_name if row.created_by_user and row.created_by_user.full_name else "Administracion",
             "action_url": row.action_url,
             "is_active": row.is_active,
+            "is_read": row.is_read,
+            "read_at": row.read_at,
+            "deleted_by_recipient": row.deleted_by_recipient,
+            "deleted_at": row.deleted_at,
             "created_at": row.created_at,
         }
         for row in rows

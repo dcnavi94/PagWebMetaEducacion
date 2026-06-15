@@ -1,0 +1,105 @@
+.moodle-config-hero {
+    overflow: hidden;
+    color: #fff;
+    background:
+        radial-gradient(circle at 88% 18%, rgba(255,255,255,.2), transparent 25%),
+        linear-gradient(135deg, #0b2673, #1768d5 58%, #10a6a0);
+}
+
+.moodle-config-status {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .45rem .8rem;
+    border: 1px solid rgba(255,255,255,.24);
+    border-radius: 999px;
+    background: rgba(255,255,255,.13);
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+.moodle-config-dot {
+    width: .65rem;
+    height: .65rem;
+    border-radius: 50%;
+    background: #fbbf24;
+    box-shadow: 0 0 0 5px rgba(251,191,36,.15);
+}
+
+.moodle-config-dot.connected {
+    background: #4ade80;
+    box-shadow: 0 0 0 5px rgba(74,222,128,.15);
+}
+
+.moodle-config-dot.error {
+    background: #fb7185;
+    box-shadow: 0 0 0 5px rgba(251,113,133,.15);
+}
+
+.moodle-config-kpi {
+    height: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(17,65,184,.09);
+    border-radius: 1rem;
+    background: #fff;
+}
+
+.moodle-config-kpi .icon {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: .8rem;
+    color: #1141b8;
+    background: #e9f0ff;
+}
+
+.moodle-config-code {
+    padding: .85rem 1rem;
+    border-radius: .85rem;
+    color: #dbeafe;
+    background: #101c36;
+    font: .8rem/1.55 Consolas, monospace;
+    overflow-wrap: anywhere;
+}
+
+.moodle-config-step {
+    display: flex;
+    gap: .85rem;
+    padding: .9rem 0;
+    border-bottom: 1px solid rgba(17,65,184,.08);
+}
+
+.moodle-config-step:last-child { border-bottom: 0; }
+
+.moodle-config-step-number {
+    display: grid;
+    place-items: center;
+    flex: 0 0 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    color: #fff;
+    background: #1141b8;
+    font-size: .8rem;
+    font-weight: 800;
+}
+
+.moodle-permission-list {
+    max-height: 440px;
+    overflow: auto;
+}
+
+.moodle-permission-row {
+    display: grid;
+    grid-template-columns: minmax(230px, .9fr) minmax(260px, 1.1fr) auto;
+    gap: 1rem;
+    align-items: center;
+    padding: .8rem 0;
+    border-bottom: 1px solid rgba(17,65,184,.08);
+}
+
+@media (max-width: 767.98px) {
+    .moodle-permission-row { grid-template-columns: 1fr; gap: .35rem; }
+    .moodle-config-hero { text-align: center; }
+    .moodle-config-hero .d-flex { justify-content: center; }
+}

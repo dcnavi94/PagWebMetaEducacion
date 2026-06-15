@@ -4,10 +4,11 @@ import app.main
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, BackgroundTasks, Response, Request, Security
 from sqlalchemy.orm import Session
 from datetime import datetime, date
-from app import models, schemas, auth, curriculum, moodle_client, import_csv, curriculum_credits
+from app import models, schemas, auth, curriculum, import_csv, curriculum_credits
 from app.config import settings
 from app.database import get_db
 from app.dependencies import admin_required, teacher_or_admin, services_or_admin, oauth2_scheme
+from app.moodle_client import moodle_client
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 import logging
@@ -43,6 +44,220 @@ def get_teacher_subjects(current_user: models.User = Depends(teacher_or_admin), 
             "group_name": a.group.name if a.group else None,
         })
     return result
+
+
+async def _teacher_moodle_course_ids(current_user: models.User, db: Session) -> tuple[set[int], list[dict]]:
+    if current_user.role == models.UserRole.TEACHER and not current_user.moodle_id:
+        evidence = await app.main._sync_teacher_to_moodle(db, user=current_user)
+        if not evidence.get("success"):
+            raise HTTPException(
+                status_code=502,
+                detail={
+                    "message": "No fue posible sincronizar la cuenta docente con Moodle",
+                    "moodle_error": app.main._latest_moodle_error(),
+                },
+            )
+    if not current_user.moodle_id:
+        return set(), []
+
+    courses = await moodle_client.get_user_courses(int(current_user.moodle_id))
+    if courses is None:
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "message": "No fue posible consultar los cursos del docente en Moodle",
+                "moodle_error": app.main._latest_moodle_error(),
+            },
+        )
+    course_ids = {int(course["id"]) for course in courses if course.get("id")}
+    return course_ids, courses
+
+
+@router.get("/teacher/moodle/courses", summary="Cursos Moodle del docente", tags=["Docente"])
+async def get_teacher_moodle_courses(
+    include_participants: bool = False,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    _, remote_courses = await _teacher_moodle_course_ids(current_user, db)
+    remote_ids = [int(course["id"]) for course in remote_courses if course.get("id")]
+    local_subjects = (
+        db.query(models.Subject)
+        .filter(models.Subject.moodle_course_id.in_(remote_ids))
+        .all()
+        if remote_ids
+        else []
+    )
+    subject_by_course = {
+        int(subject.moodle_course_id): subject
+        for subject in local_subjects
+        if subject.moodle_course_id
+    }
+
+    items = []
+    for course in remote_courses:
+        course_id = int(course.get("id") or 0)
+        if not course_id:
+            continue
+        subject = subject_by_course.get(course_id)
+        participants_count = None
+        if include_participants:
+            participants = await moodle_client.get_enrolled_users(course_id)
+            participants_count = len(participants or []) if participants is not None else 0
+        serialized = app.main._serialize_moodle_course(course)
+        items.append(
+            {
+                "moodle_course_id": course_id,
+                "subject_id": subject.id if subject else None,
+                "subject_name": subject.name if subject else serialized.get("displayname"),
+                "semester": subject.semester if subject else None,
+                "participants_count": participants_count,
+                "moodle_course": serialized,
+            }
+        )
+    return {"count": len(items), "moodle_id": current_user.moodle_id, "courses": items}
+
+
+@router.get("/teacher/moodle/courses/{course_id}/contents", summary="Contenido de curso Moodle del docente", tags=["Docente"])
+async def get_teacher_moodle_course_contents(
+    course_id: int,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    allowed_ids, _ = await _teacher_moodle_course_ids(current_user, db)
+    if course_id not in allowed_ids:
+        raise HTTPException(status_code=404, detail="Curso Moodle no asignado a este docente")
+    sections = await moodle_client.get_course_contents(course_id)
+    if sections is None:
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "message": "No fue posible consultar el contenido del curso Moodle",
+                "moodle_error": app.main._latest_moodle_error(),
+            },
+        )
+    return {"course_id": course_id, "sections": sections}
+
+
+@router.get("/teacher/moodle/courses/{course_id}/participants", summary="Participantes del curso Moodle", tags=["Docente"])
+async def get_teacher_moodle_course_participants(
+    course_id: int,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    allowed_ids, _ = await _teacher_moodle_course_ids(current_user, db)
+    if course_id not in allowed_ids:
+        raise HTTPException(status_code=404, detail="Curso Moodle no asignado a este docente")
+    users = await moodle_client.get_enrolled_users(course_id)
+    if users is None:
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "message": "No fue posible consultar los participantes del curso Moodle",
+                "moodle_error": app.main._latest_moodle_error(),
+            },
+        )
+    return {
+        "course_id": course_id,
+        "count": len(users),
+        "users": [
+            {
+                "id": user.get("id"),
+                "username": user.get("username"),
+                "fullname": user.get("fullname"),
+                "email": user.get("email"),
+            }
+            for user in users
+        ],
+    }
+
+
+@router.get("/teacher/moodle/courses/{course_id}/badges", summary="Catalogo de insignias Moodle del curso", tags=["Docente"])
+async def get_teacher_moodle_badges(
+    course_id: int,
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    allowed_ids, _ = await _teacher_moodle_course_ids(current_user, db)
+    if course_id not in allowed_ids:
+        raise HTTPException(status_code=404, detail="Curso Moodle no asignado a este docente")
+    remote_users = await moodle_client.get_enrolled_users(course_id)
+    if remote_users is None:
+        raise HTTPException(status_code=502, detail="No fue posible consultar los participantes del curso")
+    moodle_ids = [int(user["id"]) for user in remote_users if user.get("id")]
+    local_students = (
+        db.query(models.User)
+        .filter(
+            models.User.moodle_id.in_(moodle_ids),
+            models.User.role == models.UserRole.STUDENT,
+        )
+        .order_by(models.User.full_name.asc())
+        .all()
+        if moodle_ids
+        else []
+    )
+    catalog = await moodle_client.badge_action(
+        "catalog",
+        teacher_id=int(current_user.moodle_id or 0),
+        course_id=course_id,
+    )
+    if catalog is None:
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "message": "No fue posible consultar las insignias Moodle",
+                "moodle_error": app.main._latest_moodle_error(),
+            },
+        )
+    return {
+        "course_id": course_id,
+        "badges": catalog.get("badges") or [],
+        "students": [
+            {
+                "username": student.username,
+                "full_name": student.full_name,
+                "moodle_id": student.moodle_id,
+            }
+            for student in local_students
+        ],
+    }
+
+
+@router.post("/teacher/moodle/courses/{course_id}/badges/{badge_id}/award", summary="Otorgar insignia Moodle", tags=["Docente"])
+async def award_teacher_moodle_badge(
+    course_id: int,
+    badge_id: int,
+    payload: Dict[str, Any],
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    allowed_ids, _ = await _teacher_moodle_course_ids(current_user, db)
+    if course_id not in allowed_ids:
+        raise HTTPException(status_code=404, detail="Curso Moodle no asignado a este docente")
+    username = str(payload.get("username") or "").strip()
+    student = db.query(models.User).filter(
+        models.User.username == username,
+        models.User.role == models.UserRole.STUDENT,
+    ).first()
+    if not student or not student.moodle_id:
+        raise HTTPException(status_code=404, detail="Alumno Moodle no encontrado")
+    result = await moodle_client.badge_action(
+        "award",
+        teacher_id=int(current_user.moodle_id or 0),
+        user_id=int(student.moodle_id),
+        course_id=course_id,
+        badge_id=badge_id,
+    )
+    if result is None:
+        message = app.main._latest_moodle_error() or "No fue posible entregar la insignia"
+        status_code = 409 if "ya tiene" in message.lower() else 502
+        raise HTTPException(status_code=status_code, detail=message)
+    return {
+        "message": result.get("message") or "Insignia entregada correctamente",
+        "student": student.full_name or student.username,
+        "badge_id": badge_id,
+        "course_id": course_id,
+    }
 
 
 @router.get("/teacher/notifications", summary="Notificaciones del docente", tags=["Docente"])
@@ -365,7 +580,7 @@ def read_teacher_advisor_students(current_user: models.User = Depends(teacher_or
             "period_label": enrollment.cycle.period if enrollment and enrollment.cycle else "Asignacion directa",
             "group_name": enrollment.group.name if enrollment and enrollment.group else student.grupo,
             "source": "direct",
-            **app.main._grade_stats(student.id),
+            **_grade_stats(student.id),
         })
         seen_student_ids.add(student.id)
 
@@ -391,7 +606,7 @@ def read_teacher_advisor_students(current_user: models.User = Depends(teacher_or
             "period_label": enrollment.cycle.period if enrollment.cycle else "Ciclo activo",
             "group_name": enrollment.group.name if enrollment.group else student.grupo,
             "source": "group",
-            **app.main._grade_stats(student.id),
+            **_grade_stats(student.id),
         })
         seen_student_ids.add(student.id)
 
@@ -406,7 +621,7 @@ def read_teacher_advisor_students(current_user: models.User = Depends(teacher_or
         }
 
     for row in rows:
-        row["pasaporte"] = {"thesis": app.main._thesis_data(row["student_id"])}
+        row["pasaporte"] = {"thesis": _thesis_data(row["student_id"])}
 
     rows.sort(key=lambda item: ((item.get("full_name") or "").lower(), item.get("username") or ""))
     return {"students": rows}
@@ -441,6 +656,40 @@ def teacher_update_thesis_status(
     db.commit()
     db.refresh(record)
     return {"ok": True, "status": record.status if isinstance(record.status, str) else record.status.value}
+
+
+@router.get("/teacher/advisor/messages", summary="Historial de mensajes de asesoría enviados", tags=["Docente"])
+def list_teacher_advisor_messages(
+    current_user: models.User = Depends(teacher_or_admin),
+    db: Session = Depends(get_db),
+):
+    app.main._ensure_notification_schema(db)
+    rows = (
+        db.query(models.NotificationMessage)
+        .filter(
+            models.NotificationMessage.created_by_user_id == current_user.id,
+            models.NotificationMessage.category == "advisor",
+        )
+        .order_by(models.NotificationMessage.created_at.desc(), models.NotificationMessage.id.desc())
+        .limit(100)
+        .all()
+    )
+    return [
+        {
+            "id": row.id,
+            "recipient_user_id": row.recipient_user_id,
+            "recipient_username": row.recipient_user.username if row.recipient_user else None,
+            "recipient_fullname": row.recipient_user.full_name if row.recipient_user else None,
+            "title": row.title,
+            "message": row.message,
+            "is_read": row.is_read,
+            "read_at": row.read_at,
+            "deleted_by_recipient": row.deleted_by_recipient,
+            "deleted_at": row.deleted_at,
+            "created_at": row.created_at,
+        }
+        for row in rows
+    ]
 
 
 @router.post("/teacher/advisor/messages", summary="Enviar mensaje de asesoria a un alumno", tags=["Docente"])

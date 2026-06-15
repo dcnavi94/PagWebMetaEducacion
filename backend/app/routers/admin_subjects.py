@@ -131,7 +131,7 @@ def get_subject_assignments(
             for ce in a.course_enrollments
             if ce.student_enrollment and ce.student_enrollment.student_id
         })
-        item = app.main._je(schemas.SubjectAssignment.model_validate(a))
+        item = _je(schemas.SubjectAssignment.model_validate(a))
         item["student_count"] = student_count
         item["group_name"] = a.group.name if a.group else None
         result.append(item)
@@ -220,7 +220,7 @@ def create_subject_assignment(
     from fastapi.responses import JSONResponse as _JSONResponse
     from fastapi.encoders import jsonable_encoder as _jsonable_encoder
 
-    data = app.main._jsonable_encoder(assignment)
+    data = _jsonable_encoder(assignment)
     data["auto_linked"] = linked_count
     return app.main._JSONResponse(content=data)
 

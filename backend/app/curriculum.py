@@ -58,8 +58,8 @@ def get_public_curriculum(career_name: str | None) -> list[dict[str, str]]:
     if not page_name:
         return []
 
-    root_dir = Path(__file__).resolve().parents[2]
-    return extract_curriculum_from_html(root_dir / "public" / page_name)
+    path = Path(__file__).resolve().parent / "public" / page_name
+    return extract_curriculum_from_html(path)
 
 
 def get_configured_curriculum(career_name: str | None) -> list[dict[str, str | int | None]]:

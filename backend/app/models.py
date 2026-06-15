@@ -45,6 +45,12 @@ class PaymentStatus(str, enum.Enum):
     PAGADO = "Pagado"
     VENCIDO = "Vencido"
 
+class PaymentMethod(str, enum.Enum):
+    EFECTIVO = "Efectivo"
+    TRANSFERENCIA = "Transferencia"
+    TARJETA = "Tarjeta"
+    DEPOSITO = "Deposito"
+
 class ChargeType(str, enum.Enum):
     TUITION = "Colegiatura"
     ENROLLMENT = "Inscripcion"
@@ -168,6 +174,7 @@ class Charge(Base):
         server_default=PaymentStatus.PENDIENTE.value,
         nullable=False,
     )
+    discount_amount = Column(Float, nullable=False, default=0.0, server_default="0.0")
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     student = relationship("User", back_populates="charges")
@@ -190,6 +197,14 @@ class Payment(Base):
         server_default=PaymentStatus.PENDIENTE.value,
         nullable=False,
     )
+    payment_date = Column(DateTime, nullable=True)
+    payment_method = Column(
+        SQLEnum(PaymentMethod, name="payment_method", values_callable=lambda x: [e.value for e in x]),
+        nullable=True,
+    )
+    reference = Column(String, nullable=True)
+    is_conciliated = Column(Boolean, nullable=False, default=False, server_default="false")
+    receipt_url = Column(String, nullable=True)
 
     student = relationship("User", back_populates="payments")
     charge = relationship("Charge", back_populates="payments")
@@ -462,6 +477,8 @@ class NotificationMessage(Base):
     is_active = Column(Boolean, nullable=False, default=True, server_default="true")
     is_read = Column(Boolean, nullable=False, default=False, server_default="false")
     read_at = Column(DateTime, nullable=True)
+    deleted_by_recipient = Column(Boolean, nullable=False, default=False, server_default="false")
+    deleted_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     expires_at = Column(DateTime, nullable=True)
 
@@ -706,3 +723,149 @@ class Community(Base):
     sort_order  = Column(Integer, default=0, nullable=False)
     is_active   = Column(Boolean, default=True, nullable=False)
     created_at  = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+# Biblioteca
+class LibraryResourceType(str, enum.Enum):
+    LINK = "link"
+    FILE = "file"
+
+
+class LibraryLoanStatus(str, enum.Enum):
+    PENDING = "Pendiente"
+    APPROVED = "Aprobado"
+    LOANED = "Prestado"
+    RETURNED = "Devuelto"
+    REJECTED = "Rechazado"
+
+
+class LibraryVirtualResource(Base):
+    __tablename__ = "library_virtual_resources"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    resource_type = Column(
+        SQLEnum(LibraryResourceType, name="library_resource_type", values_callable=lambda x: [e.value for e in x]),
+        default=LibraryResourceType.LINK,
+        server_default=LibraryResourceType.LINK.value,
+        nullable=False,
+    )
+    url = Column(String, nullable=False)
+    category = Column(String, nullable=True)
+    author = Column(String, nullable=True)
+    is_active = Column(Boolean, default=True, server_default="true", nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+
+class LibraryBook(Base):
+    __tablename__ = "library_books"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    author = Column(String, nullable=True)
+    isbn = Column(String, nullable=True, unique=True, index=True)
+    category = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    shelf_location = Column(String, nullable=True)
+    cover_url = Column(String, nullable=True)
+    total_copies = Column(Integer, default=1, server_default="1", nullable=False)
+    available_copies = Column(Integer, default=1, server_default="1", nullable=False)
+    is_active = Column(Boolean, default=True, server_default="true", nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    loan_requests = relationship("LibraryLoanRequest", back_populates="book", passive_deletes=True)
+
+
+class LibraryLoanRequest(Base):
+    __tablename__ = "library_loan_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    book_id = Column(Integer, ForeignKey("library_books.id", ondelete="CASCADE"), nullable=False, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    status = Column(
+        SQLEnum(LibraryLoanStatus, name="library_loan_status", values_callable=lambda x: [e.value for e in x]),
+        default=LibraryLoanStatus.PENDING,
+        server_default=LibraryLoanStatus.PENDING.value,
+        nullable=False,
+    )
+    student_note = Column(String, nullable=True)
+    admin_note = Column(String, nullable=True)
+    requested_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    approved_at = Column(DateTime, nullable=True)
+    loaned_at = Column(DateTime, nullable=True)
+    due_at = Column(DateTime, nullable=True)
+    returned_at = Column(DateTime, nullable=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    book = relationship("LibraryBook", back_populates="loan_requests")
+    student = relationship("User", foreign_keys=[student_id])
+
+
+class LabMaterial(Base):
+    __tablename__ = "lab_materials"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    code = Column(String, nullable=True, unique=True, index=True)
+    category = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    storage_location = Column(String, nullable=True)
+    image_url = Column(String, nullable=True)
+    total_units = Column(Integer, default=1, server_default="1", nullable=False)
+    available_units = Column(Integer, default=1, server_default="1", nullable=False)
+    is_active = Column(Boolean, default=True, server_default="true", nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    requests = relationship("LabMaterialRequest", back_populates="material", passive_deletes=True)
+
+
+class LabMaterialRequest(Base):
+    __tablename__ = "lab_material_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    material_id = Column(Integer, ForeignKey("lab_materials.id", ondelete="CASCADE"), nullable=False, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    quantity = Column(Integer, default=1, server_default="1", nullable=False)
+    status = Column(
+        SQLEnum(LibraryLoanStatus, name="lab_material_request_status", values_callable=lambda x: [e.value for e in x]),
+        default=LibraryLoanStatus.PENDING,
+        server_default=LibraryLoanStatus.PENDING.value,
+        nullable=False,
+    )
+    project_name = Column(String, nullable=True)
+    student_note = Column(String, nullable=True)
+    admin_note = Column(String, nullable=True)
+    requested_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    approved_at = Column(DateTime, nullable=True)
+    delivered_at = Column(DateTime, nullable=True)
+    due_at = Column(DateTime, nullable=True)
+    returned_at = Column(DateTime, nullable=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    material = relationship("LabMaterial", back_populates="requests")
+    student = relationship("User", foreign_keys=[student_id])
+
+
+class StudentScheduleEntry(Base):
+    __tablename__ = "student_schedule_entries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
+    group_id = Column(Integer, ForeignKey("groups.id", ondelete="CASCADE"), nullable=True, index=True)
+    weekday = Column(Integer, nullable=False)
+    subject_name = Column(String, nullable=False)
+    start_time = Column(String, nullable=False)
+    end_time = Column(String, nullable=False)
+    classroom = Column(String, nullable=True)
+    teacher_name = Column(String, nullable=True)
+    color = Column(String, nullable=False, default="blue", server_default="blue")
+    notes = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    student = relationship("User", foreign_keys=[student_id])
+    group = relationship("Group", foreign_keys=[group_id])

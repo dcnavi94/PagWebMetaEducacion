@@ -28,6 +28,12 @@ class PaymentStatus(str, enum.Enum):
     PAGADO = "Pagado"
     VENCIDO = "Vencido"
 
+class PaymentMethod(str, enum.Enum):
+    EFECTIVO = "Efectivo"
+    TRANSFERENCIA = "Transferencia"
+    TARJETA = "Tarjeta"
+    DEPOSITO = "Deposito"
+
 class ChargeType(str, enum.Enum):
     TUITION = "Colegiatura"
     ENROLLMENT = "Inscripcion"
@@ -168,6 +174,11 @@ class PaymentBase(BaseModel):
     amount: float = Field(gt=0)
     due_date: datetime
     status: PaymentStatus
+    payment_date: Optional[datetime] = None
+    payment_method: Optional[PaymentMethod] = None
+    reference: Optional[str] = None
+    is_conciliated: bool = False
+    receipt_url: Optional[str] = None
 
 class PaymentCreate(PaymentBase):
     student_username: str
@@ -186,6 +197,11 @@ class PaymentUpdate(BaseModel):
     amount: Optional[float] = Field(None, gt=0)
     due_date: Optional[datetime] = None
     status: Optional[PaymentStatus] = None
+    payment_date: Optional[datetime] = None
+    payment_method: Optional[PaymentMethod] = None
+    reference: Optional[str] = None
+    is_conciliated: Optional[bool] = None
+    receipt_url: Optional[str] = None
 
     @field_validator("due_date")
     @classmethod
@@ -214,6 +230,10 @@ class ChargeBase(BaseModel):
     amount: float = Field(gt=0)
     due_date: datetime
     status: PaymentStatus = PaymentStatus.PENDIENTE
+    payment_date: Optional[datetime] = None
+    payment_method: Optional[PaymentMethod] = None
+    reference: Optional[str] = None
+    discount_amount: float = Field(default=0.0, ge=0)
 
 
 class ChargeCreate(ChargeBase):
@@ -231,6 +251,10 @@ class ChargeUpdate(BaseModel):
     amount: Optional[float] = Field(None, gt=0)
     due_date: Optional[datetime] = None
     status: Optional[PaymentStatus] = None
+    payment_date: Optional[datetime] = None
+    payment_method: Optional[PaymentMethod] = None
+    reference: Optional[str] = None
+    discount_amount: Optional[float] = Field(None, ge=0)
 
 
 class Charge(ChargeBase):
@@ -480,6 +504,8 @@ class NotificationMessageOut(BaseModel):
     is_active: bool = True
     is_read: bool = False
     read_at: Optional[datetime] = None
+    deleted_by_recipient: bool = False
+    deleted_at: Optional[datetime] = None
     created_at: datetime
 
 
@@ -602,6 +628,11 @@ class PaymentListItem(BaseModel):
     amount: Optional[float] = None
     due_date: Optional[datetime] = None
     status: PaymentStatus
+    payment_date: Optional[datetime] = None
+    payment_method: Optional[PaymentMethod] = None
+    reference: Optional[str] = None
+    is_conciliated: bool = False
+    receipt_url: Optional[str] = None
     student: Optional[StudentRef] = None
     model_config = ConfigDict(from_attributes=True)
 
@@ -618,8 +649,10 @@ class ChargeListItem(BaseModel):
     amount: float
     due_date: datetime
     status: PaymentStatus = PaymentStatus.PENDIENTE
+    discount_amount: float = 0.0
     created_at: datetime
     student: Optional[StudentRef] = None
+    payments: List[PaymentListItem] = []
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -802,6 +835,22 @@ class FinanceSummary(BaseModel):
     paid_count: int
     pending_count: int
     overdue_count: int
+
+class AgingBalanceRow(BaseModel):
+    student_id: int
+    username: str
+    full_name: Optional[str] = None
+    days_1_30: float = 0.0
+    days_31_60: float = 0.0
+    days_61_90: float = 0.0
+    days_90_plus: float = 0.0
+    total_overdue: float = 0.0
+
+class IncomeFlowRow(BaseModel):
+    payment_date: str
+    payment_method: str
+    total_amount: float
+    count: int
 
 
 class BlockedStudentRow(BaseModel):
@@ -1190,3 +1239,225 @@ class CommunityOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+# Biblioteca
+class LibraryVirtualResourceCreate(BaseModel):
+    title: str = Field(min_length=2, max_length=180)
+    description: Optional[str] = None
+    resource_type: str = "link"
+    url: str = Field(min_length=2)
+    category: Optional[str] = None
+    author: Optional[str] = None
+    is_active: bool = True
+
+
+class LibraryVirtualResourceUpdate(BaseModel):
+    title: Optional[str] = Field(None, min_length=2, max_length=180)
+    description: Optional[str] = None
+    resource_type: Optional[str] = None
+    url: Optional[str] = Field(None, min_length=2)
+    category: Optional[str] = None
+    author: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class LibraryVirtualResourceOut(LibraryVirtualResourceCreate):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class LibraryBookCreate(BaseModel):
+    title: str = Field(min_length=2, max_length=180)
+    author: Optional[str] = None
+    isbn: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    shelf_location: Optional[str] = None
+    cover_url: Optional[str] = None
+    total_copies: int = Field(default=1, ge=0)
+    available_copies: Optional[int] = Field(default=None, ge=0)
+    is_active: bool = True
+
+
+class LibraryBookUpdate(BaseModel):
+    title: Optional[str] = Field(None, min_length=2, max_length=180)
+    author: Optional[str] = None
+    isbn: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    shelf_location: Optional[str] = None
+    cover_url: Optional[str] = None
+    total_copies: Optional[int] = Field(None, ge=0)
+    available_copies: Optional[int] = Field(None, ge=0)
+    is_active: Optional[bool] = None
+
+
+class LibraryBookOut(BaseModel):
+    id: int
+    title: str
+    author: Optional[str] = None
+    isbn: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    shelf_location: Optional[str] = None
+    cover_url: Optional[str] = None
+    total_copies: int
+    available_copies: int
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class LibraryLoanCreate(BaseModel):
+    book_id: int
+    student_note: Optional[str] = Field(None, max_length=500)
+
+
+class LibraryLoanStatusUpdate(BaseModel):
+    status: str
+    admin_note: Optional[str] = Field(None, max_length=500)
+    due_at: Optional[datetime] = None
+
+
+class LibraryLoanOut(BaseModel):
+    id: int
+    book_id: int
+    student_id: int
+    status: str
+    student_note: Optional[str] = None
+    admin_note: Optional[str] = None
+    requested_at: datetime
+    approved_at: Optional[datetime] = None
+    loaned_at: Optional[datetime] = None
+    due_at: Optional[datetime] = None
+    returned_at: Optional[datetime] = None
+    updated_at: datetime
+    book: Optional[LibraryBookOut] = None
+    student_username: Optional[str] = None
+    student_name: Optional[str] = None
+    model_config = {"from_attributes": True}
+
+
+class LabMaterialCreate(BaseModel):
+    name: str = Field(min_length=2, max_length=180)
+    code: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    storage_location: Optional[str] = None
+    image_url: Optional[str] = None
+    total_units: int = Field(default=1, ge=0)
+    available_units: Optional[int] = Field(default=None, ge=0)
+    is_active: bool = True
+
+
+class LabMaterialUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=2, max_length=180)
+    code: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    storage_location: Optional[str] = None
+    image_url: Optional[str] = None
+    total_units: Optional[int] = Field(None, ge=0)
+    available_units: Optional[int] = Field(None, ge=0)
+    is_active: Optional[bool] = None
+
+
+class LabMaterialOut(BaseModel):
+    id: int
+    name: str
+    code: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+    storage_location: Optional[str] = None
+    image_url: Optional[str] = None
+    total_units: int
+    available_units: int
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class LabMaterialRequestCreate(BaseModel):
+    material_id: int
+    quantity: int = Field(default=1, ge=1)
+    project_name: Optional[str] = Field(None, max_length=180)
+    student_note: Optional[str] = Field(None, max_length=500)
+
+
+class LabMaterialRequestStatusUpdate(BaseModel):
+    status: str
+    admin_note: Optional[str] = Field(None, max_length=500)
+    due_at: Optional[datetime] = None
+
+
+class LabMaterialRequestOut(BaseModel):
+    id: int
+    material_id: int
+    student_id: int
+    quantity: int
+    status: str
+    project_name: Optional[str] = None
+    student_note: Optional[str] = None
+    admin_note: Optional[str] = None
+    requested_at: datetime
+    approved_at: Optional[datetime] = None
+    delivered_at: Optional[datetime] = None
+    due_at: Optional[datetime] = None
+    returned_at: Optional[datetime] = None
+    updated_at: datetime
+    material: Optional[LabMaterialOut] = None
+    student_username: Optional[str] = None
+    student_name: Optional[str] = None
+    model_config = {"from_attributes": True}
+
+
+class StudentScheduleEntryCreate(BaseModel):
+    weekday: int = Field(ge=1, le=6)
+    subject_name: str = Field(min_length=2, max_length=180)
+    start_time: str = Field(pattern=r"^\d{2}:\d{2}$")
+    end_time: str = Field(pattern=r"^\d{2}:\d{2}$")
+    classroom: Optional[str] = Field(None, max_length=80)
+    teacher_name: Optional[str] = Field(None, max_length=180)
+    color: str = "blue"
+    notes: Optional[str] = Field(None, max_length=500)
+
+
+class StudentScheduleEntryUpdate(BaseModel):
+    weekday: Optional[int] = Field(None, ge=1, le=6)
+    subject_name: Optional[str] = Field(None, min_length=2, max_length=180)
+    start_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}$")
+    end_time: Optional[str] = Field(None, pattern=r"^\d{2}:\d{2}$")
+    classroom: Optional[str] = Field(None, max_length=80)
+    teacher_name: Optional[str] = Field(None, max_length=180)
+    color: Optional[str] = None
+    notes: Optional[str] = Field(None, max_length=500)
+
+
+class StudentScheduleEntryOut(StudentScheduleEntryCreate):
+    id: int
+    student_id: Optional[int] = None
+    group_id: Optional[int] = None
+    created_at: datetime
+    updated_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class KardexSummaryOut(BaseModel):
+    gpa: float
+    earned_credits: int
+    total_career_credits: int
+    progress_percentage: float
+    history: list[AcademicHistoryItem]
+
+
+class CalendarEventOut(BaseModel):
+    id: int
+    title: str
+    date: str
+    category: str
+    description: Optional[str] = None

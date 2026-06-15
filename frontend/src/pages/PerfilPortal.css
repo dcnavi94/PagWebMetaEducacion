@@ -1,0 +1,139 @@
+.profile-page {
+  overflow-x: hidden;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.profile-page,
+.profile-page * {
+  min-width: 0;
+}
+
+.profile-card {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.profile-back,
+.profile-header-spacer {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+}
+
+.profile-title {
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  line-height: 1.15;
+}
+
+.profile-avatar {
+  width: 110px;
+  height: 110px;
+  font-size: 3rem;
+}
+
+.profile-camera {
+  right: 0;
+  bottom: 0;
+  width: 38px;
+  height: 38px;
+}
+
+.profile-name,
+.profile-identity {
+  overflow-wrap: anywhere;
+}
+
+.profile-name {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+}
+
+.profile-toast {
+  z-index: 1050;
+  max-width: min(420px, calc(100vw - 2rem));
+  border: 0;
+  border-radius: 12px;
+}
+
+.profile-form-actions .btn,
+.profile-security-actions .btn {
+  min-height: 44px;
+}
+
+@media (min-width: 576px) {
+  .profile-form-actions .btn,
+  .profile-security-actions .btn {
+    width: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .profile-container {
+    padding-top: 1rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .profile-header {
+    margin-bottom: 1rem !important;
+  }
+
+  .profile-back,
+  .profile-header-spacer {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+
+  .profile-title {
+    font-size: 1.35rem;
+  }
+
+  .profile-title i {
+    display: none;
+  }
+
+  .profile-card {
+    border-radius: 16px;
+  }
+
+  .profile-card-body {
+    padding: 1.25rem !important;
+  }
+
+  .profile-avatar {
+    width: 92px;
+    height: 92px;
+    font-size: 2.4rem;
+  }
+
+  .profile-camera {
+    width: 36px;
+    height: 36px;
+  }
+
+  .profile-form-actions .btn,
+  .profile-security-actions .btn {
+    width: 100%;
+  }
+
+  .profile-page .form-control {
+    min-height: 46px;
+    font-size: 16px;
+  }
+
+  .profile-page .form-check-input {
+    flex-shrink: 0;
+  }
+
+  .profile-toast {
+    top: .5rem !important;
+    right: .5rem !important;
+    left: .5rem !important;
+    width: auto;
+    max-width: none;
+    margin: 0 !important;
+  }
+}

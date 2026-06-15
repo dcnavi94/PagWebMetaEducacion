@@ -26,6 +26,18 @@ def public_get_projects(category: Optional[str] = None, db: Session = Depends(ge
     return q.order_by(models.Project.created_at.desc()).all()
 
 
+@router.get("/public/projects/{project_id}", response_model=schemas.ProjectOut, tags=["Web Publica"])
+def public_get_project(project_id: int, db: Session = Depends(get_db)):
+    project = (
+        db.query(models.Project)
+        .filter(models.Project.id == project_id, models.Project.is_active == True)
+        .first()
+    )
+    if not project:
+        raise HTTPException(status_code=404, detail="Proyecto no encontrado")
+    return project
+
+
 @router.post("/public/contacts", response_model=schemas.ContactOut, status_code=201, tags=["Web Pública"])
 def public_create_contact(data: schemas.ContactCreate, db: Session = Depends(get_db)):
     """Recibe un lead del formulario de contacto de la landing page."""

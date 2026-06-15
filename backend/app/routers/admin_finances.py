@@ -28,6 +28,11 @@ def get_all_payments(current_user: models.User = Depends(admin_required), db: Se
             models.Payment.amount,
             models.Payment.due_date,
             models.Payment.status,
+            models.Payment.payment_date,
+            models.Payment.payment_method,
+            models.Payment.reference,
+            models.Payment.is_conciliated,
+            models.Payment.receipt_url,
             models.User.username.label("student_username"),
             models.User.full_name.label("student_full_name"),
         )
@@ -44,6 +49,11 @@ def get_all_payments(current_user: models.User = Depends(admin_required), db: Se
             "amount": row.amount,
             "due_date": row.due_date,
             "status": row.status,
+            "payment_date": row.payment_date,
+            "payment_method": row.payment_method,
+            "reference": row.reference,
+            "is_conciliated": row.is_conciliated,
+            "receipt_url": row.receipt_url,
             "student": {
                 "username": row.student_username,
                 "full_name": row.student_full_name,
@@ -72,6 +82,7 @@ def get_all_charges(
             models.Charge.amount,
             models.Charge.due_date,
             models.Charge.status,
+            models.Charge.discount_amount,
             models.Charge.created_at,
             models.User.username.label("student_username"),
             models.User.full_name.label("student_full_name"),
@@ -97,6 +108,7 @@ def get_all_charges(
             "amount": row.amount,
             "due_date": row.due_date,
             "status": row.status,
+            "discount_amount": row.discount_amount,
             "created_at": row.created_at,
             "student": {
                 "username": row.student_username,
@@ -136,10 +148,18 @@ def create_charge(charge: schemas.ChargeCreate, current_user: models.User = Depe
         amount=charge.amount,
         due_date=charge.due_date,
         status=charge.status,
+        discount_amount=charge.discount_amount,
     )
     db.add(new_charge)
     db.flush()
-    app.main._ensure_payment_for_charge(db, new_charge)
+    payment = app.main._ensure_payment_for_charge(db, new_charge)
+    if charge.payment_date is not None:
+        payment.payment_date = charge.payment_date
+    if charge.payment_method is not None:
+        payment.payment_method = charge.payment_method
+    if charge.reference is not None:
+        payment.reference = charge.reference
+    db.commit()
     db.commit()
     db.refresh(new_charge)
     return new_charge
@@ -173,8 +193,16 @@ def update_charge(charge_id: int, charge_update: schemas.ChargeUpdate, current_u
         db_charge.due_date = charge_update.due_date
     if charge_update.status is not None:
         db_charge.status = charge_update.status
+    if charge_update.discount_amount is not None:
+        db_charge.discount_amount = charge_update.discount_amount
 
-    app.main._ensure_payment_for_charge(db, db_charge)
+    payment = app.main._ensure_payment_for_charge(db, db_charge)
+    if charge_update.payment_date is not None:
+        payment.payment_date = charge_update.payment_date
+    if charge_update.payment_method is not None:
+        payment.payment_method = charge_update.payment_method
+    if charge_update.reference is not None:
+        payment.reference = charge_update.reference
     db.commit()
     db.refresh(db_charge)
     return db_charge
@@ -207,6 +235,11 @@ def create_payment(payment: schemas.PaymentCreate, current_user: models.User = D
         amount=payment.amount,
         due_date=payment.due_date,
         status=payment.status,
+        payment_date=payment.payment_date,
+        payment_method=payment.payment_method,
+        reference=payment.reference,
+        is_conciliated=payment.is_conciliated,
+        receipt_url=payment.receipt_url,
     )
     db.add(new_payment)
     db.commit()
@@ -228,11 +261,55 @@ def update_payment(payment_id: int, payment_update: schemas.PaymentUpdate, curre
         db_payment.due_date = payment_update.due_date
     if payment_update.status is not None:
         db_payment.status = payment_update.status
-        if db_payment.charge:
-            db_payment.charge.status = payment_update.status
+
+    if payment_update.payment_date is not None:
+        db_payment.payment_date = payment_update.payment_date
+    if payment_update.payment_method is not None:
+        db_payment.payment_method = payment_update.payment_method
+    if payment_update.reference is not None:
+        db_payment.reference = payment_update.reference
+    if payment_update.is_conciliated is not None:
+        db_payment.is_conciliated = payment_update.is_conciliated
+    if payment_update.receipt_url is not None:
+        db_payment.receipt_url = payment_update.receipt_url
+
+    if db_payment.charge:
+        paid_total = sum(p.amount for p in db_payment.charge.payments if p.status == models.PaymentStatus.PAGADO and p.id != db_payment.id)
+        if db_payment.status == models.PaymentStatus.PAGADO:
+            paid_total += db_payment.amount
+        
+        if paid_total >= db_payment.charge.amount:
+            db_payment.charge.status = models.PaymentStatus.PAGADO
+        else:
+            if db_payment.charge.due_date < datetime.utcnow():
+                db_payment.charge.status = models.PaymentStatus.VENCIDO
+            else:
+                db_payment.charge.status = models.PaymentStatus.PENDIENTE
 
     db.commit()
     db.refresh(db_payment)
     return db_payment
 
+import os
+import uuid
+import shutil
 
+@router.post("/admin/payments/{payment_id}/receipt", response_model=schemas.Payment, summary="Subir comprobante de pago", tags=["Administracion"])
+async def upload_payment_receipt(payment_id: int, file: UploadFile = File(...), current_user: models.User = Depends(admin_required), db: Session = Depends(get_db)):
+    db_payment = db.query(models.Payment).filter(models.Payment.id == payment_id).first()
+    if not db_payment:
+        raise HTTPException(status_code=404, detail="Pago no encontrado")
+        
+    upload_dir = "uploads/receipts"
+    os.makedirs(upload_dir, exist_ok=True)
+    ext = os.path.splitext(file.filename)[1]
+    filename = f"{uuid.uuid4().hex}{ext}"
+    file_path = os.path.join(upload_dir, filename)
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    db_payment.receipt_url = f"/{upload_dir}/{filename}"
+    db.commit()
+    db.refresh(db_payment)
+    return db_payment

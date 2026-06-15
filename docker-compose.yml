@@ -80,14 +80,16 @@ services:
       - MOODLE_SITE_NAME=UNIVES Moodle
       - MOODLE_SKIP_BOOTSTRAP=no
       - BITNAMI_DEBUG=true
+      - UNIVES_SSO_SECRET=${UNIVES_SSO_SECRET:-02c9c861cf440efd8bef8854db78d0580bd93019d734246b48595ab3920220cc}
     volumes:
       - moodle_app_data:/bitnami/moodle
       - moodledata_data:/bitnami/moodledata
+      - ./moodle/local/univessso:/bitnami/moodle/local/univessso:ro
     depends_on:
       moodle-db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/login/index.php >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "php -r 'exit(@file_get_contents(\"http://localhost:8080/login/index.php\") === false ? 1 : 0);'"]
       interval: 30s
       timeout: 10s
       retries: 10

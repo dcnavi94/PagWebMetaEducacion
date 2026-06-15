@@ -1,15 +1,21 @@
 from typing import List, Optional, Any, Dict
+import hashlib
+import hmac
 import os
+import time
+import httpx
+from urllib.parse import quote, urlparse
 import app.main
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, BackgroundTasks, Response, Request, Security
 from sqlalchemy.orm import Session
 from datetime import datetime, date
-from app import models, schemas, auth, curriculum, moodle_client, import_csv, curriculum_credits
+from app import models, schemas, auth, curriculum, import_csv, curriculum_credits
+from app.moodle_client import moodle_client
 from app.config import settings
 from app.database import get_db
 from app.dependencies import admin_required, teacher_or_admin, services_or_admin, oauth2_scheme
 from sqlalchemy.orm import joinedload
-from sqlalchemy import func
+from sqlalchemy import func, text
 import logging
 import csv
 from io import StringIO
@@ -228,6 +234,84 @@ def read_user_academic_history(current_user: models.User = Depends(auth.get_curr
     ]
 
 
+@router.get("/users/me/kardex-summary", response_model=schemas.KardexSummaryOut, summary="Resumen completo del Kardex", tags=["Usuario"])
+def read_user_kardex_summary(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    from app.curriculum_credits import CURRICULUM_CREDITS
+
+    history = app.main._get_academic_history_for_student(db, current_user.id)
+    history_items = [
+        item for item in history
+        if item["course_enrollment_id"] or item["assignment_id"] or item["final_score"] is not None
+    ]
+
+    gpa_sum = 0.0
+    gpa_count = 0
+    earned_credits = 0
+
+    for item in history_items:
+        score = item.get("final_score")
+        if score is not None and score > 0:
+            gpa_sum += score
+            gpa_count += 1
+            if item.get("status") == models.GradeStatus.APROBADA or score >= 6.0:
+                earned_credits += item.get("credits") or 8
+
+    gpa = round(gpa_sum / gpa_count, 2) if gpa_count > 0 else 0.0
+
+    total_career_credits = 0
+    career_name = current_user.carrera or ""
+    matched_career = None
+    for k in CURRICULUM_CREDITS.keys():
+        if k.lower() in career_name.lower() or career_name.lower() in k.lower():
+            matched_career = k
+            break
+            
+    if matched_career:
+        for semester_subjects in CURRICULUM_CREDITS[matched_career].values():
+            for subject in semester_subjects:
+                total_career_credits += subject.get("credits") or 8
+    else:
+        total_career_credits = 350  # Fallback
+
+    progress_percentage = round((earned_credits / total_career_credits) * 100, 1) if total_career_credits > 0 else 0.0
+    if progress_percentage > 100:
+        progress_percentage = 100.0
+
+    return {
+        "gpa": gpa,
+        "earned_credits": earned_credits,
+        "total_career_credits": total_career_credits,
+        "progress_percentage": progress_percentage,
+        "history": history_items
+    }
+
+
+@router.get("/users/me/calendar", response_model=list[schemas.CalendarEventOut], summary="Calendario Academico", tags=["Usuario"])
+def read_user_calendar(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    # Mock data for 2026 Academic Year
+    # categories: exam, payment, enrollment, holiday
+    return [
+        {"id": 1, "title": "Inicio de Clases - Cuatrimestre Enero-Abril", "date": "2026-01-05", "category": "enrollment", "description": "Inicio de todas las clases regulares."},
+        {"id": 2, "title": "Día de la Constitución", "date": "2026-02-02", "category": "holiday", "description": "Suspensión de labores institucionales."},
+        {"id": 3, "title": "Límite de pago 1ra Mensualidad", "date": "2026-02-15", "category": "payment", "description": "Último día para pago sin recargos."},
+        {"id": 4, "title": "Exámenes Parciales", "date": "2026-02-23", "category": "exam", "description": "Inicio de periodo de evaluación parcial."},
+        {"id": 5, "title": "Límite de pago 2da Mensualidad", "date": "2026-03-15", "category": "payment", "description": "Último día para pago sin recargos."},
+        {"id": 6, "title": "Natalicio de Benito Juárez", "date": "2026-03-16", "category": "holiday", "description": "Suspensión de labores institucionales."},
+        {"id": 7, "title": "Semana Santa", "date": "2026-03-30", "category": "holiday", "description": "Vacaciones de primavera."},
+        {"id": 8, "title": "Exámenes Finales", "date": "2026-04-13", "category": "exam", "description": "Evaluaciones ordinarias finales."},
+        {"id": 9, "title": "Día del Trabajo", "date": "2026-05-01", "category": "holiday", "description": "Suspensión de labores."},
+        {"id": 10, "title": "Inicio de Clases - Cuatrimestre Mayo-Agosto", "date": "2026-05-04", "category": "enrollment", "description": "Inicio de clases nuevo cuatrimestre."},
+        {"id": 11, "title": "Límite de pago 1ra Mensualidad", "date": "2026-06-15", "category": "payment", "description": "Pago sin recargos."},
+        {"id": 12, "title": "Exámenes Parciales", "date": "2026-06-22", "category": "exam", "description": "Evaluaciones de medio término."},
+        {"id": 13, "title": "Día de la Independencia", "date": "2026-09-16", "category": "holiday", "description": "Suspensión de labores."},
+        {"id": 14, "title": "Exámenes Parciales", "date": "2026-10-19", "category": "exam", "description": "Periodo de evaluación parcial Otoño."},
+        {"id": 15, "title": "Día de Muertos", "date": "2026-11-02", "category": "holiday", "description": "Suspensión de labores."},
+        {"id": 16, "title": "Revolución Mexicana", "date": "2026-11-16", "category": "holiday", "description": "Día feriado oficial."},
+        {"id": 17, "title": "Exámenes Finales", "date": "2026-12-07", "category": "exam", "description": "Evaluaciones finales de diciembre."},
+        {"id": 18, "title": "Vacaciones de Invierno", "date": "2026-12-21", "category": "holiday", "description": "Periodo vacacional decembrino."},
+    ]
+
+
 @router.put("/users/me", summary="Actualizar perfil", tags=["Usuario"])
 def update_user_me(user_update: schemas.UserUpdate, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
     if user_update.full_name is not None:
@@ -267,6 +351,240 @@ def read_user_payments(current_user: models.User = Depends(auth.get_current_user
 @router.get("/users/me/charges", response_model=list[schemas.Charge], summary="Mis cargos", tags=["Usuario"])
 def read_user_charges(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
     return db.query(models.Charge).filter(models.Charge.student_id == current_user.id).order_by(models.Charge.id.desc()).all()
+
+
+def _mercado_pago_headers() -> dict:
+    if not settings.MERCADO_PAGO_ACCESS_TOKEN:
+        raise HTTPException(status_code=503, detail="Mercado Pago no esta configurado")
+    return {
+        "Authorization": f"Bearer {settings.MERCADO_PAGO_ACCESS_TOKEN}",
+        "Content-Type": "application/json",
+    }
+
+
+def _mp_external_reference(charge: models.Charge) -> str:
+    return f"unives-charge-{charge.id}-student-{charge.student_id}"
+
+
+def _mp_charge_id_from_reference(reference: Optional[str]) -> Optional[int]:
+    if not reference:
+        return None
+    parts = reference.split("-")
+    if len(parts) >= 3 and parts[0] == "unives" and parts[1] == "charge":
+        try:
+            return int(parts[2])
+        except ValueError:
+            return None
+    return None
+
+
+async def _mp_get_payment(payment_id: str) -> dict:
+    async with httpx.AsyncClient(timeout=20.0) as client:
+        response = await client.get(
+            f"https://api.mercadopago.com/v1/payments/{quote(str(payment_id))}",
+            headers=_mercado_pago_headers(),
+        )
+    if response.status_code == 404:
+        raise HTTPException(status_code=404, detail="Pago no encontrado en Mercado Pago")
+    if response.status_code >= 400:
+        raise HTTPException(status_code=502, detail="No fue posible consultar el pago en Mercado Pago")
+    return response.json()
+
+
+def _register_approved_mp_payment(db: Session, charge: models.Charge, payment_data: dict) -> Optional[models.Payment]:
+    if payment_data.get("status") != "approved":
+        return None
+
+    payment_id = str(payment_data.get("id") or "")
+    if not payment_id:
+        return None
+
+    existing = (
+        db.query(models.Payment)
+        .filter(
+            models.Payment.charge_id == charge.id,
+            models.Payment.reference == f"MP-{payment_id}",
+        )
+        .first()
+    )
+    if existing:
+        return existing
+
+    amount = float(payment_data.get("transaction_amount") or charge.amount or 0)
+    paid_at = payment_data.get("date_approved") or payment_data.get("date_created")
+    payment_date = None
+    if paid_at:
+        try:
+            payment_date = datetime.fromisoformat(str(paid_at).replace("Z", "+00:00")).replace(tzinfo=None)
+        except ValueError:
+            payment_date = datetime.utcnow()
+
+    db_payment = models.Payment(
+        student_id=charge.student_id,
+        charge_id=charge.id,
+        concept=charge.concept,
+        amount=amount,
+        due_date=charge.due_date,
+        status=models.PaymentStatus.PAGADO,
+        payment_date=payment_date or datetime.utcnow(),
+        payment_method=models.PaymentMethod.TARJETA,
+        reference=f"MP-{payment_id}",
+        is_conciliated=True,
+        receipt_url=payment_data.get("transaction_details", {}).get("external_resource_url"),
+    )
+    db.add(db_payment)
+    charge.status = models.PaymentStatus.PAGADO
+    db.commit()
+    db.refresh(db_payment)
+    return db_payment
+
+
+@router.get("/users/me/payments/mercadopago/config", tags=["Usuario"], summary="Estado de Mercado Pago")
+def read_mercado_pago_config(current_user: models.User = Depends(auth.get_current_user)):
+    return {
+        "enabled": bool(settings.MERCADO_PAGO_ACCESS_TOKEN),
+        "public_key_configured": bool(settings.MERCADO_PAGO_PUBLIC_KEY),
+        "sandbox": settings.MERCADO_PAGO_SANDBOX,
+        "currency_id": settings.MERCADO_PAGO_CURRENCY_ID,
+    }
+
+
+@router.post("/users/me/charges/{charge_id}/mercadopago/preference", tags=["Usuario"], summary="Crear preferencia Mercado Pago")
+async def create_mercado_pago_preference(
+    charge_id: int,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db),
+):
+    charge = (
+        db.query(models.Charge)
+        .filter(models.Charge.id == charge_id, models.Charge.student_id == current_user.id)
+        .first()
+    )
+    if not charge:
+        raise HTTPException(status_code=404, detail="Cargo no encontrado")
+    if charge.status == models.PaymentStatus.PAGADO:
+        raise HTTPException(status_code=400, detail="Este cargo ya esta pagado")
+    if charge.amount <= 0:
+        raise HTTPException(status_code=400, detail="El cargo no tiene un monto valido")
+
+    external_reference = _mp_external_reference(charge)
+    back_url = f"{settings.PORTAL_PUBLIC_URL}/campus-virtual?mp_charge_id={charge.id}"
+    payload = {
+        "items": [{
+            "id": str(charge.id),
+            "title": f"UNIVES - {charge.concept}",
+            "description": charge.period_label or "Cargo escolar",
+            "quantity": 1,
+            "currency_id": settings.MERCADO_PAGO_CURRENCY_ID or "MXN",
+            "unit_price": round(float(charge.amount), 2),
+        }],
+        "payer": {
+            "name": current_user.full_name or current_user.username,
+            "email": current_user.email,
+        },
+        "external_reference": external_reference,
+        "back_urls": {
+            "success": f"{back_url}&mp_result=success",
+            "pending": f"{back_url}&mp_result=pending",
+            "failure": f"{back_url}&mp_result=failure",
+        },
+        "auto_return": "approved",
+        "notification_url": f"{settings.API_PUBLIC_URL}/payments/mercadopago/webhook",
+        "statement_descriptor": "UNIVES",
+        "metadata": {
+            "charge_id": charge.id,
+            "student_id": current_user.id,
+            "student_username": current_user.username,
+        },
+    }
+
+    async with httpx.AsyncClient(timeout=20.0) as client:
+        response = await client.post(
+            "https://api.mercadopago.com/checkout/preferences",
+            headers=_mercado_pago_headers(),
+            json=payload,
+        )
+    if response.status_code >= 400:
+        logging.error("Mercado Pago preference error %s: %s", response.status_code, response.text)
+        raise HTTPException(status_code=502, detail="No se pudo crear el enlace de pago")
+    preference = response.json()
+    return {
+        "preference_id": preference.get("id"),
+        "init_point": preference.get("init_point"),
+        "sandbox_init_point": preference.get("sandbox_init_point"),
+        "external_reference": external_reference,
+    }
+
+
+@router.post("/users/me/charges/{charge_id}/mercadopago/confirm", tags=["Usuario"], summary="Confirmar pago Mercado Pago")
+async def confirm_mercado_pago_charge(
+    charge_id: int,
+    payload: dict,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(get_db),
+):
+    payment_id = str(payload.get("payment_id") or payload.get("collection_id") or "").strip()
+    if not payment_id:
+        raise HTTPException(status_code=400, detail="payment_id es requerido")
+    charge = (
+        db.query(models.Charge)
+        .filter(models.Charge.id == charge_id, models.Charge.student_id == current_user.id)
+        .first()
+    )
+    if not charge:
+        raise HTTPException(status_code=404, detail="Cargo no encontrado")
+
+    payment_data = await _mp_get_payment(payment_id)
+    reference_charge_id = _mp_charge_id_from_reference(payment_data.get("external_reference"))
+    metadata_charge_id = payment_data.get("metadata", {}).get("charge_id")
+    if reference_charge_id != charge.id and int(metadata_charge_id or 0) != charge.id:
+        raise HTTPException(status_code=400, detail="El pago no corresponde a este cargo")
+
+    db_payment = _register_approved_mp_payment(db, charge, payment_data)
+    return {
+        "status": payment_data.get("status"),
+        "status_detail": payment_data.get("status_detail"),
+        "approved": bool(db_payment),
+        "payment_id": payment_id,
+        "charge_id": charge.id,
+    }
+
+
+@router.post("/payments/mercadopago/webhook", tags=["Pagos"], summary="Webhook Mercado Pago")
+async def mercado_pago_webhook(request: Request, db: Session = Depends(get_db)):
+    payload = await request.json()
+    payment_id = (
+        payload.get("data", {}).get("id")
+        or payload.get("id")
+        or request.query_params.get("data.id")
+        or request.query_params.get("id")
+    )
+    event_type = payload.get("type") or request.query_params.get("type")
+    if event_type and event_type not in {"payment", "topic_payment"}:
+        return {"ok": True, "ignored": event_type}
+    if not payment_id:
+        return {"ok": True, "ignored": "missing_payment_id"}
+
+    try:
+        payment_data = await _mp_get_payment(str(payment_id))
+    except HTTPException as exc:
+        logging.warning("No se pudo procesar webhook Mercado Pago %s: %s", payment_id, exc.detail)
+        return {"ok": False, "detail": exc.detail}
+
+    charge_id = _mp_charge_id_from_reference(payment_data.get("external_reference"))
+    charge_id = charge_id or int(payment_data.get("metadata", {}).get("charge_id") or 0)
+    charge = db.query(models.Charge).filter(models.Charge.id == charge_id).first() if charge_id else None
+    if not charge:
+        return {"ok": False, "detail": "charge_not_found"}
+
+    db_payment = _register_approved_mp_payment(db, charge, payment_data)
+    return {
+        "ok": True,
+        "status": payment_data.get("status"),
+        "approved": bool(db_payment),
+        "charge_id": charge.id,
+        "payment_id": str(payment_id),
+    }
 
 
 @router.get("/users/me/services", summary="Mis tramites", tags=["Usuario"])
@@ -494,7 +812,14 @@ def delete_user_notification(
     notification = app.main._get_user_manageable_notification(db, notification_id=notification_id, user=current_user)
     if not notification:
         raise HTTPException(status_code=404, detail="Notificacion no encontrada")
-    notification.is_active = False
+    
+    if notification.target_scope == "user":
+        notification.deleted_by_recipient = True
+        notification.deleted_at = datetime.utcnow()
+    else:
+        # Prevent hiding broadcast messages for everyone
+        raise HTTPException(status_code=400, detail="Las notificaciones generales no se pueden eliminar")
+        
     db.commit()
     return {"ok": True, "id": notification_id}
 
@@ -564,20 +889,12 @@ def read_pasaporte(current_user: models.User = Depends(auth.get_current_user), d
 @router.get("/users/me/moodle-url", summary="Estado y URL base de Moodle", tags=["Usuario"])
 async def read_user_moodle_url(current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
     credentials = app.main._get_moodle_credentials_for_user(db, current_user)
-    remote_courses = await moodle_client.get_user_courses(int(current_user.moodle_id)) if current_user.moodle_id and settings.MOODLE_REST_TOKEN else None
+    remote_courses = (
+        await moodle_client.get_user_courses(int(current_user.moodle_id))
+        if current_user.moodle_id and settings.MOODLE_REST_TOKEN
+        else []
+    )
     serialized_courses = [app.main._serialize_moodle_course(course) for course in (remote_courses or [])]
-    if not serialized_courses:
-        local_courses = await read_user_courses(current_user=current_user, db=db)
-        serialized_courses = [
-            {
-                "id": item.get("id"),
-                "displayname": item.get("name"),
-                "fullname": item.get("name"),
-                "teacher": item.get("teacher"),
-                "view_url": app.main._build_moodle_public_url("/my/"),
-            }
-            for item in local_courses[:6]
-        ]
     return {
         "enabled": bool(settings.MOODLE_BASE_URL),
         "linked": bool(current_user.moodle_id),
@@ -593,26 +910,87 @@ async def read_user_moodle_url(current_user: models.User = Depends(auth.get_curr
     }
 
 
+@router.get("/users/me/moodle-badges", summary="Mis insignias Moodle", tags=["Usuario"])
+async def read_user_moodle_badges(
+    current_user: models.User = Depends(auth.get_current_user),
+):
+    if not current_user.moodle_id:
+        return {"count": 0, "badges": []}
+    result = await moodle_client.badge_action("user", user_id=int(current_user.moodle_id))
+    if result is None:
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "message": "No fue posible consultar las insignias Moodle",
+                "moodle_error": app.main._latest_moodle_error(),
+            },
+        )
+    styles = {
+        "Excelencia Académica": {"icon": "bi-trophy-fill", "color": "warning"},
+        "Participación Destacada": {"icon": "bi-megaphone-fill", "color": "primary"},
+        "Trabajo en Equipo": {"icon": "bi-people-fill", "color": "success"},
+        "Constancia": {"icon": "bi-fire", "color": "danger"},
+    }
+    badges = []
+    for badge in result.get("badges") or []:
+        badge["style"] = styles.get(badge.get("name"), {"icon": "bi-award-fill", "color": "info"})
+        badges.append(badge)
+    return {"count": len(badges), "badges": badges}
+
+
 @router.get("/users/me/moodle-launch", summary="Preparar apertura de Moodle", tags=["Usuario"])
 async def read_user_moodle_launch(target_url: Optional[str] = None, current_user: models.User = Depends(auth.get_current_user), db: Session = Depends(get_db)):
+    sync_error = None
+    if (
+        not current_user.moodle_id
+        and settings.MOODLE_REST_TOKEN
+        and current_user.role in (models.UserRole.TEACHER, models.UserRole.STUDENT)
+    ):
+        sync = (
+            app.main._sync_teacher_to_moodle
+            if current_user.role == models.UserRole.TEACHER
+            else app.main._sync_student_to_moodle
+        )
+        evidence = await sync(db, user=current_user)
+        if not evidence.get("success"):
+            sync_error = app.main._latest_moodle_error() or "No fue posible vincular la cuenta con Moodle"
+
     credentials = app.main._get_moodle_credentials_for_user(db, current_user)
     base_target = target_url or app.main._build_moodle_public_url("/my/")
+    parsed_target = urlparse(base_target)
+    target_path = parsed_target.path or "/my/"
+    if parsed_target.query:
+        target_path += f"?{parsed_target.query}"
     can_auto_login = bool(
         settings.MOODLE_AUTO_LOGIN_ENABLED
+        and settings.MOODLE_SSO_SECRET
         and current_user.moodle_id
-        and credentials.get("moodle_username")
-        and credentials.get("moodle_password")
     )
+    sso_url = None
+    if can_auto_login:
+        expires = int(time.time()) + 60
+        payload = f"{int(current_user.moodle_id)}|{expires}|{target_path}"
+        signature = hmac.new(
+            settings.MOODLE_SSO_SECRET.encode("utf-8"),
+            payload.encode("utf-8"),
+            hashlib.sha256,
+        ).hexdigest()
+        sso_url = app.main._build_moodle_public_url(
+            f"/local/univessso/login.php?userid={int(current_user.moodle_id)}"
+            f"&expires={expires}&target={quote(target_path, safe='')}&signature={signature}"
+        )
     return {
         "enabled": bool(settings.MOODLE_BASE_URL),
         "can_auto_login": can_auto_login,
-        "reason": None if can_auto_login else "auto_login_not_available",
+        "reason": None if can_auto_login else ("moodle_sync_failed" if sync_error else "auto_login_not_available"),
+        "sync_error": sync_error,
         "url": base_target,
         "target_url": base_target,
+        "sso_url": sso_url,
         "login_url": app.main._build_moodle_public_url("/login/index.php"),
         "moodle_username": credentials.get("moodle_username"),
         "username": credentials.get("moodle_username"),
-        "password": credentials.get("moodle_password") if can_auto_login else None,
+        "password": None,
         "login_post_url": app.main._build_moodle_public_url("/login/index.php"),
     }
 

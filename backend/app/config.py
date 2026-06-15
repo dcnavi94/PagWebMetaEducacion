@@ -82,10 +82,20 @@ class Settings:
     MOODLE_PUBLIC_URL: str = os.getenv("MOODLE_PUBLIC_URL", MOODLE_BASE_URL).rstrip("/")
     MOODLE_REST_TOKEN: str = os.getenv("MOODLE_REST_TOKEN", "").strip()
     MOODLE_AUTO_LOGIN_ENABLED: bool = _get_bool("MOODLE_AUTO_LOGIN_ENABLED", False)
+    MOODLE_SSO_SECRET: str = os.getenv("MOODLE_SSO_SECRET", "").strip()
     MOODLE_ROLE_CONTEXT_LEVEL: str = os.getenv("MOODLE_ROLE_CONTEXT_LEVEL", "system").strip()
     MOODLE_ROLE_INSTANCE_ID: int = _get_int("MOODLE_ROLE_INSTANCE_ID", 0)
     MOODLE_STUDENT_ROLE_ID: int = _get_int("MOODLE_STUDENT_ROLE_ID", 5)
     MOODLE_TEACHER_ROLE_ID: int = _get_int("MOODLE_TEACHER_ROLE_ID", 3)
+
+    # Mercado Pago / pagos en linea
+    MERCADO_PAGO_ACCESS_TOKEN: str = os.getenv("MERCADO_PAGO_ACCESS_TOKEN", "").strip()
+    MERCADO_PAGO_PUBLIC_KEY: str = os.getenv("MERCADO_PAGO_PUBLIC_KEY", "").strip()
+    MERCADO_PAGO_WEBHOOK_SECRET: str = os.getenv("MERCADO_PAGO_WEBHOOK_SECRET", "").strip()
+    MERCADO_PAGO_CURRENCY_ID: str = os.getenv("MERCADO_PAGO_CURRENCY_ID", "MXN").strip()
+    MERCADO_PAGO_SANDBOX: bool = _get_bool("MERCADO_PAGO_SANDBOX", True)
+    PORTAL_PUBLIC_URL: str = os.getenv("PORTAL_PUBLIC_URL", "http://localhost:8080").rstrip("/")
+    API_PUBLIC_URL: str = os.getenv("API_PUBLIC_URL", "http://localhost:8000").rstrip("/")
 
     @property
     def is_production(self) -> bool:
