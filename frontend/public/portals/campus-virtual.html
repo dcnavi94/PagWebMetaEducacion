@@ -6,7 +6,7 @@
   <base href="/" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aula Virtual | Portal del Alumno</title>
-  <link rel="icon" type="image/png" href="assets/logo_white.png" />
+  <link rel="icon" type="image/png" href="assets/images/logo_white.png" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
@@ -207,9 +207,9 @@
     }
     .service-hero > * { position: relative; z-index: 1; }
     .service-hero-copy { max-width: 720px; }
-    .service-hero-biblioteca { background: #1141b8 url('assets/student_gal_4.png') center 52%/cover no-repeat; }
-    .service-hero-cafeteria { background: #d04f1b url('assets/student_gal_1.png') center 48%/cover no-repeat; }
-    .service-hero-laboratorio { background: #0e6655 url('assets/student_gal_3.png') center 48%/cover no-repeat; }
+    .service-hero-biblioteca { background: #1141b8 url('assets/images/student_gal_4.png') center 52%/cover no-repeat; }
+    .service-hero-cafeteria { background: #d04f1b url('assets/images/student_gal_1.png') center 48%/cover no-repeat; }
+    .service-hero-laboratorio { background: #0e6655 url('assets/images/student_gal_3.png') center 48%/cover no-repeat; }
     .service-status {
       display: inline-flex;
       align-items: center;
@@ -781,7 +781,7 @@
   <div class="app">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
-        <img src="assets/logo_white.png" alt="MetaEducación" />
+        <img src="assets/images/logo_white.png" alt="MetaEducación" />
         <div>
           <h6>MetaEducación</h6>
           <small>Aula Virtual Alumno</small>
@@ -870,7 +870,7 @@
 
             <div class="dropdown">
               <button class="btn btn-light rounded-circle p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width:40px;height:40px;overflow:hidden;">
-                <img src="assets/axolotl_student.png" alt="Perfil" class="img-fluid" style="object-fit:cover;width:100%;height:100%;">
+                <img src="assets/images/axolotl_student.png" alt="Perfil" class="img-fluid" style="object-fit:cover;width:100%;height:100%;">
               </button>
               <div class="dropdown-menu dropdown-menu-end shadow-sm">
                 <div class="px-3 py-2 text-center border-bottom mb-2">
@@ -1308,7 +1308,7 @@
         <section id="view-advisor" class="section">
           <section class="panel p-4">
             <div class="d-flex align-items-center gap-3 mb-1">
-              <img src="assets/axolotl_scientist.png" alt="Ajolote Asesor" class="advisor-icon-header" />
+              <img src="assets/images/axolotl_scientist.png" alt="Ajolote Asesor" class="advisor-icon-header" />
               <h2 class="h4 fw-bold mb-0">Asesor Académico</h2>
             </div>
             <p class="text-secondary small mb-4">Orientación, tutorías y seguimiento académico personalizado.</p>
@@ -1317,7 +1317,7 @@
               <!-- Tarjeta del asesor -->
               <div class="col-lg-4">
                 <div class="card-soft text-center h-100">
-                  <img src="assets/axolotl_scientist.png" alt="Asesor" class="advisor-avatar mb-3" id="advisorAvatar" />
+                  <img src="assets/images/axolotl_scientist.png" alt="Asesor" class="advisor-avatar mb-3" id="advisorAvatar" />
                   <div class="fw-bold fs-5 mb-1" id="advisorName">-</div>
                   <div class="small text-secondary" id="advisorAssignment">-</div>
                   <div class="small mt-2"><i class="bi bi-envelope-fill me-1 text-primary"></i><span id="advisorEmail">-</span></div>
@@ -1987,7 +1987,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/api.js?v=20260610"></script>
+  <script src="assets/js/api.js?v=20260610"></script>
   <script>
     (async function clearLegacyCampusCache() {
       try {
@@ -2878,7 +2878,7 @@
       document.getElementById('advisorAssignment').textContent = advisor.period_label ? `Periodo: ${advisor.period_label}` : `Carrera: ${e?.career?.name || currentUser?.carrera || 'Pendiente'}`;
       document.getElementById('advisorEmail').textContent = advisor.teacher_email || 'Pendiente';
       document.getElementById('advisorFocus').textContent = advisor.notes || (risk > 0 ? `Refuerzo en ${risk} materia(s) con riesgo.` : 'Seguimiento preventivo y continuidad académica.');
-      document.getElementById('advisorAvatar').src = advisorAssigned && advisor.photo_url ? advisor.photo_url : 'assets/axolotl_scientist.png';
+      document.getElementById('advisorAvatar').src = advisorAssigned && advisor.photo_url ? advisor.photo_url : 'assets/images/axolotl_scientist.png';
       document.getElementById('advisorStatusHint').textContent = advisorAssigned
         ? 'Asesor activo y vinculado a tu expediente.'
         : 'Aún no tienes asesor asignado por administración.';

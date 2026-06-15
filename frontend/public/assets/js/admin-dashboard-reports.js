@@ -948,7 +948,7 @@
                 <html>
                     <head>
                         <meta charset="utf-8">
-                        <link rel="stylesheet" href="assets/admin-page.css">
+                        <link rel="stylesheet" href="assets/css/admin-page.css">
                     </head>
                     <body>
                         <h2>Reportes Administrativos</h2>

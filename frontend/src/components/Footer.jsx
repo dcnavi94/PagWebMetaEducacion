@@ -5,7 +5,7 @@ const Footer = () => {
             <div className="row g-4">
                 <div className="col-lg-4 mb-4 mb-lg-0">
                     <div className="d-flex align-items-center mb-3">
-                        <img src="/assets/logo_white.png" alt="MetaEducación Logo" height="50" className="me-2" loading="lazy" decoding="async" />
+                        <img src="/assets/images/logo_white.png" alt="MetaEducación Logo" height="50" className="me-2" loading="lazy" decoding="async" />
                         <span className="fw-bolder fs-3 italic">MetaEducación</span>
                     </div>
                     <p className="text-white-50">Transformando la educación tecnológica en la región con programas intensivos, prácticos y con validez oficial.</p>

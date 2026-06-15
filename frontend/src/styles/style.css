@@ -1807,7 +1807,7 @@ body {
     min-height: 560px;
     background:
         linear-gradient(135deg, rgba(21, 97, 109, 0.88) 0%, rgba(26, 61, 182, 0.78) 52%, rgba(216, 27, 96, 0.68) 100%),
-        url("assets/axolotl_bg.png") center bottom / cover no-repeat;
+        url("/assets/images/axolotl_bg.png") center bottom / cover no-repeat;
 }
 
 .software-eco-overlay {

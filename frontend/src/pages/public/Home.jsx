@@ -19,7 +19,7 @@ const createPortfolioCard = (project) => {
   card.className = 'card border-0 shadow-sm rounded-4 overflow-hidden h-100';
 
   const image = document.createElement('img');
-  image.src = resolvePublicAsset(project.image_url, 'assets/robot_creation.png');
+  image.src = resolvePublicAsset(project.image_url, 'assets/images/robot_creation.png');
   image.className = 'card-img-top portfolio-card-img';
   image.alt = project.title;
   image.loading = 'lazy';
@@ -57,7 +57,7 @@ const createSuccessStoryCard = (story) => {
   imageWrap.className = 'text-center mb-3';
 
   const image = document.createElement('img');
-  image.src = resolvePublicAsset(story.photo_url, 'assets/axolotl_student.png');
+  image.src = resolvePublicAsset(story.photo_url, 'assets/images/axolotl_student.png');
   image.className = 'rounded-circle success-avatar';
   image.alt = story.name;
   image.loading = 'lazy';

@@ -48,7 +48,7 @@ const ProyectoDetalle = () => {
         if (hero) {
           hero.style.backgroundImage = `url("${resolvePublicAsset(
             project.image_url,
-            'assets/proyecto-robotica.png',
+            'assets/images/proyecto-robotica.png',
           )}")`;
         }
 
